@@ -36,19 +36,6 @@
 \dim_new:N \l__leporello_paper_width_dim
 
 \keys_define:nn { leporello / global } {
-  prepress        .bool_set:N = \l_leporello_prepress_bool ,
-  prepress        .default:n  = { true } ,
-  prepress        .initial:n  = { false } ,
-  show ~ frames   .bool_set:N = \l_leporello_show_frames_bool ,
-  show ~ frames   .default:n  = { true } ,
-  show ~ frames   .initial:n  = { false } ,
-  layout ~ height .dim_set:N  = \l_leporello_layout_height_dim ,
-  layout ~ height .initial:n  = { 210mm } ,
-  bleed           .dim_set:N  = \l_leporello_bleed_dim ,
-  bleed           .initial:n  = { 3mm } ,
-  info ~ area     .dim_set:N  = \l_leporello_info_area_dim ,
-  info ~ area     .initial:n  = { 10mm } ,
-
   columns         .code:n     = {
     \clist_set:Nn \l_leporello_columns_clist {#1}
     \int_set:Nn \l_leporello_column_count_int {
@@ -60,6 +47,18 @@
     }
   } ,
   columns         .initial:n  = { 97mm , 100mm , 100mm } ,
+  layout ~ height .dim_set:N  = \l_leporello_layout_height_dim ,
+  layout ~ height .initial:n  = { 210mm } ,
+  show ~ frames   .bool_set:N = \l_leporello_show_frames_bool ,
+  show ~ frames   .default:n  = { true } ,
+  show ~ frames   .initial:n  = { false } ,
+  prepress        .bool_set:N = \l_leporello_prepress_bool ,
+  prepress        .default:n  = { true } ,
+  prepress        .initial:n  = { false } ,
+  bleed           .dim_set:N  = \l_leporello_bleed_dim ,
+  bleed           .initial:n  = { 3mm } ,
+  info ~ area     .dim_set:N  = \l_leporello_info_area_dim ,
+  info ~ area     .initial:n  = { 10mm } ,
 
   two ~ columns         .meta:n = {
     columns = { 99mm , 99mm }
@@ -222,6 +221,73 @@
   \clearpage
 }
 
+\cs_if_exist:NF \draw_set_linewidth:n {
+  \cs_set_eq:NN \draw_set_linewidth:n \draw_linewidth:n
+}
+
+\cs_new_protected:Npn \__leporello_cropmarks: {
+  \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
+    \draw_set_linewidth:n { .25pt }
+    \draw_scope_begin:
+      \draw_transform_shift:n {
+        10mm , -10mm
+      }
+      \draw_path_moveto:n { -5pt , 0pt }
+      \draw_path_lineto:n { -20pt , 0pt }
+      \draw_path_use:n { stroke }
+    \draw_scope_end:
+    \draw_scope_begin:
+      \draw_transform_shift:n {
+        10mm , 10mm - \paperheight
+      }
+      \draw_path_moveto:n { -5pt , 0pt }
+      \draw_path_lineto:n { -20pt , 0pt }
+      \draw_path_use:n { stroke }
+    \draw_scope_end:
+    \draw_scope_begin:
+      \draw_transform_shift:n {
+        \paperwidth - 10mm , -10mm
+      }
+      \draw_path_moveto:n { 5pt , 0pt }
+      \draw_path_lineto:n { 20pt , 0pt }
+      \draw_path_use:n { stroke }
+    \draw_scope_end:
+    \draw_scope_begin:
+      \draw_transform_shift:n {
+        \paperwidth - 10mm , 10mm - \paperheight
+      }
+      \draw_path_moveto:n { 5pt , 0pt }
+      \draw_path_lineto:n { 20pt , 0pt }
+      \draw_path_use:n { stroke }
+    \draw_scope_end:
+  \draw_end:
+}
+\cs_new_protected:Npn \__leporello_cropmark_n:n #1 {
+  \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
+    \draw_set_linewidth:n { .25pt }
+    \draw_transform_shift:n {
+      #1 , -10mm
+    }
+    \draw_path_moveto:n { 0pt , 5pt }
+    \draw_path_lineto:n { 0pt , 20pt }
+    \draw_path_use:n { stroke }
+  \draw_end:
+}
+\cs_new_protected:Npn \__leporello_cropmark_s:n #1 {
+  \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
+    \draw_set_linewidth:n { .25pt }
+    \draw_transform_shift:n {
+      #1 , 10mm - \paperheight
+    }
+    \draw_path_moveto:n { 0pt , -5pt }
+    \draw_path_lineto:n { 0pt , -20pt }
+    \draw_path_use:n { stroke }
+  \draw_end:
+}
+
 \AddToHook { begindocument / before } {
   \pagestyle { empty }
   \dim_set:Nn \l__leporello_paper_height_dim {
@@ -238,8 +304,22 @@
       layoutvoffset = \l_leporello_info_area_dim ,
       paperwidth = \l__leporello_paper_width_dim ,
       paperheight = \l__leporello_paper_height_dim ,
-      margin = 0pt ,
-      showcrop
+      margin = 0pt
+    }
+    \AddToHook { shipout / foreground } {
+      \__leporello_cropmarks:
+      \dim_set:Nn \l_leporello_current_column_offset_dim {
+        \l_leporello_info_area_dim
+      }
+      \__leporello_cropmark_n:n { \l_leporello_current_column_offset_dim }
+      \__leporello_cropmark_s:n { \l_leporello_current_column_offset_dim }
+      \clist_map_inline:Nn \l_leporello_columns_clist {
+        \dim_add:Nn \l_leporello_current_column_offset_dim {
+          #1
+        }
+        \__leporello_cropmark_n:n { \l_leporello_current_column_offset_dim }
+        \__leporello_cropmark_s:n { \l_leporello_current_column_offset_dim }
+      }
     }
   } {
     \geometry {
