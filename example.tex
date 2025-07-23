@@ -5,20 +5,19 @@
     show frames
 }
 
-\usepackage{lipsum, graphicx, fontspec}
-\setmainfont{TeX Gyre Heros}
+\usepackage{lipsum, graphicx}
 
 \sloppy
 
-\leporellosetstyle{mystyle}{
-    offset={0mm,20mm}, bleed={l}, background=dcwred
-}
+\leporellocolordefine{darkred}{cmyk}{0.25,1,1,0.25}
 
-\leporellocolordefine{dcwred}{cmyk}{0.25,1,1,0.25}
+\leporellosetstyle{mystyle}{
+    offset={0mm,20mm}, bleed={l}, background=darkred
+}
 
 \begin{document}
 
-\begin{leporellocolumn}{title}
+\begin{leporellocolumn}{page one}
 
 \begin{leporellobox}[padding={top=5mm}]
 \hfill\includegraphics[height=10mm, width=30mm]{example-image-a}
@@ -30,7 +29,8 @@
 
 \end{leporellocolumn}
 
-\begin{leporellocolumn}{page one}
+
+\begin{leporellocolumn}{page two}
 
 \begin{leporellobox}[padding={top=5mm}]
 \hfill\includegraphics[height=10mm, width=30mm]{example-image-a}
@@ -47,14 +47,9 @@
 \end{leporellocolumn}
 
 
-\begin{leporellocolumn}{page two}
+\begin{leporellocolumn}{page three}
 
-\begin{leporellobox}[padding={top=5mm}]
-\raggedleft
-\includegraphics[height=10mm, width=30mm]{example-image-a}
-\end{leporellobox}
-
-\begin{leporellobox}[mystyle, store height=\myheight]
+\begin{leporellobox}[mystyle]
 \Huge\leporellocolorselect{white} FOO 
 \end{leporellobox}
 
@@ -64,8 +59,9 @@
 
 \end{leporellocolumn}
 
-\printleporellocolumns{page two}
 
-\printleporellocolumns[reverse layout]{title,title,page two}
+\printleporellocolumns{page one, page three, page one}
+
+\printleporellocolumns[reverse layout]{page one, page two, page three}
 
 \end{document}
