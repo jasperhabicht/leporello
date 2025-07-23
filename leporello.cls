@@ -60,7 +60,7 @@
   four ~ columns ~ wrap .meta:n = {
     columns = { 97mm , 99mm , 100mm , 101mm }
   } ,
-  six ~ columns         .meta:n = {
+  five ~ columns        .meta:n = {
     columns = { 97mm , 97mm , 97mm , 99mm , 100mm }
   } ,
   six ~ columns         .meta:n = {
