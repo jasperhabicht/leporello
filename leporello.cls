@@ -1,5 +1,5 @@
 \ProvidesExplClass{leporello}
-  {2025/07/07} {3.9} {Document class for folding flyers}
+  {2025/07/23} {0.2} {Document class for typesetting folding flyers}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }
