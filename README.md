@@ -52,7 +52,7 @@ A box is defined by the `leporellobox` environment which takes one optional argu
 - `padding left`: Expects a dimension to describe the padding of the contents from the left edge of the box. The default value is `7.5mm`.
 - `padding right`: Expects a dimension to describe the padding of the contents from the right edge of the box. The default value is `7.5mm`. All four padding settings can also be stated using the syntax `padding={left=7.5mm,top=7.5mm}` or similar.
 - `no padding`: When set, sets all padding to zero. Does not expect a value.
-- `background`: Expects a color name as defined via `l3color`.
+- `background`: Expects a color name as defined via `l3color` or `none` which will not fill the background. The default value is `none`.
 - `bleed`: Expects a comma-separated list consisting of up to four items with the values `t`, `b`, `l` and `r` that describe the edges (top, bottom, left and right) where bleed should be added to the box. Note that bleed is not added to the inner edges where the column boxes meet.
 - `store height`: Expects a single control sequence (macro) to store the height of the current box.
 - `store width`: Expects a single control sequence (macro) to store the width of the current box.

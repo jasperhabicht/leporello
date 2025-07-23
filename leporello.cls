@@ -21,6 +21,7 @@
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , TF }
+\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
 
 \bool_new:N \l_leporello_prepress_bool
 \bool_new:N \l_leporello_show_frames_bool
@@ -163,7 +164,7 @@
     }
   } ,
   background       .tl_set:N    = \l__leporello_box_background_tl ,
-  background       .initial:n   = { white } ,
+  background       .initial:n   = { none } ,
   bleed            .clist_set:N = \l__leporello_box_bleed_clist ,
   store ~ width    .tl_set:N    = \l__leporello_box_store_width_tl ,
   store ~ height   .tl_set:N    = \l__leporello_box_store_height_tl
@@ -529,10 +530,14 @@
           \l__leporello_typeset_box_height_dim +
           \l__leporello_typeset_box_bleed_y_dim
         }
-        \color_select:e {
+        \str_if_eq:enF {
           \prop_item:cn { g_leporello_box_ #3 _prop } { background }
+        } { none } {
+          \color_select:e {
+            \prop_item:cn { g_leporello_box_ #3 _prop } { background }
+          }
+          \draw_path_use_clear:n { fill }
         }
-        \draw_path_use_clear:n { fill }
       \draw_end:
       \draw_suspend_end:
     }
