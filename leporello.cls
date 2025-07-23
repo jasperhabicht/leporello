@@ -185,6 +185,7 @@
 \dim_new:N \l_leporello_image_outer_offset_x_dim
 \dim_new:N \l_leporello_image_outer_offset_y_dim
 \fp_new:N \l_leporello_image_scale_fp
+\box_new:N \l__leporello_image_original_box
 
 \keys_define:nn { leporello / image } {
   fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
@@ -194,7 +195,7 @@
   clip ~ height    .dim_set:N   = \l_leporello_image_clip_height_dim ,
   offset           .code:n      = {
     \dim_set:Nn \l_leporello_image_offset_x_dim { \clist_item:nn {#1} { 1 } }
-    \dim_set:Nn \l_leporello_image_offset_y_dim { \clist_item:nn {#1} { 2 } }
+    \dim_set:Nn \l_leporello_image_offset_y_dim { - \clist_item:nn {#1} { 2 } }
   } ,
   offset           .initial:n   = { 0mm , 0mm } ,
   scale            .fp_set:N    = \l_leporello_image_scale_fp ,
@@ -270,6 +271,10 @@
 \NewDocumentCommand { \leporelloimage } { O{} m } {
   \keys_set:nn { leporello / image } {#1}
 
+  \hbox_set:Nn \l__leporello_image_original_box {
+    \includegraphics {#2}
+  }
+
   \bool_if:NT \l_leporello_image_fill_bleed_bool {
     \int_compare:nNnT {
       \l_leporello_current_column_int
@@ -295,16 +300,25 @@
       }
     }
     \clist_if_in:enT {
-      \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } { bleed }
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { bleed }
     } { t } {
       \dim_add:Nn \l_leporello_image_outer_offset_y_dim { \l_leporello_bleed_dim }
       \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
     }
     \clist_if_in:enT {
-      \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } { bleed }
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { bleed }
     } { b } {
       \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
     }
+  }
+
+  \dim_add:Nn \l_leporello_image_offset_y_dim {
+    \box_ht:N \l__leporello_image_original_box -
+    \l_leporello_image_clip_height_dim
   }
 
   \skip_vertical:n { - \l_leporello_image_outer_offset_y_dim }
@@ -326,16 +340,16 @@
       \dim_to_decimal_in_bp:n {
         \fp_to_dim:n {
           ( 
-            \l_leporello_image_offset_x_dim +
-            \l_leporello_image_clip_width_dim 
+            \l_leporello_image_clip_width_dim +
+            \l_leporello_image_offset_x_dim
           ) / \l_leporello_image_scale_fp
         }
       } ~
       \dim_to_decimal_in_bp:n {
         \fp_to_dim:n {
           (
-            \l_leporello_image_offset_y_dim +
-            \l_leporello_image_clip_height_dim 
+            \l_leporello_image_clip_height_dim +
+            \l_leporello_image_offset_y_dim
           ) / \l_leporello_image_scale_fp
         }
       } ,

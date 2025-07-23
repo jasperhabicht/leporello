@@ -84,5 +84,5 @@ With the command `\leporelloimage` images that cover full boxes can be inserted.
 - `clip width`: Expects a dimension depicting the width of the boxed image.
 - `clip height`: Expects a dimension depicting the height of the boxed image.
 - `scale`: Expects a floating point number depicting the scaling factor of the image. This factor will not affect the size of the box.
-- `offset`: Expects a comma-separated list consisting of two values that describe the offset of the image that will be positioned per default so that the lower left corner sits at the lower left corner of the box. A positive offset will shift the image in lower left direction.
-- `fill bleed`: When set, the image will spread into the bleed. Does not expect a value.
+- `offset`: Expects a comma-separated list consisting of two values that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction.
+- `fill bleed`: When set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which needs to be accounted for using `offset`. Does not expect a value.
