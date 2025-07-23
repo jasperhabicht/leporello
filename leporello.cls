@@ -1,5 +1,17 @@
+% File: leporello.cls
+% Copyright 2025 Jasper Habicht (mail(at)jasperhabicht.de).
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
+%
+% This file is part of the `leporello' package (The Work in LPPL)
+% and all files in that bundle must be distributed together.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
 \ProvidesExplClass{leporello}
-  {2025/07/23} {0.2} {Document class for typesetting folding flyers}
+  {2025/07/23} {0.3} {Document class for typesetting folding flyers}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }
@@ -8,7 +20,7 @@
 \cs_generate_variant:Nn \tl_const:Nn { co }
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 
-\prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T }
+\prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , TF }
 
 \bool_new:N \l_leporello_prepress_bool
 \bool_new:N \l_leporello_show_frames_bool
@@ -115,6 +127,7 @@
 \dim_new:N \l__leporello_typeset_box_bleed_left_dim
 \dim_new:N \l__leporello_typeset_box_bleed_y_dim
 \dim_new:N \l__leporello_typeset_box_bleed_x_dim
+\int_new:N \l__leporello_typeset_coffin_attach_align_int
 
 \keys_define:nn { leporello / box } {
   align ~ parent   .clist_set:N = \l__leporello_box_align_parent_clist ,
@@ -141,6 +154,14 @@
     left   = 7.5mm ,
     right  = 7.5mm
   } ,
+  no ~ padding     .meta:n      = {
+    padding = {
+      top    = 0mm ,
+      bottom = 0mm ,
+      left   = 0mm ,
+      right  = 0mm
+    }
+  } ,
   background       .tl_set:N    = \l__leporello_box_background_tl ,
   background       .initial:n   = { white } ,
   bleed            .clist_set:N = \l__leporello_box_bleed_clist ,
@@ -154,6 +175,30 @@
   reverse ~ layout .bool_set:N = \l_leporello_reverse_layout_bool ,
   reverse ~ layout .default:n  = { true } ,
   reverse ~ layout .initial:n  = { false } ,
+}
+
+\bool_new:N \l_leporello_image_fill_bleed_bool
+\dim_new:N \l_leporello_image_clip_width_dim
+\dim_new:N \l_leporello_image_clip_height_dim
+\dim_new:N \l_leporello_image_offset_x_dim
+\dim_new:N \l_leporello_image_offset_y_dim
+\dim_new:N \l_leporello_image_outer_offset_x_dim
+\dim_new:N \l_leporello_image_outer_offset_y_dim
+\fp_new:N \l_leporello_image_scale_fp
+
+\keys_define:nn { leporello / image } {
+  fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
+  fill ~ bleed     .default:n   = { true } ,
+  fill ~ bleed     .initial:n   = { false } ,
+  clip ~ width     .dim_set:N   = \l_leporello_image_clip_width_dim ,
+  clip ~ height    .dim_set:N   = \l_leporello_image_clip_height_dim ,
+  offset           .code:n      = {
+    \dim_set:Nn \l_leporello_image_offset_x_dim { \clist_item:nn {#1} { 1 } }
+    \dim_set:Nn \l_leporello_image_offset_y_dim { \clist_item:nn {#1} { 2 } }
+  } ,
+  offset           .initial:n   = { 0mm , 0mm } ,
+  scale            .fp_set:N    = \l_leporello_image_scale_fp ,
+  scale            .initial:n   = { 1 }
 }
 
 % ===
@@ -219,6 +264,82 @@
 
 \NewDocumentCommand { \leporellocolorselect } { m } {
   \color_select:n {#1}
+}
+
+\clist_new:N \l__leporello_graphicx_options_clist
+\NewDocumentCommand { \leporelloimage } { O{} m } {
+  \keys_set:nn { leporello / image } {#1}
+
+  \bool_if:NT \l_leporello_image_fill_bleed_bool {
+    \int_compare:nNnT {
+      \l_leporello_current_column_int
+    } = { 1 } {
+      \clist_if_in:enT {
+        \prop_item:cn {
+          g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+        } { bleed }
+      } { l } {
+        \dim_add:Nn \l_leporello_image_outer_offset_x_dim { \l_leporello_bleed_dim }
+        \dim_add:Nn \l_leporello_image_clip_width_dim { \l_leporello_bleed_dim }
+      }
+    }
+    \int_compare:nNnT { 
+      \l_leporello_current_column_int
+    } = { \l_leporello_column_count_int } {
+      \clist_if_in:enT {
+        \prop_item:cn {
+          g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop 
+        } { bleed }
+      } { r } {
+        \dim_add:Nn \l_leporello_image_clip_width_dim { \l_leporello_bleed_dim }
+      }
+    }
+    \clist_if_in:enT {
+      \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } { bleed }
+    } { t } {
+      \dim_add:Nn \l_leporello_image_outer_offset_y_dim { \l_leporello_bleed_dim }
+      \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
+    }
+    \clist_if_in:enT {
+      \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } { bleed }
+    } { b } {
+      \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
+    }
+  }
+
+  \skip_vertical:n { - \l_leporello_image_outer_offset_y_dim }
+  \skip_horizontal:n { - \l_leporello_image_outer_offset_x_dim }
+  \includegraphics [
+    scale = \fp_use:N \l_leporello_image_scale_fp ,
+    clip ,
+    viewport =
+      \dim_to_decimal_in_bp:n {
+        \fp_to_dim:n {
+          \l_leporello_image_offset_x_dim / \l_leporello_image_scale_fp
+        }
+      } ~
+      \dim_to_decimal_in_bp:n {
+        \fp_to_dim:n {
+          \l_leporello_image_offset_y_dim / \l_leporello_image_scale_fp
+        }
+      } ~
+      \dim_to_decimal_in_bp:n {
+        \fp_to_dim:n {
+          ( 
+            \l_leporello_image_offset_x_dim +
+            \l_leporello_image_clip_width_dim 
+          ) / \l_leporello_image_scale_fp
+        }
+      } ~
+      \dim_to_decimal_in_bp:n {
+        \fp_to_dim:n {
+          (
+            \l_leporello_image_offset_y_dim +
+            \l_leporello_image_clip_height_dim 
+          ) / \l_leporello_image_scale_fp
+        }
+      } ,
+  ] {#2}
 }
 
 \NewDocumentEnvironment { leporellocolumn } { m +b } {
@@ -518,6 +639,14 @@
             }
           }
 
+          \clist_if_in:enTF {
+            \prop_item:cn { g_leporello_box_ ####1 _prop } { align ~ self }
+          } { b } { 
+            \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { 1 }
+          } {
+            \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { -1 }
+          }
+
           \coffin_attach:Neeceeee \l_leporello_current_column_phantom_coffin {
             \clist_item:en {
               \prop_item:cn { g_leporello_box_ ####1 _prop } { align ~ parent }
@@ -551,9 +680,9 @@
               (
                 \clist_item:en {
                   \prop_item:cn { g_leporello_box_ ####1 _prop } { offset }
-                } { 2 } +
+                } { 2 } -
                 \l__leporello_typeset_box_bleed_top_dim
-              ) * -1
+              ) * \l__leporello_typeset_coffin_attach_align_int
             }
           }
         }

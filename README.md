@@ -51,6 +51,7 @@ A box is defined by the `leporellobox` environment which takes one optional argu
 - `padding bottom`: Expects a dimension to describe the padding of the contents from the bottom edge of the box. The default value is `7.5mm`.
 - `padding left`: Expects a dimension to describe the padding of the contents from the left edge of the box. The default value is `7.5mm`.
 - `padding right`: Expects a dimension to describe the padding of the contents from the right edge of the box. The default value is `7.5mm`. All four padding settings can also be stated using the syntax `padding={left=7.5mm,top=7.5mm}` or similar.
+- `no padding`: When set, sets all padding to zero. Does not expect a value.
 - `background`: Expects a color name as defined via `l3color`.
 - `bleed`: Expects a comma-separated list consisting of up to four items with the values `t`, `b`, `l` and `r` that describe the edges (top, bottom, left and right) where bleed should be added to the box. Note that bleed is not added to the inner edges where the column boxes meet.
 - `store height`: Expects a single control sequence (macro) to store the height of the current box.
@@ -75,3 +76,13 @@ The command `\leporellocolorselect` takes the name of the previously defined col
 ### Defining styles
 
 In order to simplify the setting of recurring options to the `leporellobox` environment, it is possible to group several of these options as style via the `\leporellosetstyle` command which takes as first argument the name of the newly defined style and as second argument the releevant options (key-value pairs). The style can then be used like an option to any `leporellobox` environment.
+
+### Inserting images
+
+With the command `\leporelloimage` images that cover full boxes can be inserted. This command can be placed in a `leporellobox` with zero padding. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take the following options:
+
+- `clip width`: Expects a dimension depicting the width of the boxed image.
+- `clip height`: Expects a dimension depicting the height of the boxed image.
+- `scale`: Expects a floating point number depicting the scaling factor of the image. This factor will not affect the size of the box.
+- `offset`: Expects a comma-separated list consisting of two values that describe the offset of the image that will be positioned per default so that the lower left corner sits at the lower left corner of the box. A positive offset will shift the image in lower left direction.
+- `fill bleed`: When set, the image will spread into the bleed. Does not expect a value.
