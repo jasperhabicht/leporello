@@ -229,38 +229,22 @@
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
     \draw_set_linewidth:n { .25pt }
-    \draw_scope_begin:
-      \draw_transform_shift:n {
-        10mm , -10mm
+    \clist_map_inline:nn { 10mm , \paperwidth - 10mm } {
+      \clist_map_inline:nn { -10mm , 10mm - \paperheight } {
+        \draw_scope_begin:
+          \draw_transform_shift:n {
+            ##1 , ####1
+          }
+          \draw_path_moveto:n {
+            \dim_sign:n { ##1 - \paperwidth / 2 } * 5pt , 0pt
+          }
+          \draw_path_lineto:n {
+            \dim_sign:n { ##1 - \paperwidth / 2 } * 20pt , 0pt
+          }
+          \draw_path_use:n { stroke }
+        \draw_scope_end:      
       }
-      \draw_path_moveto:n { -5pt , 0pt }
-      \draw_path_lineto:n { -20pt , 0pt }
-      \draw_path_use:n { stroke }
-    \draw_scope_end:
-    \draw_scope_begin:
-      \draw_transform_shift:n {
-        10mm , 10mm - \paperheight
-      }
-      \draw_path_moveto:n { -5pt , 0pt }
-      \draw_path_lineto:n { -20pt , 0pt }
-      \draw_path_use:n { stroke }
-    \draw_scope_end:
-    \draw_scope_begin:
-      \draw_transform_shift:n {
-        \paperwidth - 10mm , -10mm
-      }
-      \draw_path_moveto:n { 5pt , 0pt }
-      \draw_path_lineto:n { 20pt , 0pt }
-      \draw_path_use:n { stroke }
-    \draw_scope_end:
-    \draw_scope_begin:
-      \draw_transform_shift:n {
-        \paperwidth - 10mm , 10mm - \paperheight
-      }
-      \draw_path_moveto:n { 5pt , 0pt }
-      \draw_path_lineto:n { 20pt , 0pt }
-      \draw_path_use:n { stroke }
-    \draw_scope_end:
+    }
   \draw_end:
 }
 \cs_new_protected:Npn \__leporello_cropmark_n:n #1 {
