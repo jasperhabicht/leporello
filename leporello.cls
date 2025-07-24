@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/07/23} {0.3} {Document class for typesetting folding flyers}
+  {2025/07/24} {0.5} {Document class for typesetting folding flyers}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }
@@ -185,12 +185,10 @@
 \dim_new:N \l_leporello_image_outer_offset_x_dim
 \dim_new:N \l_leporello_image_outer_offset_y_dim
 \fp_new:N \l_leporello_image_scale_fp
+\clist_new:N \l_leporello_image_ignore_padding_clist
 \box_new:N \l__leporello_image_original_box
 
 \keys_define:nn { leporello / image } {
-  fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
-  fill ~ bleed     .default:n   = { true } ,
-  fill ~ bleed     .initial:n   = { false } ,
   clip ~ width     .dim_set:N   = \l_leporello_image_clip_width_dim ,
   clip ~ height    .dim_set:N   = \l_leporello_image_clip_height_dim ,
   offset           .code:n      = {
@@ -199,7 +197,11 @@
   } ,
   offset           .initial:n   = { 0mm , 0mm } ,
   scale            .fp_set:N    = \l_leporello_image_scale_fp ,
-  scale            .initial:n   = { 1 }
+  scale            .initial:n   = { 1 } ,
+  ignore ~ padding .clist_set:N = \l_leporello_image_ignore_padding_clist ,
+  fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
+  fill ~ bleed     .default:n   = { true } ,
+  fill ~ bleed     .initial:n   = { false } ,
 }
 
 % ===
@@ -338,6 +340,45 @@
 
   \hbox_set:Nn \l__leporello_image_original_box {
     \includegraphics {#2}
+  }
+
+  \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { l } {
+    \dim_add:Nn \l_leporello_image_outer_offset_x_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ left }
+    }
+    \dim_add:Nn \l_leporello_image_clip_width_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ left }
+    }
+  }
+  \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { r } {
+    \dim_add:Nn \l_leporello_image_clip_width_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ right }
+    }
+  }
+  \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { t } {
+    \dim_add:Nn \l_leporello_image_outer_offset_y_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ top }
+    }
+    \dim_add:Nn \l_leporello_image_clip_height_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ top }
+    }
+  }
+  \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { b } {
+    \dim_add:Nn \l_leporello_image_clip_height_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ bottom }
+    }
   }
 
   \bool_if:NT \l_leporello_image_fill_bleed_bool {
