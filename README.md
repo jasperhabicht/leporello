@@ -11,7 +11,7 @@ A simple LaTeX document class to create folding flyers with two key features:
 
 ## Loading the class
 
-Use `\documentclass{leporello}` to load the document class. The document class loads the `geometry` and the `l3draw` package.
+Use `\documentclass{leporello}` to load the document class. The document class loads the `geometry`, the `graphicx` and the `l3draw` package.
 
 Use `\leporelloset` or use the optional argument of the document class to globally set the document layout. The following options are available:
 
