@@ -47,15 +47,15 @@ A box is defined by the `leporellobox` environment which takes one optional argu
 - `width`: Expects a dimension to explicitly set the width of the current box. The default value is `0mm` which means that the box is as wide as the parent column box.
 - `height`: Expects a dimension to explicitly set the height of the current box. The default value is `0mm` which means that the box is as high as necessary to fit the contents.
 - `stretch height`: When set, the box is stretched until its relevant edge meets the edge of the parent column box. Does not expect a value.
-- `padding top`: Expects a dimension to describe the padding of the contents from the top edge of the box. The default value is `7.5mm`.
-- `padding bottom`: Expects a dimension to describe the padding of the contents from the bottom edge of the box. The default value is `7.5mm`.
 - `padding left`: Expects a dimension to describe the padding of the contents from the left edge of the box. The default value is `7.5mm`.
-- `padding right`: Expects a dimension to describe the padding of the contents from the right edge of the box. The default value is `7.5mm`. All four padding settings can also be stated using the syntax `padding={left=7.5mm,top=7.5mm}` or similar.
+- `padding right`: Expects a dimension to describe the padding of the contents from the right edge of the box. The default value is `7.5mm`.
+- `padding top`: Expects a dimension to describe the padding of the contents from the top edge of the box. The default value is `7.5mm`.
+- `padding bottom`: Expects a dimension to describe the padding of the contents from the bottom edge of the box. The default value is `7.5mm`. All four padding settings can also be stated using the syntax `padding={left=7.5mm,top=7.5mm}` or similar.
 - `no padding`: When set, sets all padding to zero. Does not expect a value.
 - `background`: Expects a color name as defined via `l3color` or `none` which will not fill the background. The default value is `none`.
 - `bleed`: Expects a comma-separated list consisting of up to four items with the values `t`, `b`, `l` and `r` that describe the edges (top, bottom, left and right) where bleed should be added to the box. Note that bleed is not added to the inner edges where the column boxes meet.
-- `store height`: Expects a single control sequence (macro) to store the height of the current box.
 - `store width`: Expects a single control sequence (macro) to store the width of the current box.
+- `store height`: Expects a single control sequence (macro) to store the height of the current box.
 
 ## Typesetting boxes to columns
 
