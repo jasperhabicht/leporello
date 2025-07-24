@@ -20,7 +20,7 @@
 \cs_generate_variant:Nn \tl_const:Nn { co }
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 
-\prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , TF }
+\prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
 \prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
 
 \bool_new:N \l_leporello_prepress_bool
@@ -459,22 +459,33 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { bleed }
       } { t } {
-        \dim_add:Nn \l_leporello_image_outer_offset_top_dim { \l_leporello_bleed_dim }
-        \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
+        \dim_add:Nn \l_leporello_image_outer_offset_top_dim {
+          \l_leporello_bleed_dim
+        }
+        \dim_add:Nn \l_leporello_image_clip_height_dim {
+          \l_leporello_bleed_dim
+        }
       }
       \clist_if_in:enT {
         \prop_item:cn {
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { bleed }
       } { b } {
-        \dim_add:Nn \l_leporello_image_outer_offset_bottom_dim { \l_leporello_bleed_dim }
-        \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
+        \dim_add:Nn \l_leporello_image_outer_offset_bottom_dim {
+          \l_leporello_bleed_dim
+        }
+        \dim_add:Nn \l_leporello_image_clip_height_dim {
+         \l_leporello_bleed_dim
+        }
       }
     }
 
     \dim_add:Nn \l_leporello_image_offset_y_dim {
-      \box_ht:N \l__leporello_image_original_box -
-      \l_leporello_image_clip_height_dim
+      \fp_to_dim:n {
+        \l_leporello_image_scale_fp *
+        \box_ht:N \l__leporello_image_original_box -
+        \l_leporello_image_clip_height_dim
+      }
     }
 
     \skip_vertical:n { - \l_leporello_image_outer_offset_top_dim }
@@ -831,8 +842,13 @@
 
           \clist_if_in:enTF {
             \prop_item:cn { g_leporello_box_ ####1 _prop } { align ~ self }
-          } { b } { 
+          } { b } {
             \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { 1 }
+            \clist_if_in:enF {
+              \prop_item:cn { g_leporello_box_ ####1 _prop } { bleed }
+            } { b } {
+              \dim_zero:N \l__leporello_typeset_box_bleed_top_dim
+            }
           } {
             \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { -1 }
           }
