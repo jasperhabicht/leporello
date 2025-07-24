@@ -24,7 +24,7 @@ Use `\leporelloset` or use the optional argument of the document class to global
 
 ## Defining columns
 
-Columns are grouped material to be typeset on a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general. The package has currently no text overflow detection. Thus, if a column contains more that fits, the relevant parts just spill over the frame.
+Columns are grouped material to be typeset on a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. The package has currently no text overflow detection. Thus, if a column contains more that fits, the relevant parts just spill over the frame edges.
 
 A column is defined by the `leporellocolumn` environment which takes one mandatory argument taking the name (or ID) of the column.
 
@@ -63,6 +63,8 @@ Using the command `\printleporellocolumns` which takes one mandatory argument, p
 
 The command takes one optional argument that can take the option `reverse layout`. When set, the widths of the columns are reversed, but the placement of the columns is still from left to right. The option should be used to typeset the verso of a folding flyer that naturally has the widths of the columns reversed.
 
+Currently, boxes can only be attached to columns. A future version of the document class may allow to attach boxes to each other.
+
 ## Other settings
 
 ### Defining colors
@@ -84,6 +86,8 @@ With the command `\leporelloimage` images that cover full boxes can be inserted.
 - `clip width`: Expects a dimension depicting the width of the boxed image.
 - `clip height`: Expects a dimension depicting the height of the boxed image.
 - `scale`: Expects a floating point number depicting the scaling factor of the image. This factor will not affect the size of the box.
+- `width`: Expects a dimension to explicitly set the width of the image. This will override a `scale` value.
+- `height`: Expects a dimension to explicitly set the width of the image. This will override a `scale` or a `width` value. The aspect ratio of the original image will always be kept.
 - `offset`: Expects a comma-separated list consisting of two values that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction.
 - `ignore padding`: Expects a comma-separated list consisting of up to four items with the values `t`, `b`, `l` and `r` that describe the edges (top, bottom, left and right) where the image should ignore the padding of the current box.
 - `fill bleed`: When set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which needs to be accounted for using `offset`. Does not expect a value.
