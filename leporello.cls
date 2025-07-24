@@ -174,23 +174,45 @@
 \keys_define:nn { leporello / print } {
   reverse ~ layout .bool_set:N = \l_leporello_reverse_layout_bool ,
   reverse ~ layout .default:n  = { true } ,
-  reverse ~ layout .initial:n  = { false } ,
+  reverse ~ layout .initial:n  = { false }
 }
 
 \bool_new:N \l_leporello_image_fill_bleed_bool
+\bool_new:N \l_leporello_image_width_bool
+\bool_new:N \l_leporello_image_height_bool
+\bool_new:N \l_leporello_image_clip_width_bool
+\bool_new:N \l_leporello_image_clip_height_bool
+\dim_new:N \l_leporello_image_width_dim
+\dim_new:N \l_leporello_image_height_dim
 \dim_new:N \l_leporello_image_clip_width_dim
 \dim_new:N \l_leporello_image_clip_height_dim
 \dim_new:N \l_leporello_image_offset_x_dim
 \dim_new:N \l_leporello_image_offset_y_dim
-\dim_new:N \l_leporello_image_outer_offset_x_dim
-\dim_new:N \l_leporello_image_outer_offset_y_dim
+\dim_new:N \l_leporello_image_outer_offset_top_dim
+\dim_new:N \l_leporello_image_outer_offset_bottom_dim
+\dim_new:N \l_leporello_image_outer_offset_left_dim
+\dim_new:N \l_leporello_image_outer_offset_right_dim
 \fp_new:N \l_leporello_image_scale_fp
-\clist_new:N \l_leporello_image_ignore_padding_clist
+\clist_new:N \l_leporello_image_options_clist
 \box_new:N \l__leporello_image_original_box
 
 \keys_define:nn { leporello / image } {
-  clip ~ width     .dim_set:N   = \l_leporello_image_clip_width_dim ,
-  clip ~ height    .dim_set:N   = \l_leporello_image_clip_height_dim ,
+  width            .code:n      = {
+    \bool_set_true:N \l_leporello_image_width_bool
+    \dim_set:Nn \l_leporello_image_width_dim {#1} 
+  } ,
+  height           .code:n      = {
+    \bool_set_true:N \l_leporello_image_height_bool
+    \dim_set:Nn \l_leporello_image_height_dim {#1} 
+  } ,
+  clip ~ width     .code:n      = {
+    \bool_set_true:N \l_leporello_image_clip_width_bool
+    \dim_set:Nn \l_leporello_image_clip_width_dim {#1} 
+  } ,
+  clip ~ height    .code:n      = {
+    \bool_set_true:N \l_leporello_image_clip_height_bool
+    \dim_set:Nn \l_leporello_image_clip_height_dim {#1} 
+  } ,
   offset           .code:n      = {
     \dim_set:Nn \l_leporello_image_offset_x_dim { \clist_item:nn {#1} { 1 } }
     \dim_set:Nn \l_leporello_image_offset_y_dim { - \clist_item:nn {#1} { 2 } }
@@ -201,7 +223,7 @@
   ignore ~ padding .clist_set:N = \l_leporello_image_ignore_padding_clist ,
   fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
   fill ~ bleed     .default:n   = { true } ,
-  fill ~ bleed     .initial:n   = { false } ,
+  fill ~ bleed     .initial:n   = { false }
 }
 
 % ===
@@ -209,6 +231,7 @@
 \ProcessKeyOptions [ leporello / global ]
 \LoadClass { article }
 \RequirePackage { geometry }
+\RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
 \cs_new_protected:Npn \leporello_draw_absolute:nn #1#2 {
@@ -342,8 +365,25 @@
     \includegraphics {#2}
   }
 
+  \bool_if:NF \l_leporello_image_clip_width_bool {
+    \dim_set:Nn \l_leporello_image_clip_width_dim {
+      \fp_to_dim:n {
+        \l_leporello_image_scale_fp *
+        \box_wd:N \l__leporello_image_original_box
+      }
+    }
+  }
+  \bool_if:NF \l_leporello_image_clip_height_bool {
+    \dim_set:Nn \l_leporello_image_clip_height_dim {
+      \fp_to_dim:n {
+        \l_leporello_image_scale_fp *
+        \box_ht:N \l__leporello_image_original_box
+      }
+    }
+  }
+
   \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { l } {
-    \dim_add:Nn \l_leporello_image_outer_offset_x_dim {
+    \dim_add:Nn \l_leporello_image_outer_offset_left_dim {
       \prop_item:cn {
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
       } { padding ~ left }
@@ -355,6 +395,11 @@
     }
   }
   \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { r } {
+    \dim_add:Nn \l_leporello_image_outer_offset_right_dim {
+      \prop_item:cn {
+        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+      } { padding ~ right }
+    }
     \dim_add:Nn \l_leporello_image_clip_width_dim {
       \prop_item:cn {
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
@@ -362,19 +407,14 @@
     }
   }
   \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { t } {
-    \dim_add:Nn \l_leporello_image_outer_offset_y_dim {
-      \prop_item:cn {
-        g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
-      } { padding ~ top }
-    }
-    \dim_add:Nn \l_leporello_image_clip_height_dim {
+    \dim_add:Nn \l_leporello_image_outer_offset_top_dim {
       \prop_item:cn {
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
       } { padding ~ top }
     }
   }
   \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { b } {
-    \dim_add:Nn \l_leporello_image_clip_height_dim {
+    \dim_add:Nn \l_leporello_image_outer_offset_bottom_dim {
       \prop_item:cn {
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
       } { padding ~ bottom }
@@ -390,8 +430,12 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { bleed }
       } { l } {
-        \dim_add:Nn \l_leporello_image_outer_offset_x_dim { \l_leporello_bleed_dim }
-        \dim_add:Nn \l_leporello_image_clip_width_dim { \l_leporello_bleed_dim }
+        \dim_add:Nn \l_leporello_image_outer_offset_left_dim {
+          \l_leporello_bleed_dim
+        }
+        \dim_add:Nn \l_leporello_image_clip_width_dim {
+          \l_leporello_bleed_dim
+        }
       }
     }
     \int_compare:nNnT { 
@@ -402,7 +446,12 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop 
         } { bleed }
       } { r } {
-        \dim_add:Nn \l_leporello_image_clip_width_dim { \l_leporello_bleed_dim }
+        \dim_add:Nn \l_leporello_image_outer_offset_right_dim {
+          \l_leporello_bleed_dim
+        }
+        \dim_add:Nn \l_leporello_image_clip_width_dim {
+          \l_leporello_bleed_dim
+        }
       }
     }
     \clist_if_in:enT {
@@ -410,7 +459,7 @@
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
       } { bleed }
     } { t } {
-      \dim_add:Nn \l_leporello_image_outer_offset_y_dim { \l_leporello_bleed_dim }
+      \dim_add:Nn \l_leporello_image_outer_offset_top_dim { \l_leporello_bleed_dim }
       \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
     }
     \clist_if_in:enT {
@@ -418,6 +467,7 @@
         g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
       } { bleed }
     } { b } {
+      \dim_add:Nn \l_leporello_image_outer_offset_bottom_dim { \l_leporello_bleed_dim }
       \dim_add:Nn \l_leporello_image_clip_height_dim { \l_leporello_bleed_dim }
     }
   }
@@ -427,20 +477,22 @@
     \l_leporello_image_clip_height_dim
   }
 
-  \skip_vertical:n { - \l_leporello_image_outer_offset_y_dim }
-  \skip_horizontal:n { - \l_leporello_image_outer_offset_x_dim }
+  \skip_vertical:n { - \l_leporello_image_outer_offset_top_dim }
+  \skip_horizontal:n { - \l_leporello_image_outer_offset_left_dim }
   \includegraphics [
     scale = \fp_use:N \l_leporello_image_scale_fp ,
     clip ,
     viewport =
       \dim_to_decimal_in_bp:n {
         \fp_to_dim:n {
-          \l_leporello_image_offset_x_dim / \l_leporello_image_scale_fp
+          \l_leporello_image_offset_x_dim /
+          \l_leporello_image_scale_fp
         }
       } ~
       \dim_to_decimal_in_bp:n {
         \fp_to_dim:n {
-          \l_leporello_image_offset_y_dim / \l_leporello_image_scale_fp
+          \l_leporello_image_offset_y_dim /
+          \l_leporello_image_scale_fp
         }
       } ~
       \dim_to_decimal_in_bp:n {
@@ -459,7 +511,15 @@
           ) / \l_leporello_image_scale_fp
         }
       } ,
+    %\bool_if:NT \l_leporello_image_width_bool {
+    %  width = \dim_use:N \l_leporello_image_width_dim ,
+    %}
+    %\bool_if:NT \l_leporello_image_height_bool {
+    %  height = \dim_use:N \l_leporello_image_height_dim ,
+    %}
   ] {#2}
+  \skip_horizontal:n { - \l_leporello_image_outer_offset_right_dim }
+  \skip_vertical:n { - \l_leporello_image_outer_offset_bottom_dim }  
 }
 
 \NewDocumentEnvironment { leporellocolumn } { m +b } {
