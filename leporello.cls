@@ -226,6 +226,9 @@
   fill ~ bleed     .initial:n   = { false }
 }
 
+\hook_new_pair:nn { leporello / column / before } { leporello / column / after }
+\hook_new_pair:nn { leporello / box / before } { leporello / box / after }
+
 % ===
 
 \ProcessKeyOptions [ leporello / global ]
@@ -538,14 +541,20 @@
 
 \NewDocumentEnvironment { leporellocolumn } { m +b } {
   \clist_new:c { g_leporello_column_ #1 _boxes_clist }
-  \tl_const:cn { c_leporello_column_ #1 _tl } {
+  \tl_if_exist:cF { g_leporello_column_ #1 _tl } {
+    \tl_new:c { g_leporello_column_ #1 _tl }
+  }
+  \tl_gset:cn { g_leporello_column_ #1 _tl } {
     \str_set:Nn \l_leporello_current_column_str {#1}
     #2
   }
 } { }
 
 \cs_new:Npn \l_leporello_box_store:nn #1#2 {
-  \tl_const:cn { c_leporello_box_ #1 _tl } {
+  \tl_if_exist:cF { g_leporello_box_ #1 _tl } {
+    \tl_new:c { g_leporello_box_ #1 _tl }
+  }
+  \tl_gset:cn { g_leporello_box_ #1 _tl } {
     \int_set:Nn \l_leporello_current_box_int {#1}
     #2
   }
@@ -635,7 +644,10 @@
       \prop_item:cn { g_leporello_box_ #3 _prop } { padding ~ right }
   } {
     \draw_suspend_begin:
-      \tl_use:c { c_leporello_box_ #3 _tl }
+      \int_set:Nn \l_leporello_current_box_int {#3}
+      \hook_use:n { leporello / box / before }
+        \tl_use:c { g_leporello_box_ #3 _tl }
+      \hook_use:n { leporello / box / after }
     \draw_suspend_end:
   }
 
@@ -767,7 +779,7 @@
       \clist_map_inline:nn {#2} {
         \int_incr:N \l_leporello_current_column_int
 
-        \tl_if_exist:cF { c_leporello_column_ ##1 _tl } {
+        \tl_if_exist:cF { g_leporello_column_ ##1 _tl } {
           \msg_error:nnn { leporello } { column-undefined } {##1}
         }
 
@@ -776,7 +788,10 @@
             \l_leporello_current_column_int
         } {
           \draw_suspend_begin:
-            \tl_use:c { c_leporello_column_ ##1 _tl }
+            \str_set:Nn \l_leporello_current_column_str {##1}
+            \hook_use:n { leporello / column / before }
+              \tl_use:c { g_leporello_column_ ##1 _tl }
+            \hook_use:n { leporello / column / after }
           \draw_suspend_end:
         }
         \vcoffin_set:Nnn \l_leporello_current_column_phantom_coffin {
