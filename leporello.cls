@@ -554,7 +554,7 @@
   \tl_if_exist:cF { g_leporello_box_ #1 _tl } {
     \tl_new:c { g_leporello_box_ #1 _tl }
   }
-  \tl_gset:cn { g_leporello_box_ #1 _tl } {
+  \tl_gput_right:cn { g_leporello_box_ #1 _tl } {
     \int_set:Nn \l_leporello_current_box_int {#1}
     #2
   }
@@ -573,8 +573,8 @@
     g_leporello_column_ \str_use:N \l_leporello_current_column_str _boxes_clist
   } \g_leporello_box_int
 
-  \keys_set:nn { leporello / box } {#1}
   \prop_new:c { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
+  \keys_set:nn { leporello / box } {#1}
   \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop } { align ~ parent }
     { \clist_use:Nn \l__leporello_box_align_parent_clist { , } }
   \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop } { align ~ self }

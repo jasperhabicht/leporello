@@ -1,0 +1,95 @@
+\documentclass{leporello}
+\usepackage{lipsum}
+
+\ExplSyntaxOn
+
+\cs_generate_variant:Nn \int_set:Nn { Ne }
+
+\bool_new:N \l_leporello_box_flow_into_bool
+\int_new:N \l_leporello_box_flow_into_int
+\box_new:N \g_leporello_box_flow_head_box
+
+\keys_define:nn { leporello / box } {
+    flow ~ into  .code:n = {
+        \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop } 
+            { flow ~ into } {#1}
+    }
+}
+
+\AddToHook { leporello / box / before } {
+    \prop_if_in:cnT { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } 
+        { flow ~ into } {
+        \int_set:Nn \l_leporello_box_flow_into_int {
+            \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } 
+                { flow ~ into }
+        }
+        \box_new:c {
+            g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box
+        }
+        \vbox_gset:cn {
+            g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box
+        } {
+            \tl_use:c { g_leporello_box_ \int_use:N \l_leporello_current_box_int _tl }
+        }
+        \tl_clear:c { g_leporello_box_ \int_use:N \l_leporello_current_box_int _tl }
+        \vbox_gset_split_to_ht:Ncn \g_leporello_box_flow_head_box {
+            g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box
+        } { 
+            \dim_compare:nNnTF {
+                \prop_item:cn {
+                    g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+                } { height }
+            } = { 0mm } {
+                \l_leporello_layout_height_dim
+            } {
+                \prop_item:cn {
+                    g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+                } { height }
+            }  -
+            \prop_item:cn {
+                g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+            } { padding ~ top } -
+            \prop_item:cn {
+                g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+            } { padding ~ bottom }
+        }
+        \tl_if_exist:cF { g_leporello_box_ \int_use:N \l_leporello_box_flow_into_int _tl } {
+            \tl_new:c { g_leporello_box_ \int_use:N \l_leporello_box_flow_into_int _tl }
+        }
+        \tl_gput_left:ce { g_leporello_box_ \int_use:N \l_leporello_box_flow_into_int _tl } {
+            \vbox_unpack:c 
+                { g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box }
+        }
+        \vbox_unpack:N \g_leporello_box_flow_head_box
+    }
+}
+
+\NewDocumentCommand { \showthisid } { } {
+    \int_use:N \l_leporello_current_box_int
+}
+
+\ExplSyntaxOff
+
+\begin{leporellocolumn}{one}
+\begin{leporellobox}[flow into={2}]
+\lipsum
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{two}
+\begin{leporellobox}[flow into={3}]
+\lipsum[1-2]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{three}
+\begin{leporellobox}
+\lipsum[1]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{document}
+
+\printleporellocolumns{one, two, three}
+
+\end{document}
