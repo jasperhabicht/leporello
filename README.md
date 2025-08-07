@@ -52,10 +52,12 @@ A box is defined by the `leporellobox` environment which takes one optional argu
 - `padding top`: Expects a dimension to describe the padding of the contents from the top edge of the box. The default value is `7.5mm`.
 - `padding bottom`: Expects a dimension to describe the padding of the contents from the bottom edge of the box. The default value is `7.5mm`. All four padding settings can also be stated using the syntax `padding={left=7.5mm,top=7.5mm}` or similar.
 - `no padding`: When set, sets all padding to zero. Does not expect a value.
+- `pre`: Expects a token list that is placed before the actual contents of the box. Should not contain typeset material.
 - `background`: Expects a color name as defined via `l3color` or `none` which will not fill the background. The default value is `none`.
 - `bleed`: Expects a comma-separated list consisting of up to four items with the values `t`, `b`, `l` and `r` that describe the edges (top, bottom, left and right) where bleed should be added to the box. Note that bleed is not added to the inner edges where the column boxes meet.
 - `store width`: Expects a single control sequence (macro) to store the width of the current box.
 - `store height`: Expects a single control sequence (macro) to store the height of the current box.
+- `flow into`: Expects the ID of the box into which typeset material will flow into if it does not fit into the current box. See section "flow mechanism" below.
 
 ## Typesetting boxes to columns
 
@@ -64,6 +66,12 @@ Using the command `\printleporellocolumns` which takes one mandatory argument, p
 The command takes one optional argument that can take the option `reverse layout`. When set, the widths of the columns are reversed, but the placement of the columns is still from left to right. The option should be used to typeset the verso of a folding flyer that naturally has the widths of the columns reversed.
 
 Currently, boxes can only be attached to columns. A future version of the document class may allow to attach boxes to each other.
+
+## Flow mechanism
+
+It is possible to let typeset material flow from one box to another box. To this end, the key `flow into` can be set to the relevant box and assigned the ID of the box to flow into as value. The IDs of the boxes are integers starting from 1 and increasing in the order of the defintion of the boxes. 
+
+The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command `\leporelloboxbreak` should be inserted at the point where the break should take place.
 
 ## Other settings
 
@@ -74,6 +82,10 @@ The package uses the color model of the `l3color` module. The `xcolor` package i
 The command `\leporellocolordefine` takes three arguments, the first being the name of the color to be defined. The second argument takes the color model (for example `rgb` or `cmyk`) and the third argument takes the color values. For more information about which color models are supported, please refer to the documentation of the `l3color` module.
 
 The command `\leporellocolorselect` takes the name of the previously defined color as argument. All following objects are affected by this color setting. To colorize only a few letters, use curly braces for grouping.
+
+### Restoring justified typesetting
+
+In order to restore justified typesetting after having set `\raggedright`, `\raggedleft` or `\centering`, the packages defines the command `\leporellojustified` which restores the default justified typesetting style of TeX.
 
 ### Defining styles
 

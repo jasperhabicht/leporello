@@ -1,0 +1,26 @@
+\documentclass[prepress]{leporello}
+\usepackage{lipsum}
+
+\begin{leporellocolumn}{one}
+\begin{leporellobox}[flow into={2}, pre={\raggedright\leporellocolorselect{red}}]
+\lipsum[1] foo foo foo foo foo foo \leporelloboxbreak foo foo \lipsum[2-7]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{two}
+\begin{leporellobox}[background=yellow, stretch height, bleed={t,b}, flow into={3}, pre={\bfseries}]
+%\leporellojustified\lipsum[1-4]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{three}
+\begin{leporellobox}
+\lipsum[1]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{document}
+
+\printleporellocolumns{one, two, three}
+
+\end{document}
