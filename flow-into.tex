@@ -3,13 +3,8 @@
 
 \ExplSyntaxOn
 
-\cs_generate_variant:Nn \int_set:Nn { Ne }
-\cs_generate_variant:Nn \vbox_set_top:Nn { Ne }
-
-\bool_new:N \l_leporello_box_flow_into_bool
 \int_new:N \l_leporello_box_flow_into_int
-\box_new:N \g_leporello_box_flow_head_box
-\box_new:N \l_leporello_box_flow_temp_box
+\box_new:N \g_leporello_box_flow_temp_box
 
 \keys_define:nn { leporello / box } {
     flow ~ into  .code:n = {
@@ -18,12 +13,30 @@
     }
 }
 
+\msg_new:nnn { leporello } { column-widths-different } {
+    \msg_warning_text:n { leporello } \iow_newline:
+    Flow ~ across ~ columns ~ with ~ different ~ width: \iow_newline:
+    #1 ~ and ~ #2 . \iow_newline:
+    Consider ~ using ~ \token_to_str:N \leporellobreakbox .
+}
+
 \AddToHook { leporello / box / before } {
     \prop_if_in:cnT { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } 
         { flow ~ into } {
         \int_set:Nn \l_leporello_box_flow_into_int {
             \prop_item:cn { g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop } 
                 { flow ~ into }
+        }
+        \dim_compare:nNnF {
+            \clist_item:Nn \l_leporello_columns_clist { \l_leporello_current_column_int }
+        } = {
+            \clist_item:Nn \l_leporello_columns_clist { \l_leporello_box_flow_into_int }
+        } {
+            \msg_warning:nnee { leporello } { column-widths-different } {
+                \clist_item:Nn \l_leporello_columns_clist { \l_leporello_current_column_int }
+            } {
+                \clist_item:Nn \l_leporello_columns_clist { \l_leporello_box_flow_into_int }
+            }
         }
         \box_new:c {
             g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box
@@ -36,7 +49,7 @@
         \tl_clear:c { g_leporello_box_ \int_use:N \l_leporello_current_box_int _tl }
         \group_begin:
             \skip_set:Nn \splittopskip { 0pt }
-            \vbox_gset_split_to_ht:Ncn \g_leporello_box_flow_head_box {
+            \vbox_gset_split_to_ht:Ncn \g_leporello_box_flow_temp_box {
                 g_leporello_box_flow_ \int_use:N \l_leporello_box_flow_into_int _box
             } { 
                 \dim_compare:nNnTF {
@@ -67,7 +80,7 @@
             }
         }
         \vbox_top:n {
-            \vbox_unpack_drop:N \g_leporello_box_flow_head_box
+            \vbox_unpack_drop:N \g_leporello_box_flow_temp_box
         }
     }
 }
