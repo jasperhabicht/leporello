@@ -42,8 +42,11 @@
             \tl_clear:c { g_leporello_box_ \int_use:N \l_leporello_current_box_int _tl }
             \vbox_gset_top:Nn \g_leporello_box_flow_temp_box {
                 \seq_item:Nn \g_leporello_box_flow_temp_seq { 1 }
+                \linebreak
+                \skip_vertical:n { - \baselineskip }
             }
             \tl_gput_left:ce { g_leporello_box_ \int_use:N \l_leporello_box_flow_into_int _tl } {
+                \noindent
                 \seq_item:Nn \g_leporello_box_flow_temp_seq { 2 }
                 \par
             }
@@ -90,13 +93,13 @@
     }
 }
 
-\NewDocumentCommand { \leporellobreakbox } { } { \par }
+\NewDocumentCommand { \leporellobreakbox } { } { }
 
 \ExplSyntaxOff
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={2}]
-\lipsum[1] \leporellobreakbox \lipsum[2]
+\lipsum[1] foo foo foo foo foo foo \leporellobreakbox foo foo \lipsum[2]
 \end{leporellobox}
 \end{leporellocolumn}
 
