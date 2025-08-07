@@ -1,4 +1,4 @@
-\documentclass{leporello}
+\documentclass[prepress]{leporello}
 \usepackage{lipsum}
 
 \ExplSyntaxOn
@@ -72,8 +72,8 @@
     }
 }
 
-\NewDocumentCommand { \showthisid } { } {
-    \int_use:N \l_leporello_current_box_int
+\NewDocumentCommand { \leporellobreakbox } { } {
+    %
 }
 
 \ExplSyntaxOff
@@ -85,7 +85,7 @@
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
-\begin{leporellobox}[flow into={3}]
+\begin{leporellobox}[background=yellow, stretch height, bleed={t,b}, flow into={3}]
 \lipsum[1-2]
 \end{leporellobox}
 \end{leporellocolumn}
