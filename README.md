@@ -24,15 +24,13 @@ Use `\leporelloset` or use the optional argument of the document class to global
 
 ## Defining columns
 
-Columns are grouped material to be typeset on a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. The package has currently no text overflow detection. Thus, if a column contains more that fits, the relevant parts just spill over the frame edges.
+Columns are grouped material to be typeset on a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. While the package provides a flow mechanism across boxes, no such mechanism is provided for columns. Thus, if a column contains more than fits, the relevant parts just spill over the frame edges.
 
 A column is defined by the `leporellocolumn` environment which takes one mandatory argument taking the name (or ID) of the column.
 
 ## Defining boxes
 
-Boxes can be defined inside of columns. They also can contain anything that can be placed in a TeX box in general and they have no text overflow detection.
-
-A box is defined by the `leporellobox` environment which takes one optional argument to set bxx-specific options. These are:
+Boxes can be defined inside of columns. They also can contain anything that can be placed in a TeX box in general. A box is defined by the `leporellobox` environment which takes one optional argument to set bxx-specific options. These are:
 
 - `align parent`: Expects a comma-separated list of two items which denote the horizontal and vertical pole of whcih the intersection defines the coordinate of the column box that serves as anchor to align the current box. The default value is `l, t` denoting the top left corner. Available poles are:
     - `l`: The left edge of the box.
