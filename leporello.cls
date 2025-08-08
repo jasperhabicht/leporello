@@ -866,13 +866,22 @@
             \prop_item:cn { g_leporello_box_ ####1 _prop } { align ~ self }
           } { b } {
             \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { 1 }
-            \clist_if_in:enF {
+            \clist_if_in:enT {
               \prop_item:cn { g_leporello_box_ ####1 _prop } { bleed }
             } { b } {
-              \dim_zero:N \l__leporello_typeset_box_bleed_top_dim
+              \dim_add:Nn \l__leporello_typeset_box_bleed_top_dim {
+                \l_leporello_bleed_dim
+              }
             }
+            \clist_if_in:enT {
+              \prop_item:cn { g_leporello_box_ ####1 _prop } { bleed }
+            } { t } {
+              \dim_sub:Nn \l__leporello_typeset_box_bleed_top_dim {
+                \l_leporello_bleed_dim
+              }
+            } 
           } {
-            \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { -1 }
+            \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { -1 }          
           }
 
           \coffin_attach:Neeceeee \l_leporello_current_column_phantom_coffin {

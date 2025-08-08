@@ -9,7 +9,7 @@
 
 \sloppy
 
-\leporellocolordefine{darkred}{cmyk}{0.25,1,1,0.25}
+\leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
 \leporellosetstyle{mystyle}{
     offset={0mm,20mm}, bleed={l}, background=darkred
@@ -18,7 +18,6 @@
 \begin{document}
 
 \begin{leporellocolumn}{page one}
-
 \begin{leporellobox}[padding={top=5mm}]
 \hfill\includegraphics[height=10mm, width=30mm]{example-image-a}
 \end{leporellobox}
@@ -32,9 +31,7 @@
 \end{leporellobox}
 
 \begin{leporellobox}[bleed={l,r}, offset={0mm,100mm}, background=yellow]
-foo
 \leporelloimage[clip height=20mm, clip width=\linewidth, offset={5mm,30mm}, fill bleed, ignore padding={l,r}]{example-image-a}
-bar
 \end{leporellobox}
 
 \end{leporellocolumn}
@@ -63,7 +60,7 @@ bar
 \Huge\leporellocolorselect{white} FOO 
 \end{leporellobox}
 
-\begin{leporellobox}[bleed={t,b,l,r}, background=black!10, align parent={l,b}, align self={l,b}, offset={0mm,15mm}]
+\begin{leporellobox}[bleed={t,l,r}, background=black!10, align parent={l,b}, align self={l,b}, offset={0mm,0mm}, stretch height]
 \lipsum[1] 
 \end{leporellobox}
 
