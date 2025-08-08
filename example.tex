@@ -7,8 +7,6 @@
 
 \usepackage{lipsum, graphicx}
 
-\sloppy
-
 \leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
 \leporellosetstyle{mystyle}{
@@ -48,7 +46,7 @@
 \end{leporellobox}
 
 \begin{leporellobox}[offset={0mm,20mm+\myheight}, bleed={l,b}, background=black!10, stretch height, pre=\bfseries]
-\lipsum[1] 
+\lipsum[1-2] 
 \end{leporellobox}
 
 \end{leporellocolumn}
@@ -60,7 +58,7 @@
 \Huge\leporellocolorselect{white} FOO 
 \end{leporellobox}
 
-\begin{leporellobox}[bleed={t,l,r}, background=black!10, align parent={l,b}, align self={l,b}, offset={0mm,0mm}, stretch height]
+\begin{leporellobox}[bleed={b,l,r}, background=black!10, align parent={l,b}, align self={l,b}, offset={0mm,0mm}]
 \lipsum[1] 
 \end{leporellobox}
 

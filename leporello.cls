@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/08} {0.6} {Document class for typesetting folding flyers}
+  {2025/08/08} {0.7} {Document class for typesetting folding flyers}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }
@@ -21,7 +21,7 @@
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
-\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
+\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { TF }
 
 \bool_new:N \l_leporello_prepress_bool
 \bool_new:N \l_leporello_show_frames_bool
@@ -240,15 +240,14 @@
 \RequirePackage { l3draw }
 
 \cs_new_protected:Npn \leporello_draw_absolute:nn #1#2 {
-  \AddToHookNext { shipout / background } {
-    \draw_begin:
-      \bool_set_false:N \l_draw_bb_update_bool
-      \draw_transform_shift:n {#1}
-      #2
-    \draw_end:
-  }
-  \null
-  \clearpage
+  \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
+    \draw_transform_shift:n {#1}
+    #2
+  \draw_end:
+  \tex_par:D
+  \tex_vfil:D
+  \tex_penalty:D -10000
 }
 
 \cs_if_exist:NF \draw_set_linewidth:n {
@@ -338,6 +337,8 @@
       margin = 0pt
     }
   }
+  \dim_set:Nn \tex_topskip:D { 0pt }
+  \dim_set:Nn \tex_parindent:D { 0pt }
 }
 
 \NewDocumentCommand { \leporelloset } { m } {
@@ -552,7 +553,7 @@
   }
 } { }
 
-\cs_new:Npn \l_leporello_box_store:nn #1#2 {
+\cs_new_protected:Npn \__leporello_box_store:nn #1#2 {
   \tl_if_exist:cF { g_leporello_box_ #1 _tl } {
     \tl_new:c { g_leporello_box_ #1 _tl }
   }
@@ -562,7 +563,7 @@
     #2
   }
 }
-\cs_generate_variant:Nn \l_leporello_box_store:nn { Vn }
+\cs_generate_variant:Nn \__leporello_box_store:nn { Vn }
 
 \NewDocumentEnvironment { leporellobox } { O{} +b } {
   \int_gincr:N \g_leporello_box_int
@@ -622,10 +623,10 @@
     }
   }
 
-  \l_leporello_box_store:Vn \g_leporello_box_int {#2}
+  \__leporello_box_store:Vn \g_leporello_box_int {#2}
 } { }
 
-\cs_new:Npn \__leporello_box_construct:nnn #1#2#3 {
+\cs_new_protected:Npn \__leporello_box_construct:nnn #1#2#3 {
   \dim_compare:nNnTF {
     \prop_item:cn { g_leporello_box_ #3 _prop } { width }
   } = { 0mm } {
@@ -723,25 +724,27 @@
   \vcoffin_gset:cnn {
     g_leporello_box_ #1 _ #2 _ #3 _outer_coffin
   } { \l__leporello_typeset_box_width_dim } {
-      \draw_suspend_begin:
-      \draw_begin:
-        \draw_path_rectangle:nn { 0mm , 0mm } {
-          \l__leporello_typeset_box_width_dim +
-          \l__leporello_typeset_box_bleed_x_dim ,
-          \l__leporello_typeset_box_height_dim +
-          \l__leporello_typeset_box_bleed_y_dim
-        }
-        \str_if_eq:enF {
+    \draw_suspend_begin:
+    \draw_begin:
+      \draw_path_rectangle:nn { 0mm , 0mm } {
+        \l__leporello_typeset_box_width_dim +
+        \l__leporello_typeset_box_bleed_x_dim ,
+        \l__leporello_typeset_box_height_dim +
+        \l__leporello_typeset_box_bleed_y_dim
+      }
+      \str_if_eq:enTF {
+        \prop_item:cn { g_leporello_box_ #3 _prop } { background }
+      } { none } {
+        \draw_path_use_clear:n { clip }
+      } {
+        \color_select:e {
           \prop_item:cn { g_leporello_box_ #3 _prop } { background }
-        } { none } {
-          \color_select:e {
-            \prop_item:cn { g_leporello_box_ #3 _prop } { background }
-          }
-          \draw_path_use_clear:n { fill }
         }
-      \draw_end:
-      \draw_suspend_end:
-    }
+        \draw_path_use_clear:n { fill }
+      }
+    \draw_end:
+    \draw_suspend_end:
+  }
 
   \tl_if_exist:cT { c_leporello_box_ #3 _store_width_tl } {
     \exp_args:NNo \exp_args:No
@@ -774,13 +777,7 @@
 
     \int_zero:N \l_leporello_current_column_int
     \dim_zero:N \l_leporello_current_column_offset_dim
-    \leporello_draw_absolute:nn {
-      \bool_if:NTF \l_leporello_prepress_bool {
-        \l_leporello_info_area_dim , -\l_leporello_info_area_dim
-      } {
-        0mm , 0mm
-      }
-    } {
+    \leporello_draw_absolute:nn { 0mm , 0mm } {
       \clist_map_inline:nn {#2} {
         \int_incr:N \l_leporello_current_column_int
 
@@ -810,6 +807,7 @@
                 \l_leporello_current_column_int ,
               \l_leporello_layout_height_dim
             }
+            \draw_path_use_clear:n { clip }
           \draw_end:
           \draw_suspend_end:
         }
