@@ -59,7 +59,7 @@ Boxes can be defined inside of columns. They also can contain anything that can 
 
 ## Typesetting boxes to columns
 
-Using the command `\printleporellocolumns` which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the `columns` key and the height is taken from the setting via the `layout height` key.
+Using the command `\leporellotypesetcolumns` which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the `columns` key and the height is taken from the setting via the `layout height` key.
 
 The command takes one optional argument that can take the option `reverse layout`. When set, the widths of the columns are reversed, but the placement of the columns is still from left to right. The option should be used to typeset the verso of a folding flyer that naturally has the widths of the columns reversed.
 

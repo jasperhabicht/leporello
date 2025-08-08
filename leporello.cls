@@ -759,7 +759,7 @@
 }
 \cs_generate_variant:Nn \__leporello_box_construct:nnn { VVn }
 
-\NewDocumentCommand { \printleporellocolumns } { O{} m } {
+\NewDocumentCommand { \leporellotypesetcolumns } { O{} m } {
   \int_incr:N \l_leporello_current_page_int
 
   \int_compare:nNnT { \clist_count:n {#2} } > {
