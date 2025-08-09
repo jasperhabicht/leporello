@@ -95,6 +95,11 @@
   Box ~ #1 ~ defined ~ outside ~ column.
 }
 
+\msg_new:nnn { leporello } { image-outside-box } {
+  \msg_error_text:n { leporello } \iow_newline:
+  Image ~ defined ~ outside ~ box.
+}
+
 \msg_new:nnn { leporello } { column-undefined } {
   \msg_error_text:n { leporello } \iow_newline:
   Column ~ #1 ~ undefined.
@@ -311,6 +316,7 @@
 }
 \cs_new_protected:Npn \__leporello_id_mark:n #1 {
   \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
     \draw_path_rectangle:nn { -1.5em , -1.5em } { 3em , 3em }
     \draw_path_use_clear:n { fill }
     \hcoffin_set:Nn \l__leporello_typeset_mark_temp_coffin {
@@ -385,6 +391,10 @@
   \group_begin:
     \keys_set:nn { leporello / image } {#1}
 
+    \int_compare:nNnT { \l_leporello_current_box_int } = { 0 } {
+      \msg_error:nn { leporello } { image-outside-box }
+    }
+  
     \hbox_set:Nn \l__leporello_image_original_box {
       \includegraphics {#2}
     }
@@ -744,6 +754,7 @@
       \dim_add:Nn \l__leporello_typeset_box_bleed_x_dim { \l_leporello_bleed_dim }
     }
   }
+  \skip_set:Nn \tex_hfuzz:D { \l__leporello_typeset_box_bleed_x_dim } 
 
   \clist_if_in:enT {
     \prop_item:cn { g_leporello_box_ #3 _prop } { bleed }
@@ -755,6 +766,7 @@
   } { b } {
     \dim_add:Nn \l__leporello_typeset_box_bleed_y_dim { \l_leporello_bleed_dim }
   }
+  \skip_set:Nn \tex_vfuzz:D { \l__leporello_typeset_box_bleed_y_dim } 
 
   \coffin_new:c {
     g_leporello_box_ #1 _ #2 _ #3 _outer_coffin

@@ -6,9 +6,9 @@
     show ids
 }
 
-\usepackage{lipsum}
+\overfullrule 5pt
 
-\begin{document}
+\usepackage{lipsum}
 
 \begin{leporellocolumn}{page one}
 \begin{leporellobox}[bleed={l,r}, offset={0mm,10mm}, background=yellow]
@@ -20,6 +20,8 @@
 \lipsum[1]
 \end{leporellobox}
 \end{leporellocolumn}
+
+\begin{document}
 
 \leporellotypesetcolumns{page one, page one}
 
