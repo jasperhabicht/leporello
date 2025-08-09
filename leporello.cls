@@ -316,7 +316,7 @@
     \hcoffin_set:Nn \l__leporello_typeset_mark_temp_coffin {
       \color_select:n { white } #1
     }
-    \draw_coffin_use:Nnnnn \l__leporello_typeset_mark_temp_coffin
+    \draw_coffin_use:Nnn \l__leporello_typeset_mark_temp_coffin
       { hc } { vc }
   \draw_end:  
 }
@@ -570,6 +570,7 @@
     \tl_new:c { g_leporello_column_ #1 _tl }
   }
   \tl_gset:cn { g_leporello_column_ #1 _tl } {
+    \clist_gclear:c { g_leporello_column_ #1 _boxes_clist }
     \str_set:Nn \l_leporello_current_column_str {#1}
     #2
   }
