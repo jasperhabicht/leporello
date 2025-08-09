@@ -1,0 +1,557 @@
+% File: leporello-doc.tex
+% Copyright 2024-2025 Jasper Habicht (mail(at)jasperhabicht.de).
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
+%
+% This file is part of the `leporello' package (The Work in LPPL)
+% and all files in that bundle must be distributed together.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+\documentclass[a4paper]{article}
+\def\leporellofileversion{0.7.0}
+\def\leporellofiledate{8 August 2025}
+
+\usepackage[T1]{fontenc}
+\usepackage{Alegreya}
+\usepackage{AlegreyaSans}
+\usepackage{FiraMono}
+
+\usepackage{geometry, longtable, booktabs, siunitx, tcolorbox, hyperref}
+\geometry{margin=25mm, left=45mm}
+\urlstyle{same}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[R]{\thepage}
+
+\ExplSyntaxOn
+\NewDocumentCommand{\fnstars}{m}{
+  \int_step_inline:nn { \value{#1} } { * }
+}
+\ExplSyntaxOff
+
+\linespread{1.1}\selectfont
+\addtolength{\skip\footins}{1em plus 5pt}
+\makeatletter
+\renewcommand*{\thefootnote}{\fnstars{footnote}}
+\renewcommand{\@makefntext}[1]{%
+  \noindent\hbox to 1em{\normalfont\@thefnmark\hss}~#1%
+}
+\makeatother
+
+\tcbuselibrary{skins,listings}
+\lstdefinestyle{leporellodocmacro}{
+  basicstyle=\small\ttfamily,
+  literate=*{<}{{{\color{black!50}\guilsinglleft}}}1
+    {>}{{{\color{black!50}\guilsinglright}}}1,
+  keywords={},
+  moredelim=[is][\bfseries]{|}{|},
+  moredelim=[is][\bfseries\itshape]{?}{?},
+  moredelim=[is][\color{black!50}]{!}{!},
+}
+\lstdefinestyle{leporellodoccodeexample}{
+  basicstyle=\small\ttfamily,
+  keywords={},
+}
+
+\hypersetup{colorlinks}
+
+\ExplSyntaxOn
+\int_new:N \l_leporello_doc_change_int
+\NewDocumentCommand{\changes}{ m m m }{
+  \int_incr:N \l_leporello_doc_change_int
+  \prop_new:c { l_leporello_doc_change_
+    \int_to_roman:n { \l_leporello_doc_change_int } _prop }
+  \prop_put:cnn { l_leporello_doc_change_
+    \int_to_roman:n { \l_leporello_doc_change_int } _prop } { version } {#1}
+  \prop_put:cnn { l_leporello_doc_change_
+    \int_to_roman:n { \l_leporello_doc_change_int } _prop } { date } {#2}
+  \prop_put:cnn { l_leporello_doc_change_
+    \int_to_roman:n { \l_leporello_doc_change_int } _prop } { changes } {#3}
+}
+\NewDocumentCommand{\printchanges}{ }{
+  \section{Changes}
+  \begin{description}
+    \setlength\itemsep{0pt}
+    \int_step_inline:nn { \l_leporello_doc_change_int } {
+      \item[
+        \prop_item:cn { l_leporello_doc_change_
+        \int_to_roman:n { ##1 } _prop } { version } ~
+        \normalfont{ (
+          \prop_item:cn { l_leporello_doc_change_
+          \int_to_roman:n { ##1 } _prop } { date }
+        ) }
+      ]
+      \prop_item:cn { l_leporello_doc_change_
+      \int_to_roman:n { ##1 } _prop } { changes }
+    }
+  \end{description}
+}
+
+\tl_new:N \l_leporello_doc_doctitle_tl
+\NewExpandableDocumentCommand{\makedoctitle}{ o m o m m o m }{
+  \hypersetup{
+    pdfauthor={#5},
+    pdftitle={\IfValueTF{#1}{#1}{#2}},
+    pdfsubject={\IfValueTF{#3}{#3}{#4}}
+  }
+  \tl_set:Nn \l_leporello_doc_doctitle_tl {
+    \group_begin:
+      \tcbset{
+        title ~ style ~ hook/.style={
+          boxrule=2pt,
+          fontupper=\huge\ttfamily
+        }
+      }
+      \setlength{\parindent}{0pt}\sffamily
+      \Huge{\bfseries #2}\par\bigskip
+      \Large #4\par\bigskip
+      \large #5
+      \IfValueT{#6}{
+        \,\footnote{#6}\par\bigskip
+      }
+      #7\par\bigskip
+      \rule{\textwidth}{.08em}
+    \group_end:
+  }
+}
+
+\NewExpandableDocumentCommand{\printdoctitle}{ }{
+  \tl_use:N \l_leporello_doc_doctitle_tl
+}
+\ExplSyntaxOff
+
+\NewDocumentCommand{\expandablestarcode}{ O{0,0} }{
+  \fill[black!50, shift={([xshift={-10pt}, yshift={-10pt-0.5em}]#1)}]
+    (90:3.75pt)
+    \foreach \i in {1,...,4} {
+      -- ({90+360/5*\i*2}:3.75pt)
+    } -- cycle;
+}
+
+\NewDocumentCommand{\expandablestar}{}{
+  \tikz{\expandablestarcode}
+}
+
+\NewDocumentCommand{\warning}{}{%
+  \begin{tikzpicture}[overlay, baseline={(w.base)}]
+    \node[circle, fill, black!25!red!10, text=black!25!red, outer sep=0pt]
+      (w) at (-3em,0pt) {\bfseries !};
+    \fill[black!25!red!10]
+      (w.east) |- (w.south) -- cycle;
+  \end{tikzpicture}%
+}
+
+\tcbset{
+  size=small,
+  arc=2.5pt,
+  outer arc=2.5pt,
+  colframe=black!10,
+  colback=black!10,
+  title style hook/.style={},
+}
+
+\NewTCBListing{macrodef}{ s o }{
+  listing only,
+  listing style={leporellodocmacro},
+  grow to left by=2cm,
+  boxrule=0pt,
+  after={\par\smallskip\noindent},
+  enhanced,
+  IfValueT={#2}{
+    hypertarget=#2
+  },
+  IfBooleanT={#1}{
+    overlay={
+      \expandablestarcode[frame.north east]
+    }
+  }
+}
+
+\NewTCBListing{codeexample}{ }{
+  listing only,
+  listing style={leporellodoccodeexample},
+  after={\par\smallskip\noindent}
+}
+
+\NewTCBListing{codeexamplecolumns}{ }{
+  text side listing,
+  lefthand width=4.5cm,
+  listing style={leporellodoccodeexample},
+  after={\par\smallskip\noindent}
+}
+
+\NewTCBListing{macrodeprecated}{ s }{
+  listing only,
+  listing style={leporellodocmacro},
+  boxrule=0pt,
+  width={0.5\linewidth-2.5pt},
+  box align=top,
+  after=\hfill,
+  colframe=black!25!red!10,
+  colback=black!25!red!10,
+  enhanced,
+  IfBooleanT={#1}{
+    overlay={
+      \fill[black!25!red!10]
+        ([yshift={5pt-1.5em}]frame.north east)
+        -- ++(5pt,-5pt) -- ++(-5pt,-5pt)
+        -- cycle;
+    }
+  }
+}
+
+\NewTCBListing{macroreplacement}{ }{
+  listing only,
+  listing style={leporellodocmacro},
+  boxrule=0pt,
+  width={0.5\linewidth-2.5pt},
+  box align=top,
+  before={},
+  colframe=black!25!green!10,
+  colback=black!25!green!10
+}
+
+\NewTotalTCBox{\macro}{ O{} v }{
+  verbatim,
+  size=tight,
+  arc=1pt,
+  outer arc=1pt,
+  top=0.5pt,
+  bottom=0.5pt,
+  left=2pt,
+  right=2pt,
+  boxrule=0pt,
+  colframe=black!10,
+  colback=black!10,
+  fontupper=\small\ttfamily,
+  #1
+}{\vphantom{/g}\lstinline^#2^}
+
+\NewTotalTCBox{\titlemacro}{ s O{} m }{
+  verbatim,
+  size=tight,
+  arc=1pt,
+  outer arc=1pt,
+  top=0.5pt,
+  bottom=0.5pt,
+  left=2pt,
+  right=2pt,
+  boxrule=0pt,
+  colframe=black!10,
+  colback=black!10,
+  fontupper=\small\ttfamily,
+  title style hook,
+  #2
+}{\vphantom{/g}\IfBooleanT{#1}{\textbackslash}#3}
+
+\sisetup{detect-all}
+\NewDocumentCommand{\mmdim}{m}{%
+    \qty{#1}{\milli\metre}%
+}
+
+\makedoctitle
+  [The leporello package]
+  {The \titlemacro{leporello} class}
+  {A simple LaTeX document class to create folding flyers using columns and boxes}
+  {Jasper Habicht}[E-mail: \href{mailto:mail@jasperhabicht.de}{mail@jasperhabicht.de}.]
+  {Version \leporellofileversion, released on \leporellofiledate}
+
+\changes{v0.7.0}{2025/08/08}{First public beta release.}
+
+\begin{document}
+\printdoctitle
+\bigskip
+
+\section{Introduction}
+
+The \macro{leporello} class is a simple LaTeX document class to create folding flyers with the following key features:
+
+\begin{itemize}
+    \item The document layout consists of a specific number of pages that can have varying widths and are placed next to each other. Each page contains one frame to contain typeset material.
+    \item Material is typeset in boxes and boxes are positioned in columns which in turn are placed into the frames on the pages of the document.
+    \item Columns are predefined and then placed into the frame of a page in the document layout. This way, columns can be used on pages with varying widths.
+    \item Boxes can have padding (including bleed) and a background and are positioned inside a column.
+\end{itemize}
+
+\section{Loading the document class}
+
+Use \macro{\documentclass{leporello}} to load the document class. The document class loads the \macro{geometry}, the \macro{graphicx} and the \macro{l3draw} package.
+
+\begin{macrodef}
+|\leporelloset|{<options>}
+\end{macrodef}
+Use \macro{\leporelloset} or use the optional argument of the \macro{\documentclass} command to globally set the document layout. The following options are available:
+
+\begin{macrodef}
+|columns|={<list of dimensions>}
+|two columns|
+|three columns|
+|four columns|
+|four columns wrap|
+|five columns|
+|six columns|
+\end{macrodef}
+Expects a comma-separated list of dimensions that describe the widths of the columns in the layout. If \macro{columns} is not specified, the class assumes the default value of \macro{97mm, 100mm, 100mm}. The width of the document layout is automatically calculated from the dimensions set via \macro{columns}.
+
+A few column layouts are predefined. These do not expect a value. The layouts will set the following list of dimensions:
+
+\begin{longtable}{ @{} 
+    p{\dimexpr0.35\linewidth-\tabcolsep} 
+    p{\dimexpr0.65\linewidth-\tabcolsep} 
+    @{} }
+    \toprule
+    \textbf{Key}              & \textbf{List of dimensions}                                 \\
+    \midrule
+    \macro{two columns}       & \mmdim{99}, \mmdim{99}                                      \\
+    \macro{three columns}     & \mmdim{97}, \mmdim{100}, \mmdim{100}                        \\
+    \macro{four columns}      & \mmdim{99}, \mmdim{99}, \mmdim{99}, \mmdim{100}             \\
+    \macro{four columns wrap} & \mmdim{97}, \mmdim{99}, \mmdim{100}, \mmdim{101}            \\
+    \macro{five columns}      & \mmdim{97}, \mmdim{97}, \mmdim{97}, \mmdim{99}, \mmdim{100} \\
+    \macro{six columns}       & \mmdim{99}, \mmdim{99}, \mmdim{96}, \mmdim{96}, \mmdim{100}, \mmdim{100} \\
+    \bottomrule
+\end{longtable}
+
+\begin{macrodef}
+|layout height|={<dimension>}
+\end{macrodef}
+Expects a dimension that sets the height of the final layout. If \macro{layout height} is not specified, the class assumes the default value of \macro{210mm} (the height of A4 landscape).
+
+\begin{macrodef}
+|show frames|
+\end{macrodef}
+If set, frames around the single pages (columns) are shown. Does not expect a value. 
+
+\begin{macrodef}
+|show ids|
+\end{macrodef}
+If set, the IDs of the boxes are shown. Does not expect a value. 
+
+\begin{macrodef}
+|prepress|
+\end{macrodef}
+If set, the paper size is increased at all four pages by the width of the info area and crop marks are shown. Does not expect a value.
+
+\begin{macrodef}
+|info area|={<dimension>}
+\end{macrodef}
+Expects a dimension for the width of the info area that is shown if \macro{prepress} is set. If \macro{info area} is not specified, the class assumes the default value of \macro{10mm}.
+
+\begin{macrodef}
+|bleed|={<dimension>}
+\end{macrodef}
+Expects a dimension for the width of the bleed that is added to boxes with background and other material reaching to the edges of the document layout. If \macro{bleed} is not specified, the class assumes the default value of \macro{3mm}.
+
+\section{Defining columns}
+
+Columns are grouped material to be typeset onto a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. While the package provides a flow mechanism across boxes, no such mechanism is provided for columns. Thus, if a column contains more than fits into it, the relevant parts just spill over the frame edges.
+
+\begin{macrodef}
+\null\begin{|leporellocolumn|}{<string>}
+  <body>
+\end{|leporellocolumn|}
+\end{macrodef}
+A column is defined by the \macro{leporellocolumn} environment which takes one mandatory argument taking the name (or ID) of the column.
+
+\section{Positioning boxes}
+
+\begin{macrodef}
+\null\begin{|leporellobox|}[<options>]
+  <body>
+\end{|leporellobox|}
+\end{macrodef}
+Boxes can be positioned inside of columns. They can contain anything that can be placed in a TeX box in general. A box is defined by the \macro{leporellobox} environment which takes one optional argument to set box-specific options. These are the following:
+
+\begin{macrodef}
+|align parent|={<tuple of poles>}
+\end{macrodef}
+Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current column that serves as anchor to align the current box. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are:
+
+\begin{longtable}{ @{} p{3em} p{\dimexpr\linewidth-2\tabcolsep-3em} @{} }
+    \toprule
+    \textbf{Key} & \textbf{Meaning}             \\
+    \midrule
+    \macro{l}    & left edge of the box         \\
+    \macro{hc}   & horizontal center of the box \\
+    \macro{r}    & right edge of the box        \\
+    \macro{t}    & top edge of the box          \\
+    \macro{vc}   & vertical center of the box   \\
+    \macro{B}    & baseline of the box          \\
+    \macro{b}    & bottom edge of the box       \\
+    \bottomrule
+\end{longtable}
+
+\begin{macrodef}
+|align self|={<tuple of poles>}
+\end{macrodef}
+Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to the current column. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
+
+\begin{macrodef}
+|align self|={<tuple of dimensions>}
+\end{macrodef}
+Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed.
+
+\begin{macrodef}
+|width|={<dimension>}
+\end{macrodef}
+Expects a dimension to explicitly set the width of the current box. If not specified, the box is as wide as the parent column.
+
+\begin{macrodef}
+|height|={<dimension>}
+\end{macrodef}
+Expects a dimension to explicitly set the height of the current box. If not specified, the box is as high as necessary to fit the contents.
+
+\begin{macrodef}
+|stretch height|
+\end{macrodef}
+If set, the box is stretched until its relevant edge (if aligned at the top, the bottom edge, if aligned at the bottom, the top edge) meets the edge of the parent column. Does not expect a value.
+
+\begin{macrodef}
+|padding left|={<dimension>}
+|padding right|={<dimension>}
+|padding top|={<dimension>}
+|padding bottom|={<dimension>}
+|padding|={<key-value list>}
+|no padding|
+\end{macrodef}
+\macro{padding left}, \macro{padding right}, \macro{padding top} and \macro{padding bottom} each expect a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
+
+All four padding settings can also be stated using the \macro{padding} key and the subkeys \macro{left}, \macro{right}, \macro{top}, \macro{bottom}. Using this syntax, the default value of the padding setting would be expressed as \macro{padding={left=7.5mm, right=7.5mm, top=7.5mm, bottom=7.5mm}}.
+
+The key \macro{no padding} sets all paddings to zero. This key does not expect a value.
+
+\begin{macrodef}
+|pre| 
+\end{macrodef}
+Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This key should be used if boxes are manually split using the \macro{\leporelloboxbreak} command.
+
+\begin{macrodef}
+|background|={<color name>}
+|background|={none}
+\end{macrodef}
+Expects a color name as defined via \macro{l3color} or \macro{none} which will not fill the background. If not specified, the default value of \macro{none} is assumed.
+
+\begin{macrodef}
+|bleed|={<list of values>}
+\end{macrodef}
+Expects a comma-separated list consisting of up to four items with the values \macro{l} and \macro{r}, \macro{t} and \macro{b} that describe the edges (left, right, top and bottom) where bleed should be added to the box. Note that bleed is never added to the inner edges where the columns meet.
+
+\begin{macrodef}
+|store width|={<control sequence>}
+\end{macrodef}
+Expects a single control sequence (macro) to store the width of the current box.
+
+\begin{macrodef}
+|store height|={<control sequence>}
+\end{macrodef}
+Expects a single control sequence (macro) to store the height of the current box.
+
+\begin{macrodef}
+|flow into|={<integer>}
+\end{macrodef}
+Expects the ID of the box into which typeset material will flow into if it does not fit into the current box. See section \ref{sec:flow} below.
+
+\section{Typesetting boxes into columns}
+
+\begin{macrodef}
+|\leporellotypesetcolumns|[<options>]{<list of strings>}
+\end{macrodef}
+Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key.
+
+\begin{macrodef}
+|reverse layout|
+\end{macrodef}
+The command takes one optional argument that can take the option \macro{reverse layout}. If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folding flyer that naturally has the widths of the columns reversed.
+
+Currently, boxes can only be attached to columns. A future version of the document class may allow the attachment of boxes to each other. If a box should be positioned below another box with natural height defined by its contents, the \macro{store height} key can be used to store the height of the upper box into a custom macro which can then be used to calculate the offset from the top.
+
+\section{Flow mechanism}\label{sec:flow}
+
+Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the ID of the box to flow into as value. The IDs of the boxes are integers starting from 1 and increasing in the order of the definition of the boxes. By setting the key \macro{show ids} to the document options, the IDs of all boxes are shown.
+
+\begin{macrodef}
+|\leporelloboxbreak|
+\end{macrodef}
+The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
+
+\section{Other settings}
+
+\subsection{Inserting images}
+
+\begin{macrodef}
+|\leporelloimage|[<options>]{<file name>}
+\end{macrodef}
+With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take the following options:
+
+\begin{macrodef}
+|clip width|={<dimension>}
+|clip height|={<dimension>}
+\end{macrodef}
+Expect a dimension depicting the width and the height of the boxed image.
+
+\begin{macrodef}
+|scale|={<floating point number>}
+\end{macrodef}
+Expects a floating point number depicting the scaling factor of the image. This factor will not affect the size of the box.
+
+\begin{macrodef}
+|width|={<dimension>}
+|height|={<dimension>}
+\end{macrodef}
+Expect a dimension to explicitly set the width and the height of the image. Setting \macro{width} will override a \macro{scale} value. Setting \macro{height} will override a \macro{width} or \macro{scale} value. The aspect ratio of the original image will always be kept.
+
+\begin{macrodef}
+|offset|={<tuple of dimension>}
+\end{macrodef}
+Expects a comma-separated list consisting of two values (tuple) that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction.
+
+\begin{macrodef}
+|ignore padding|={<list of values>}
+\end{macrodef}
+Expects a comma-separated list consisting of up to four items with the values \macro{l} and \macro{r}, \macro{t} and \macro{b} that describe the edges (left, right, top and bottom) where the image should ignore the padding of the current box.
+
+\begin{macrodef}
+|fill bleed|
+\end{macrodef}
+If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which needs to be accounted for using \macro{offset}. Does not expect a value.
+
+\subsection{Defining colors}
+
+The package uses the color model of the \macro{l3color} module. The \macro{xcolor} package is not supported. To provide a user interface to define and select colors, the commands \macro{\leporellocolordefine} and \macro{\leporellocolorselect} are defined. 
+
+\begin{macrodef}
+|\leporellocolordefine|{<string>}{<color model>}{<list of values>}
+\end{macrodef}
+The command \macro{\leporellocolordefine} takes three arguments, the first being the name of the color to be defined. The second argument takes the color model (for example \macro{rgb} or \macro{cmyk}) and the third argument takes the color values. For more information about which color models are supported, please refer to the documentation of the \macro{l3color} module.
+
+\begin{macrodef}
+|\leporellocolorselect|{<string>}
+\end{macrodef}
+The command \macro{\leporellocolorselect} takes the name of the previously defined color as argument. All following objects are affected by this color setting. To colorize only a few letters, use curly braces for grouping.
+
+\subsection{Defining styles}
+
+\begin{macrodef}
+|\leporellosetstyle|{<string>}{<key-value list>}
+\end{macrodef}
+In order to simplify the setting of recurring options to the \macro{leporellobox} environment, it is possible to group several of these options as style via the \macro{\leporellosetstyle} command which takes as first argument the name of the newly defined style and as second argument the releevant options (key-value pairs). The style can then be used like an option to any \macro{leporellobox} environment.
+
+\subsection{Restoring justified typesetting}
+
+\begin{macrodef}
+|\leporellojustified|
+\end{macrodef}
+In order to restore the default justified typesetting style of TeX after having set \macro{\raggedright}, \macro{\raggedleft} or \macro{\centering}, the packages defines the command \macro{\leporellojustified}.
+
+% =====
+
+\printchanges
+
+\end{document}
+
+%% End of file `leporello-doc.tex`.
