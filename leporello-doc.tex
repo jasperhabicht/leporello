@@ -392,7 +392,7 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
 Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to the current column. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
 
 \begin{macrodef}
-|align self|={<tuple of dimensions>}
+|offset|={<tuple of dimensions>}
 \end{macrodef}
 Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed.
 
@@ -426,7 +426,7 @@ All four padding settings can also be stated using the \macro{padding} key and t
 The key \macro{no padding} sets all paddings to zero. This key does not expect a value.
 
 \begin{macrodef}
-|pre| 
+|pre|={<code>}
 \end{macrodef}
 Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This key should be used if boxes are manually split using the \macro{\leporelloboxbreak} command.
 
@@ -486,7 +486,7 @@ The flow mechanism works across multiple boxes. But due to the way the typesetti
 \begin{macrodef}
 |\leporelloimage|[<options>]{<file name>}
 \end{macrodef}
-With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take the following options:
+With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding and it should only be used inside a \macro{leporellobox} environment. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take the following options:
 
 \begin{macrodef}
 |clip width|={<dimension>}
@@ -506,7 +506,7 @@ Expects a floating point number depicting the scaling factor of the image. This 
 Expect a dimension to explicitly set the width and the height of the image. Setting \macro{width} will override a \macro{scale} value. Setting \macro{height} will override a \macro{width} or \macro{scale} value. The aspect ratio of the original image will always be kept.
 
 \begin{macrodef}
-|offset|={<tuple of dimension>}
+|offset|={<tuple of dimensions>}
 \end{macrodef}
 Expects a comma-separated list consisting of two values (tuple) that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction.
 
@@ -518,7 +518,7 @@ Expects a comma-separated list consisting of up to four items with the values \m
 \begin{macrodef}
 |fill bleed|
 \end{macrodef}
-If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which needs to be accounted for using \macro{offset}. Does not expect a value.
+If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{offset}. Does not expect a value.
 
 \subsection{Defining colors}
 
