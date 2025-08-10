@@ -548,6 +548,73 @@ In order to simplify the setting of recurring options to the \macro{leporellobox
 \end{macrodef}
 In order to restore the default justified typesetting style of TeX after having set \macro{\raggedright}, \macro{\raggedleft} or \macro{\centering}, the packages defines the command \macro{\leporellojustified}.
 
+\section{Example}
+
+The following example shows some of the basic ideas of the package by providing a code example and showing its output.
+
+\begin{tcolorbox}
+\setlength{\fboxsep}{0pt}
+\colorbox{white}{\includegraphics[width=\linewidth]{doc/layout.pdf}}
+\end{tcolorbox}
+
+\begin{codeexample}
+\documentclass[
+    prepress,
+    show frames,
+    show ids
+]{leporello}
+
+\leporellosetstyle{align bottom}{
+    align parent={l,b},
+    align self={l,b}
+}
+
+\begin{leporellocolumn}{example-a}
+\begin{leporellobox}[
+    background=black!10,
+    height=50mm,
+    bleed={l,t}
+]
+foo
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{example-b}
+\begin{leporellobox}[
+    background=black!10,
+    offset={0mm,50mm},
+    stretch height,
+    bleed={b}
+]
+bar
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{example-c}
+\begin{leporellobox}[
+    background=black!10,
+    align bottom,
+    bleed={r,b}
+]
+baz
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{document}
+
+\leporellotypesetcolumns{
+    example-a,
+    example-b,
+    example-c
+}
+
+\end{document}
+\end{codeexample}
+
+The example shows the use of the \macro{prepress} key that adds cropmarks to the layout. It also shows how the \macro{show frames} key adds frames around the columns. Finally, the \macro{show box} key adds the box IDs to the boxes.
+
+The default layout has three pages which are shown here. Three columns named \macro{example-a}, \macro{example-b} and \macro{example-c} are defined and contain one box each. A custom style is defined to combine the two keys needed to bottom-align the third box. A fixed height is set to for the first box and the second box has and offset and its height stretched to the bottom of the column. Bleed is added to the relevant edges of the three columns.
+
 % =====
 
 \printchanges
