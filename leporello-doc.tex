@@ -273,10 +273,10 @@
 The \macro{leporello} class is a simple LaTeX document class to create folding flyers with the following key features:
 
 \begin{itemize}
-    \item The document layout consists of a specific number of pages that can have varying widths and are placed next to each other. Each page contains one frame to contain typeset material.
-    \item Material is typeset in boxes and boxes are positioned in columns which in turn are placed into the frames on the pages of the document.
-    \item Columns are predefined and then placed into the frame of a page in the document layout. This way, columns can be used on pages with varying widths.
-    \item Boxes can have padding (including bleed) and a background and are positioned inside a column.
+  \item The document layout consists of a specific number of pages that can have varying widths and are placed next to each other. Each page contains one frame to contain typeset material.
+  \item Material is typeset in boxes and boxes are positioned in columns which in turn are placed into the frames on the pages of the document.
+  \item Columns are predefined and then placed into the frame of a page in the document layout. This way, columns can be used on pages with varying widths.
+  \item Boxes can have padding (including bleed) and a background and are positioned inside a column.
 \end{itemize}
 
 \section{Loading the document class}
@@ -301,20 +301,22 @@ Expects a comma-separated list of dimensions that describe the widths of the col
 
 A few column layouts are predefined. These do not expect a value. The layouts will set the following list of dimensions:
 
-\begin{longtable}{ @{} 
-    p{\dimexpr0.35\linewidth-\tabcolsep} 
-    p{\dimexpr0.65\linewidth-\tabcolsep} 
-    @{} }
-    \toprule
-    \textbf{Key}              & \textbf{List of dimensions}                                 \\
-    \midrule
-    \macro{two columns}       & \mmdim{99}, \mmdim{99}                                      \\
-    \macro{three columns}     & \mmdim{97}, \mmdim{100}, \mmdim{100}                        \\
-    \macro{four columns}      & \mmdim{99}, \mmdim{99}, \mmdim{99}, \mmdim{100}             \\
-    \macro{four columns wrap} & \mmdim{97}, \mmdim{99}, \mmdim{100}, \mmdim{101}            \\
-    \macro{five columns}      & \mmdim{97}, \mmdim{97}, \mmdim{97}, \mmdim{99}, \mmdim{100} \\
-    \macro{six columns}       & \mmdim{99}, \mmdim{99}, \mmdim{96}, \mmdim{96}, \mmdim{100}, \mmdim{100} \\
-    \bottomrule
+\begin{longtable}{
+  @{} 
+  p{\dimexpr0.35\linewidth-\tabcolsep} 
+  p{\dimexpr0.65\linewidth-\tabcolsep} 
+  @{}
+}
+  \toprule
+  \textbf{Key}              & \textbf{List of dimensions}                                 \\
+  \midrule
+  \macro{two columns}       & \mmdim{99}, \mmdim{99}                                      \\
+  \macro{three columns}     & \mmdim{97}, \mmdim{100}, \mmdim{100}                        \\
+  \macro{four columns}      & \mmdim{99}, \mmdim{99}, \mmdim{99}, \mmdim{100}             \\
+  \macro{four columns wrap} & \mmdim{97}, \mmdim{99}, \mmdim{100}, \mmdim{101}            \\
+  \macro{five columns}      & \mmdim{97}, \mmdim{97}, \mmdim{97}, \mmdim{99}, \mmdim{100} \\
+  \macro{six columns}       & \mmdim{99}, \mmdim{99}, \mmdim{96}, \mmdim{96}, \mmdim{100}, \mmdim{100} \\
+  \bottomrule
 \end{longtable}
 
 \begin{macrodef}
@@ -372,18 +374,23 @@ Boxes can be positioned inside of columns. They can contain anything that can be
 \end{macrodef}
 Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current column that serves as anchor to align the current box. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are:
 
-\begin{longtable}{ @{} p{3em} p{\dimexpr\linewidth-2\tabcolsep-3em} @{} }
-    \toprule
-    \textbf{Key} & \textbf{Meaning}             \\
-    \midrule
-    \macro{l}    & left edge of the box         \\
-    \macro{hc}   & horizontal center of the box \\
-    \macro{r}    & right edge of the box        \\
-    \macro{t}    & top edge of the box          \\
-    \macro{vc}   & vertical center of the box   \\
-    \macro{B}    & baseline of the box          \\
-    \macro{b}    & bottom edge of the box       \\
-    \bottomrule
+\begin{longtable}{
+  @{}
+  p{3em}
+  p{\dimexpr\linewidth-2\tabcolsep-3em}
+  @{}
+}
+  \toprule
+  \textbf{Key} & \textbf{Meaning}             \\
+  \midrule
+  \macro{l}    & left edge of the box         \\
+  \macro{hc}   & horizontal center of the box \\
+  \macro{r}    & right edge of the box        \\
+  \macro{t}    & top edge of the box          \\
+  \macro{vc}   & vertical center of the box   \\
+  \macro{B}    & baseline of the box          \\
+  \macro{b}    & bottom edge of the box       \\
+  \bottomrule
 \end{longtable}
 
 \begin{macrodef}
@@ -559,21 +566,21 @@ The following example shows some of the basic ideas of the package by providing 
 
 \begin{codeexample}
 \documentclass[
-    prepress,
-    show frames,
-    show ids
+  prepress,
+  show frames,
+  show ids
 ]{leporello}
 
 \leporellosetstyle{align bottom}{
-    align parent={l,b},
-    align self={l,b}
+  align parent={l,b},
+  align self={l,b}
 }
 
 \begin{leporellocolumn}{example-a}
 \begin{leporellobox}[
-    background=black!10,
-    height=50mm,
-    bleed={l,t}
+  background=black!10,
+  height=50mm,
+  bleed={l,t}
 ]
 foo
 \end{leporellobox}
@@ -581,10 +588,10 @@ foo
 
 \begin{leporellocolumn}{example-b}
 \begin{leporellobox}[
-    background=black!10,
-    offset={0mm,50mm},
-    stretch height,
-    bleed={b}
+  background=black!10,
+  offset={0mm,50mm},
+  stretch height,
+  bleed={b}
 ]
 bar
 \end{leporellobox}
@@ -592,9 +599,9 @@ bar
 
 \begin{leporellocolumn}{example-c}
 \begin{leporellobox}[
-    background=black!10,
-    align bottom,
-    bleed={r,b}
+  background=black!10,
+  align bottom,
+  bleed={r,b}
 ]
 baz
 \end{leporellobox}
@@ -603,9 +610,9 @@ baz
 \begin{document}
 
 \leporellotypesetcolumns{
-    example-a,
-    example-b,
-    example-c
+  example-a,
+  example-b,
+  example-c
 }
 
 \end{document}

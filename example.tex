@@ -1,8 +1,8 @@
 \documentclass{leporello}
 \leporelloset{
-    three columns,
-    prepress,
-    show frames
+  three columns,
+  prepress,
+  show frames
 }
 
 \usepackage{lipsum, graphicx}
@@ -10,12 +10,13 @@
 \leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
 \leporellosetstyle{mystyle}{
-    offset={0mm,20mm}, bleed={l}, background=darkred
+  offset={0mm,20mm}, bleed={l}, background=darkred
 }
 
 \begin{document}
 
 \begin{leporellocolumn}{page one}
+
 \begin{leporellobox}[padding={top=5mm}]
 \hfill\includegraphics[height=10mm, width=30mm]{example-image-a}
 \end{leporellobox}
@@ -63,6 +64,7 @@
 \end{leporellobox}
 
 \end{leporellocolumn}
+
 
 \leporellotypesetcolumns{page three, page three, page one}
 

@@ -1,19 +1,19 @@
 \documentclass[
-    prepress,
-    show frames,
-    show ids
+  prepress,
+  show frames,
+  show ids
 ]{leporello}
 
 \leporellosetstyle{align bottom}{
-    align parent={l,b},
-    align self={l,b}
+  align parent={l,b},
+  align self={l,b}
 }
 
 \begin{leporellocolumn}{example-a}
 \begin{leporellobox}[
-    background=black!10,
-    height=50mm,
-    bleed={l,t}
+  background=black!10,
+  height=50mm,
+  bleed={l,t}
 ]
 foo
 \end{leporellobox}
@@ -21,10 +21,10 @@ foo
 
 \begin{leporellocolumn}{example-b}
 \begin{leporellobox}[
-    background=black!10,
-    offset={0mm,50mm},
-    stretch height,
-    bleed={b}
+  background=black!10,
+  offset={0mm,50mm},
+  stretch height,
+  bleed={b}
 ]
 bar
 \end{leporellobox}
@@ -32,9 +32,9 @@ bar
 
 \begin{leporellocolumn}{example-c}
 \begin{leporellobox}[
-    background=black!10,
-    align bottom,
-    bleed={r,b}
+  background=black!10,
+  align bottom,
+  bleed={r,b}
 ]
 baz
 \end{leporellobox}
@@ -43,9 +43,9 @@ baz
 \begin{document}
 
 \leporellotypesetcolumns{
-    example-a,
-    example-b,
-    example-c
+  example-a,
+  example-b,
+  example-c
 }
 
 \end{document}
