@@ -450,6 +450,11 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ left }
       }
+      \skip_add:Nn \tex_hfuzz:D {
+        \prop_item:cn {
+          g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+        } { padding ~ left }
+      }
     }
     \clist_if_in:NnT \l_leporello_image_ignore_padding_clist { r } {
       \dim_add:Nn \l_leporello_image_outer_offset_right_dim {
@@ -458,6 +463,11 @@
         } { padding ~ right }
       }
       \dim_add:Nn \l_leporello_image_clip_width_dim {
+        \prop_item:cn {
+          g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
+        } { padding ~ right }
+      }
+      \skip_add:Nn \tex_hfuzz:D {
         \prop_item:cn {
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ right }
