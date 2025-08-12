@@ -1,4 +1,4 @@
-![Version 0.7.0](https://img.shields.io/badge/version-0.7.0-blue)
+![Version 0.8.0](https://img.shields.io/badge/version-0.8.0-blue)
 
 # The `leporello` class
 

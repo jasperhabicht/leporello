@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{0.7.0}
-\def\leporellofiledate{8 August 2025}
+\def\leporellofileversion{0.8.0}
+\def\leporellofiledate{12 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -263,6 +263,7 @@
   {Version \leporellofileversion, released on \leporellofiledate}
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
+\changes{v0.8.0}{2025/08/12}{Added option to place arbitrary code to box background.}
 
 \begin{document}
 \printdoctitle
@@ -505,6 +506,8 @@ The flow mechanism works across multiple boxes. But due to the way the typesetti
 
 \subsection{Inserting images}
 
+One way to insert images is via the \macro{\includegraphics} command provided by the \macro{graphicx} package. Using the \macro{background code} key, images can be added to the background of a box.
+
 \begin{macrodef}
 |\leporelloimage|[<options>]{<file name>}
 \end{macrodef}
@@ -593,7 +596,7 @@ The following example shows some of the basic ideas of the package by providing 
 
 \begin{leporellocolumn}{example-a}
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   height=50mm,
   bleed={l,t}
 ]
@@ -603,7 +606,7 @@ foo
 
 \begin{leporellocolumn}{example-b}
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   offset={0mm,50mm},
   stretch height,
   bleed={b}
@@ -614,7 +617,7 @@ bar
 
 \begin{leporellocolumn}{example-c}
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   align bottom,
   bleed={r,b}
 ]
