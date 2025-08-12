@@ -10,7 +10,7 @@
 \leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
 \leporellosetstyle{mystyle}{
-  offset={0mm,20mm}, bleed={l}, background=darkred
+  offset={0mm,20mm}, bleed={l}, background color=darkred
 }
 
 \begin{document}
@@ -29,7 +29,7 @@
 \leporelloimage[clip height=20mm, clip width=\linewidth, offset={5mm,30mm}, fill bleed]{example-image-a}
 \end{leporellobox}
 
-\begin{leporellobox}[bleed={l,r}, offset={0mm,100mm}, background=yellow]
+\begin{leporellobox}[bleed={l,r}, offset={0mm,100mm}, background color=yellow]
 \leporelloimage[clip height=20mm, clip width=\linewidth, offset={5mm,30mm}, fill bleed, ignore padding={l,r}]{example-image-a}
 \end{leporellobox}
 
@@ -46,7 +46,7 @@
 \Huge\leporellocolorselect{white} FOO 
 \end{leporellobox}
 
-\begin{leporellobox}[offset={0mm,20mm+\myheight}, bleed={l,b}, background=black!10, stretch height, pre=\bfseries]
+\begin{leporellobox}[offset={0mm,20mm+\myheight}, bleed={l,b}, background color=black!10, stretch height, pre=\bfseries]
 \lipsum[1-2] 
 \end{leporellobox}
 
@@ -59,7 +59,7 @@
 \Huge\leporellocolorselect{white} FOO 
 \end{leporellobox}
 
-\begin{leporellobox}[bleed={b,l,r}, background=black!10, align parent={l,b}, align self={l,b}, offset={0mm,0mm}]
+\begin{leporellobox}[bleed={b,l,r}, background color=black!10, align parent={l,b}, align self={l,b}, offset={0mm,0mm}]
 \lipsum[1]
 \end{leporellobox}
 

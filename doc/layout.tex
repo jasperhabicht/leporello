@@ -23,17 +23,20 @@
 
 \begin{leporellocolumn}{example-a}
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   height=50mm,
+  width=200pt,
   bleed={l,t}
 ]
-foo
+foo \leporelloboxwidth 
+
+x \leporellobleed
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{example-b}
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   offset={0mm,50mm},
   stretch height,
   bleed={b}
@@ -45,7 +48,7 @@ bar
 \begin{leporellocolumn}{example-c}
 hutzli
 \begin{leporellobox}[
-  background=black!10,
+  background color=black!10,
   align bottom,
   bleed={r,b}
 ]

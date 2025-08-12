@@ -21,7 +21,7 @@
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
-\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { TF }
+\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
 
 \bool_new:N \l_leporello_show_frames_bool
 \bool_new:N \l_leporello_show_id_bool
@@ -128,7 +128,9 @@
 \dim_new:N \l__leporello_box_padding_top_dim
 \dim_new:N \l__leporello_box_padding_bottom_dim
 \tl_new:N \l__leporello_box_pre_tl
-\tl_new:N \l__leporello_box_background_tl
+\tl_new:N \l__leporello_box_background_color_tl
+\tl_new:N \l__leporello_box_background_code_tl
+\box_new:N \l__leporello_box_background_box
 \clist_new:N \l__leporello_box_bleed_clist
 
 \dim_new:N \l__leporello_typeset_box_width_dim
@@ -180,8 +182,9 @@
     }
   } ,
   pre              .tl_set:N    = \l__leporello_box_pre_tl ,
-  background       .tl_set:N    = \l__leporello_box_background_tl ,
-  background       .initial:n   = { none } ,
+  background ~ color .tl_set:N    = \l__leporello_box_background_color_tl ,
+  background ~ color .initial:n   = { none } ,
+  background ~ code  .tl_set:N    = \l__leporello_box_background_code_tl ,
   bleed            .clist_set:N = \l__leporello_box_bleed_clist ,
   store ~ width    .tl_set:N    = \l__leporello_box_store_width_tl ,
   store ~ height   .tl_set:N    = \l__leporello_box_store_height_tl
@@ -377,6 +380,14 @@
   \keys_define:nn { leporello / box } {
     #1  .meta:n = {#2}
   }
+}
+
+\NewDocumentCommand { \leporelloboxwidth } { } {
+  \dim_use:N \l__leporello_typeset_box_width_dim
+}
+
+\NewDocumentCommand { \leporellobleed } { } {
+  \dim_use:N \l_leporello_bleed_dim
 }
 
 \NewDocumentCommand { \leporellocolordefine } { m m m } {
@@ -650,8 +661,11 @@
       { pre }
       { \l__leporello_box_pre_tl }
     \prop_gput:cnV { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
-      { background }
-      \l__leporello_box_background_tl
+      { background ~ color }
+      \l__leporello_box_background_color_tl
+    \prop_gput:cno { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
+      { background ~ code }
+      { \l__leporello_box_background_code_tl }
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { bleed }
       { \clist_use:Nn \l__leporello_box_bleed_clist { , } }
@@ -781,15 +795,28 @@
         \l__leporello_typeset_box_height_dim +
         \l__leporello_typeset_box_bleed_y_dim
       }
-      \str_if_eq:enTF {
-        \prop_item:cn { g_leporello_box_ #3 _prop } { background }
+      \str_if_eq:enF {
+        \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
       } { none } {
-        \draw_path_use_clear:n { clip }
-      } {
-        \color_select:e {
-          \prop_item:cn { g_leporello_box_ #3 _prop } { background }
+        \group_begin:
+          \color_select:e {
+            \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
+          }
+          \draw_path_use:n { fill }
+        \group_end:
+      }
+      \draw_path_use_clear:n { clip }
+      \prop_if_in:cnT { g_leporello_box_ #3 _prop } { background ~ code } {
+        \exp_args:Ne
+        \vbox_set_top:Nn \l__leporello_box_background_box {
+          \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ code }
         }
-        \draw_path_use_clear:n { fill }
+        \draw_box_use:Nn \l__leporello_box_background_box {
+          0mm ,
+          \l__leporello_typeset_box_height_dim +
+          \l__leporello_typeset_box_bleed_y_dim -
+          \box_ht:N \l__leporello_box_background_box
+        }
       }
     \draw_end:
     \draw_suspend_end:

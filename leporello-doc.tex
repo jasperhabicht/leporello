@@ -349,6 +349,16 @@ Expects a dimension for the width of the info area that is shown if \macro{prepr
 \end{macrodef}
 Expects a dimension for the width of the bleed that is added to boxes with background and other material reaching to the edges of the document layout. If \macro{bleed} is not specified, the class assumes the default value of \macro{3mm}.
 
+\begin{macrodef}
+|\leporellobleed|
+\end{macrodef}
+Retrieves the width of the bleed in pt.
+
+\begin{macrodef}
+|\leporelloboxwidth|
+\end{macrodef}
+Retrieves the width of the current box including padding, but without bleed, in pt.
+
 \section{Defining columns}
 
 Columns are grouped material to be typeset onto a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. While the package provides a flow mechanism across boxes, no such mechanism is provided for columns. Thus, if a column contains more than fits into it, the relevant parts just spill over the frame edges.
@@ -438,10 +448,15 @@ The key \macro{no padding} sets all paddings to zero. This key does not expect a
 Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This key should be used if boxes are manually split using the \macro{\leporelloboxbreak} command.
 
 \begin{macrodef}
-|background|={<color name>}
-|background|={none}
+|background color|={<color name>}
+|background color|={none}
 \end{macrodef}
 Expects a color name as defined via \macro{l3color} or \macro{none} which will not fill the background. If not specified, the default value of \macro{none} is assumed.
+
+\begin{macrodef}
+|background code|={<code>}
+\end{macrodef}
+Expects typeset material that will be placed into the background of the box aligned at the upper left corner of the box. THe typeset material is clipped to the size of the box.
 
 \begin{macrodef}
 |bleed|={<list of values>}
