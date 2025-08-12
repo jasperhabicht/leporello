@@ -138,7 +138,8 @@
 \dim_new:N \l__leporello_typeset_box_bleed_x_dim
 \dim_new:N \l__leporello_typeset_box_bleed_y_dim
 \int_new:N \l__leporello_typeset_coffin_attach_align_int
-\coffin_new:N \l__leporello_typeset_temp_coffin
+\box_new:N \l__leporello_typeset_column_box
+\coffin_new:N \l__leporello_typeset_mark_coffin
 \coffin_new:N \l__leporello_typeset_mark_temp_coffin
 
 \keys_define:nn { leporello / box } {
@@ -844,8 +845,8 @@
                 \l_leporello_current_column_int ,
               \l_leporello_layout_height_dim
             }
-            \draw_path_replace_bb:
-            \vbox_top:n {
+            \draw_path_use_clear:n { clip }
+            \vbox_set_top:Nn \l__leporello_typeset_column_box {
               \draw_suspend_begin:
                 \str_set:Nn \l_leporello_current_column_str {##1}
                 \hook_use:n { leporello / column / before }
@@ -853,6 +854,7 @@
                 \hook_use:n { leporello / column / after }
               \draw_suspend_end:
             }
+            \draw_box_use:N \l__leporello_typeset_column_box
           \draw_end:
           \draw_suspend_end:
         }
@@ -882,7 +884,7 @@
           }
 
           \bool_if:NT \l_leporello_show_id_bool {
-            \hcoffin_set:Nn \l__leporello_typeset_temp_coffin {
+            \hcoffin_set:Nn \l__leporello_typeset_mark_coffin {
               \__leporello_id_mark:n { ####1 }
             }
             \coffin_attach:cnnNnnnn {
@@ -891,7 +893,7 @@
                 \int_use:N \l_leporello_current_column_int _
                 ####1 _inner_coffin
               } { hc } { vc } 
-              \l__leporello_typeset_temp_coffin
+              \l__leporello_typeset_mark_coffin
               { hc } { vc } { 0pt } { 0pt }
           }
 
