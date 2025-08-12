@@ -110,7 +110,6 @@
 \str_new:N \l_leporello_current_column_str
 \dim_new:N \l_leporello_current_column_offset_dim
 \coffin_new:N \l_leporello_current_column_coffin
-\coffin_new:N \l_leporello_current_column_phantom_coffin
 
 \int_new:N \g_leporello_box_int
 \int_new:N \l_leporello_current_box_int
@@ -581,7 +580,6 @@
   }
   \tl_gset:cn { g_leporello_column_ #1 _tl } {
     \clist_gclear:c { g_leporello_column_ #1 _boxes_clist }
-    \str_set:Nn \l_leporello_current_column_str {#1}
     #2
   }
 } { }
@@ -840,24 +838,21 @@
             \l_leporello_current_column_int
         } {
           \draw_suspend_begin:
-            \str_set:Nn \l_leporello_current_column_str {##1}
-            \hook_use:n { leporello / column / before }
-              \tl_use:c { g_leporello_column_ ##1 _tl }
-            \hook_use:n { leporello / column / after }
-          \draw_suspend_end:
-        }
-        \vcoffin_set:Nnn \l_leporello_current_column_phantom_coffin {
-          \clist_item:NV \l_leporello_columns_clist
-            \l_leporello_current_column_int
-        } {
-          \draw_suspend_begin:
           \draw_begin:
             \draw_path_rectangle:nn { 0mm , 0mm } {
               \clist_item:NV \l_leporello_columns_clist
                 \l_leporello_current_column_int ,
               \l_leporello_layout_height_dim
             }
-            \draw_path_use_clear:n { clip }
+            \draw_path_replace_bb:
+            \vbox_top:n {
+              \draw_suspend_begin:
+                \str_set:Nn \l_leporello_current_column_str {##1}
+                \hook_use:n { leporello / column / before }
+                  \tl_use:c { g_leporello_column_ ##1 _tl }
+                \hook_use:n { leporello / column / after }
+              \draw_suspend_end:
+            }
           \draw_end:
           \draw_suspend_end:
         }
@@ -946,7 +941,7 @@
             \int_set:Nn \l__leporello_typeset_coffin_attach_align_int { -1 }          
           }
 
-          \coffin_attach:Neeceeee \l_leporello_current_column_phantom_coffin {
+          \coffin_attach:Neeceeee \l_leporello_current_column_coffin {
             \clist_item:en {
               \prop_item:cn { g_leporello_box_ ####1 _prop } { align ~ parent }
             } { 1 }
@@ -986,8 +981,6 @@
           }
         }
 
-        \draw_coffin_use:Nnnn \l_leporello_current_column_phantom_coffin
-          { l } { t } { \l_leporello_current_column_offset_dim , 0mm }
         \draw_coffin_use:Nnnn \l_leporello_current_column_coffin
           { l } { t } { \l_leporello_current_column_offset_dim , 0mm }
 
