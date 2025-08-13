@@ -37,7 +37,7 @@
 \dim_new:N \l__leporello_paper_height_dim
 
 \keys_define:nn { leporello / global } {
-  columns         .code:n     = {
+  columns           .code:n     = {
     \clist_set:Nn \l_leporello_columns_clist {#1}
     \int_set:Nn \l_leporello_column_count_int {
       \clist_count:N \l_leporello_columns_clist
@@ -47,22 +47,22 @@
       \dim_add:Nn \l__leporello_layout_width_dim {##1}
     }
   } ,
-  columns         .initial:n  = { 97mm , 100mm , 100mm } ,
-  layout ~ height .dim_set:N  = \l_leporello_layout_height_dim ,
-  layout ~ height .initial:n  = { 210mm } ,
-  show ~ frames   .bool_set:N = \l_leporello_show_frames_bool ,
-  show ~ frames   .default:n  = { true } ,
-  show ~ frames   .initial:n  = { false } ,
-  show ~ ids      .bool_set:N = \l_leporello_show_id_bool ,
-  show ~ ids      .default:n  = { true } ,
-  show ~ ids      .initial:n  = { false } ,
-  prepress        .bool_set:N = \l_leporello_prepress_bool ,
-  prepress        .default:n  = { true } ,
-  prepress        .initial:n  = { false } ,
-  bleed           .dim_set:N  = \l_leporello_bleed_dim ,
-  bleed           .initial:n  = { 3mm } ,
-  info ~ area     .dim_set:N  = \l_leporello_info_area_dim ,
-  info ~ area     .initial:n  = { 10mm } ,
+  columns           .initial:n  = { 97mm , 100mm , 100mm } ,
+  layout ~ height   .dim_set:N  = \l_leporello_layout_height_dim ,
+  layout ~ height   .initial:n  = { 210mm } ,
+  show ~ frames     .bool_set:N = \l_leporello_show_frames_bool ,
+  show ~ frames     .default:n  = { true } ,
+  show ~ frames     .initial:n  = { false } ,
+  show ~ ids        .bool_set:N = \l_leporello_show_id_bool ,
+  show ~ ids        .default:n  = { true } ,
+  show ~ ids        .initial:n  = { false } ,
+  prepress          .bool_set:N = \l_leporello_prepress_bool ,
+  prepress          .default:n  = { true } ,
+  prepress          .initial:n  = { false } ,
+  bleed             .dim_set:N  = \l_leporello_bleed_dim ,
+  bleed             .initial:n  = { 3mm } ,
+  info ~ area       .dim_set:N  = \l_leporello_info_area_dim ,
+  info ~ area       .initial:n  = { 10mm } ,
 
   two ~ columns         .meta:n = {
     columns = { 99mm , 99mm }
@@ -145,35 +145,35 @@
 \coffin_new:N \l__leporello_typeset_mark_temp_coffin
 
 \keys_define:nn { leporello / box } {
-  align ~ parent   .clist_set:N = \l__leporello_box_align_parent_clist ,
-  align ~ parent   .initial:n   = { l , t } ,
-  align ~ self     .clist_set:N = \l__leporello_box_align_self_clist ,
-  align ~ self     .initial:n   = { l , t } ,
-  offset           .clist_set:N = \l__leporello_box_offset_clist ,
-  offset           .initial:n   = { 0mm , 0mm } ,
-  width            .code:n      = {
+  align ~ parent     .clist_set:N = \l__leporello_box_align_parent_clist ,
+  align ~ parent     .initial:n   = { l , t } ,
+  align ~ self       .clist_set:N = \l__leporello_box_align_self_clist ,
+  align ~ self       .initial:n   = { l , t } ,
+  offset             .clist_set:N = \l__leporello_box_offset_clist ,
+  offset             .initial:n   = { 0mm , 0mm } ,
+  width              .code:n      = {
     \bool_set_true:N \l__leporello_box_width_bool
     \dim_set:Nn \l__leporello_box_width_dim {#1}
   } ,
-  height           .code:n      = {
+  height             .code:n      = {
     \bool_set_true:N \l__leporello_box_height_bool
     \dim_set:Nn \l__leporello_box_height_dim {#1}
   } ,
-  stretch ~ height .bool_set:N  = \l__leporello_box_stretch_height_bool ,
-  stretch ~ height .default:n   = { true } ,
-  stretch ~ height .initial:n   = { false } ,
-  padding / left   .dim_set:N   = \l__leporello_box_padding_left_dim ,
-  padding / right  .dim_set:N   = \l__leporello_box_padding_right_dim ,
-  padding / top    .dim_set:N   = \l__leporello_box_padding_top_dim ,
-  padding / bottom .dim_set:N   = \l__leporello_box_padding_bottom_dim ,
-  padding          .code:n      = { \keys_set:nn { leporello / box / padding } {#1} } ,
-  padding          .initial:n   = {
+  stretch ~ height   .bool_set:N  = \l__leporello_box_stretch_height_bool ,
+  stretch ~ height   .default:n   = { true } ,
+  stretch ~ height   .initial:n   = { false } ,
+  padding / left     .dim_set:N   = \l__leporello_box_padding_left_dim ,
+  padding / right    .dim_set:N   = \l__leporello_box_padding_right_dim ,
+  padding / top      .dim_set:N   = \l__leporello_box_padding_top_dim ,
+  padding / bottom   .dim_set:N   = \l__leporello_box_padding_bottom_dim ,
+  padding            .code:n      = { \keys_set:nn { leporello / box / padding } {#1} } ,
+  padding            .initial:n   = {
     left   = 7.5mm ,
     right  = 7.5mm ,
     top    = 7.5mm ,
     bottom = 7.5mm
   } ,
-  no ~ padding     .meta:n      = {
+  no ~ padding       .meta:n      = {
     padding = {
       left   = 0mm ,
       right  = 0mm ,
@@ -181,13 +181,13 @@
       bottom = 0mm
     }
   } ,
-  pre              .tl_set:N    = \l__leporello_box_pre_tl ,
+  pre                .tl_set:N    = \l__leporello_box_pre_tl ,
   background ~ color .tl_set:N    = \l__leporello_box_background_color_tl ,
   background ~ color .initial:n   = { none } ,
   background ~ code  .tl_set:N    = \l__leporello_box_background_code_tl ,
-  bleed            .clist_set:N = \l__leporello_box_bleed_clist ,
-  store ~ width    .tl_set:N    = \l__leporello_box_store_width_tl ,
-  store ~ height   .tl_set:N    = \l__leporello_box_store_height_tl
+  bleed              .clist_set:N = \l__leporello_box_bleed_clist ,
+  store ~ width      .tl_set:N    = \l__leporello_box_store_width_tl ,
+  store ~ height     .tl_set:N    = \l__leporello_box_store_height_tl
 }
 
 \bool_new:N \l_leporello_reverse_layout_bool
@@ -218,33 +218,33 @@
 \box_new:N \l__leporello_image_original_box
 
 \keys_define:nn { leporello / image } {
-  width            .code:n      = {
+  width              .code:n      = {
     \bool_set_true:N \l_leporello_image_width_bool
     \dim_set:Nn \l_leporello_image_width_dim {#1} 
   } ,
-  height           .code:n      = {
+  height             .code:n      = {
     \bool_set_true:N \l_leporello_image_height_bool
     \dim_set:Nn \l_leporello_image_height_dim {#1} 
   } ,
-  clip ~ width     .code:n      = {
+  clip ~ width       .code:n      = {
     \bool_set_true:N \l_leporello_image_clip_width_bool
     \dim_set:Nn \l_leporello_image_clip_width_dim {#1} 
   } ,
-  clip ~ height    .code:n      = {
+  clip ~ height      .code:n      = {
     \bool_set_true:N \l_leporello_image_clip_height_bool
     \dim_set:Nn \l_leporello_image_clip_height_dim {#1} 
   } ,
-  offset           .code:n      = {
+  offset             .code:n      = {
     \dim_set:Nn \l_leporello_image_offset_x_dim { \clist_item:nn {#1} { 1 } }
     \dim_set:Nn \l_leporello_image_offset_y_dim { - \clist_item:nn {#1} { 2 } }
   } ,
-  offset           .initial:n   = { 0mm , 0mm } ,
-  scale            .fp_set:N    = \l_leporello_image_scale_fp ,
-  scale            .initial:n   = { 1 } ,
-  ignore ~ padding .clist_set:N = \l_leporello_image_ignore_padding_clist ,
-  fill ~ bleed     .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
-  fill ~ bleed     .default:n   = { true } ,
-  fill ~ bleed     .initial:n   = { false }
+  offset             .initial:n   = { 0mm , 0mm } ,
+  scale              .fp_set:N    = \l_leporello_image_scale_fp ,
+  scale              .initial:n   = { 1 } ,
+  ignore ~ padding   .clist_set:N = \l_leporello_image_ignore_padding_clist ,
+  fill ~ bleed       .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
+  fill ~ bleed       .default:n   = { true } ,
+  fill ~ bleed       .initial:n   = { false }
 }
 
 \hook_new_pair:nn { leporello / column / before } { leporello / column / after }
@@ -1059,7 +1059,7 @@
 \dim_new:N \l_leporello_box_flow_width_second_dim
 
 \keys_define:nn { leporello / box } {
-  flow ~ into  .code:n = {
+  flow ~ into        .code:n = {
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop } 
       { flow ~ into } {#1}
   }

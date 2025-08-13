@@ -258,20 +258,24 @@
 \makedoctitle
   [The leporello package]
   {The \titlemacro{leporello} class}
-  {A simple LaTeX document class to create folding flyers using columns and boxes}
-  {Jasper Habicht}[E-mail: \href{mailto:mail@jasperhabicht.de}{mail@jasperhabicht.de}.]
+  {A simple LaTeX document class to create folded leaflets using columns and boxes}
+  {Jasper Habicht}[E-mail: \href{mailto:mail@jasperhabicht.de}{mail@jasperhabicht.de}. The title image was generated using ChatGPT.]
   {Version \leporellofileversion, released on \leporellofiledate}
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
 \changes{v0.8.0}{2025/08/12}{Added option to place arbitrary code to box background.}
 
 \begin{document}
+\vspace*{-3em}%
+\noindent\hspace{-5pt}%
+\includegraphics[width=75mm]{doc/leporello.pdf}
+
 \printdoctitle
 \bigskip
 
 \section{Introduction}
 
-The \macro{leporello} class is a simple LaTeX document class to create folding flyers with the following key features:
+The \macro{leporello} class is a simple LaTeX document class to create folded leaflets with the following key features:
 
 \begin{itemize}
   \item The document layout consists of a specific number of pages that can have varying widths and are placed next to each other. Each page contains one frame to contain typeset material.
@@ -279,6 +283,8 @@ The \macro{leporello} class is a simple LaTeX document class to create folding f
   \item Columns are predefined and then placed into the frame of a page in the document layout. This way, columns can be used on pages with varying widths.
   \item Boxes can have padding (including bleed) and a background and are positioned inside a column.
 \end{itemize}
+
+A folded leaflet is sometimes called leporello in reference to the servant of Don Giovanni (known from the opera by Mozart) who, at one point, unfolds a lengthy zig-zag folded list of his master's love affairs.
 
 \section{Loading the document class}
 
@@ -362,7 +368,7 @@ Retrieves the width of the current box including padding, but without bleed, in 
 
 \section{Defining columns}
 
-Columns are grouped material to be typeset onto a specific page of the folding flyer. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. While the package provides a flow mechanism across boxes, no such mechanism is provided for columns. Thus, if a column contains more than fits into it, the relevant parts just spill over the frame edges.
+Columns are grouped material to be typeset onto a specific page of the folded leaflet. A column can contain anything that can be placed in a TeX box in general, but the typical use of a column is to only serve as a frame to which boxes are attached. While the package provides a flow mechanism across boxes, no such mechanism is provided for columns. Thus, if a column contains more than fits into it, the relevant parts just spill over the frame edges.
 
 \begin{macrodef}
 \null\begin{|leporellocolumn|}{<string>}
@@ -489,7 +495,7 @@ Using the command \macro{\leporellotypesetcolumns} which takes one mandatory arg
 \begin{macrodef}
 |reverse layout|
 \end{macrodef}
-The command takes one optional argument that can take the option \macro{reverse layout}. If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folding flyer that naturally has the widths of the columns reversed.
+The command takes one optional argument that can take the option \macro{reverse layout}. If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed.
 
 Currently, boxes can only be attached to columns. A future version of the document class may allow the attachment of boxes to each other. If a box should be positioned below another box with natural height defined by its contents, the \macro{store height} key can be used to store the height of the upper box into a custom macro which can then be used to calculate the offset from the top.
 
@@ -501,6 +507,28 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 |\leporelloboxbreak|
 \end{macrodef}
 The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
+
+\subsection{Hooks}
+
+The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code. The package uses the hook \macro{leporello/box/before} to insert code for the flow mechanism. 
+
+Apart from that, the package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
+
+\begin{longtable}{
+  @{}
+  p{13em}
+  p{\dimexpr\linewidth-2\tabcolsep-13em}
+  @{}
+}
+  \toprule
+  \textbf{Hook}                   & \textbf{Position} \\
+  \midrule
+  \macro{leporello/column/before} & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that sets \macro{\l_leporello_current_column_str} to the name of the current column \\
+  \macro{leporello/column/after}  & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
+  \macro{leporello/box/before}    & before the code block stored via the \macro{leporellobox} environment is typeset to the relevant box which is preceded by a line of code that sets \macro{\l_leporello_current_box_int} to the ID of the current column and inserts the code defined via the \macro{pre} key \\
+  \macro{leporello/box/after}     & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
+  \bottomrule
+\end{longtable}
 
 \section{Other settings}
 
