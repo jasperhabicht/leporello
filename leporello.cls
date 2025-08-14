@@ -270,7 +270,7 @@
 
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_set_eq:NN \leporello_geometry_set:n \geometry
-\cs_new_protected:Npn \leoprello_graphics_use:nn #1#2 [
+\cs_new_protected:Npn \leoprello_graphics_use:nn #1#2 {
   \includegraphics [ #1 ] {#2}
 }
 
