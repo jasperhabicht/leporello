@@ -1,0 +1,35 @@
+\documentclass{leporello}
+\leporelloset{
+  three columns,
+  prepress,
+  show frames,
+  show ids
+}
+
+\overfullrule 5pt
+
+\usepackage{lipsum}
+
+\begin{leporellocolumn}{page one}
+\begin{leporellobox}[bleed={r}, height=30mm, background color=magenta, name=foo]
+FOO
+\end{leporellobox}
+
+\begin{leporellobox}[align parent={b,r}, align self={t,r}, bleed={l}, height=30mm, background color=cyan, parent={foo}]
+FOO
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{page two}
+\begin{leporellobox}[align parent={b,l}, align self={t,l}, height=30mm, background color=cyan]
+FOO
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{document}
+
+\leporellotypesetcolumns{page one, page one, page one}
+
+\leporellotypesetcolumns{page one}
+
+\end{document}

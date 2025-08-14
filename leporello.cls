@@ -1057,23 +1057,12 @@
   }
 
   \prop_if_exist:cT { g_leporello_box_ #1 _prop } {
-    \clist_if_in:enT {
-      \prop_item:cn { g_leporello_box_ #2 _prop } { align ~ parent }
-    } { l } {
+    \int_compare:nNnT {
+      \l_leporello_current_column_int
+    } = { 1 } {
       \clist_if_in:enT {
         \prop_item:cn { g_leporello_box_ #1 _prop } { bleed }
-      } { l } {
-        \dim_sub:Nn \l__leporello_typeset_box_bleed_left_dim {
-          \l_leporello_bleed_dim
-        }
-      }
-    }
-    \clist_if_in:enT {
-      \prop_item:cn { g_leporello_box_ #2 _prop } { align ~ parent }
-    } { r } {
-      \clist_if_in:enT {
-        \prop_item:cn { g_leporello_box_ #1 _prop } { bleed }
-      } { r } {
+      } { l } {  
         \dim_sub:Nn \l__leporello_typeset_box_bleed_left_dim {
           \l_leporello_bleed_dim
         }
