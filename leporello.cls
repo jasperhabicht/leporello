@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/12} {0.8.0} {Document class for typesetting folded leaflets}
+  {2025/08/15} {0.9.0} {Document class for typesetting folded leaflets}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }

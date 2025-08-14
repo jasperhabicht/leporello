@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{0.8.0}
-\def\leporellofiledate{12 August 2025}
+\def\leporellofileversion{0.9.0}
+\def\leporellofiledate{15 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -264,6 +264,7 @@
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
 \changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
+\changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID.}
 
 \begin{document}
 \printdoctitle
@@ -335,7 +336,7 @@ If set, frames around the single pages (columns) are shown. Does not expect a va
 \begin{macrodef}
 |show ids|
 \end{macrodef}
-If set, the IDs of the boxes are shown. Does not expect a value. 
+If set, the IDs of the boxes are shown. Does not expect a value. The IDs of the boxes are integers starting from 1 and increasing in the order of typesetting of the boxes.
 
 \begin{macrodef}
 |prepress|
@@ -383,9 +384,14 @@ A column is defined by the \macro{leporellocolumn} environment which takes one m
 Boxes can be positioned inside of columns. They can contain anything that can be placed in a TeX box in general. A box is defined by the \macro{leporellobox} environment which takes one optional argument to set box-specific options. These are the following:
 
 \begin{macrodef}
-|parent|={<integer>}
+|name|={<string>}
 \end{macrodef}
-Expects the ID of the box to which the current box is aligned. If not specified, the default value \macro{0} is assumed, denoting the current column box.
+Expects a (unique) string denoting the name of the box which can be used for attaching boxes to each other or assigning boxes for the flow mechanism.
+
+\begin{macrodef}
+|parent|={<string>}
+\end{macrodef}
+Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box.
 
 \begin{macrodef}
 |align parent|={<tuple of poles>}
@@ -502,7 +508,7 @@ Currently, boxes can only be attached to columns. A future version of the docume
 
 \section{Flow mechanism}\label{sec:flow}
 
-Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the ID of the box to flow into as value. The IDs of the boxes are integers starting from 1 and increasing in the order of typesetting of the boxes. By setting the key \macro{show ids} to the document options, the IDs of all boxes are shown.
+Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key.
 
 \begin{macrodef}
 |\leporelloboxbreak|
