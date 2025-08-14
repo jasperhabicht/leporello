@@ -5,21 +5,17 @@
   show frames
 }
 
-\usepackage{lipsum, graphicx}
+\usepackage{lipsum, graphicx} \sloppy
 
 \leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
 \leporellosetstyle{mystyle}{
-  offset={0mm,20mm}, bleed={l}, background color=darkred
+  offset={0mm,20mm}, bleed={l,r}, background color=darkred
 }
 
 \begin{document}
 
 \begin{leporellocolumn}{page one}
-
-\begin{leporellobox}[padding={top=5mm}]
-\hfill\includegraphics[height=10mm, width=30mm]{example-image-a}
-\end{leporellobox}
 
 \begin{leporellobox}[mystyle]
 \Huge\leporellocolorselect{white} FOO
@@ -32,8 +28,6 @@
 \begin{leporellobox}[bleed={l,r}, offset={0mm,100mm}, background color=yellow]
 \leporelloimage[clip height=20mm, clip width=\linewidth, offset={5mm,30mm}, fill bleed, ignore padding={l,r}]{example-image-a}
 \end{leporellobox}
-
-\the\hfuzz
 
 \end{leporellocolumn}
 

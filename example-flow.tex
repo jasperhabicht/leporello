@@ -2,19 +2,19 @@
 \usepackage{lipsum}
 
 \begin{leporellocolumn}{one}
-\begin{leporellobox}[flow into={2}, pre={\raggedright\leporellocolorselect{red}}]
+\begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
 \lipsum[1] foo foo foo foo foo foo \leporelloboxbreak foo foo \lipsum[2-7]
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
-\begin{leporellobox}[background color=yellow, stretch height, bleed={t,b}, flow into={3}, pre={\bfseries}]
+\begin{leporellobox}[background color=yellow, stretch height, bleed={t,b}, flow into={bar}, pre={\bfseries}, name={foo}]
 %\leporellojustified\lipsum[1-4]
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{three}
-\begin{leporellobox}
+\begin{leporellobox}[name={bar}]
 \lipsum[1]
 \end{leporellobox}
 \end{leporellocolumn}
