@@ -391,7 +391,7 @@ Expects a (unique) string denoting the name of the box which can be used for att
 \begin{macrodef}
 |parent|={<string>}
 \end{macrodef}
-Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box.
+Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box. The parent box needs to be in the same column as the box that should be aligned to it.
 
 \begin{macrodef}
 |align parent|={<tuple of poles>}
@@ -490,7 +490,7 @@ Expects a single control sequence (macro) to store the height of the current box
 \begin{macrodef}
 |flow into|={<integer>}
 \end{macrodef}
-Expects the ID of the box into which typeset material will flow into if it does not fit into the current box. See section \ref{sec:flow} below.
+Expects the ID of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following (but not previous) column or on a following (but not previous) page. See section \ref{sec:flow} below.
 
 \section{Typesetting boxes into columns}
 
@@ -499,12 +499,17 @@ Expects the ID of the box into which typeset material will flow into if it does 
 \end{macrodef}
 Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key.
 
+The command takes one optional argument that accepts one of the following keys:
+
 \begin{macrodef}
 |reverse layout|
 \end{macrodef}
-The command takes one optional argument that can take the option \macro{reverse layout}. If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed.
+If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed.
 
-Currently, boxes can only be attached to columns. A future version of the document class may allow the attachment of boxes to each other. If a box should be positioned below another box with natural height defined by its contents, the \macro{store height} key can be used to store the height of the upper box into a custom macro which can then be used to calculate the offset from the top.
+\begin{macrodef}
+|reverse order|
+\end{macrodef}
+If set, the order of the columns is reversed, which means that the columns are typeset from right to left.
 
 \section{Flow mechanism}\label{sec:flow}
 

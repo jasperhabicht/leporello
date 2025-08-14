@@ -1,5 +1,7 @@
-\documentclass[prepress]{leporello}
+\documentclass[prepress, show frames]{leporello}
 \usepackage{lipsum}
+
+\errorcontextlines100
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
@@ -14,13 +16,21 @@
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{three}
-\begin{leporellobox}[name={bar}]
-\lipsum[1]
+\begin{leporellobox}[name={bar}, flow into={baz}]
+\lipsum[1-3]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{four}
+\begin{leporellobox}[name={baz}]
+
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{document}
 
-\leporellotypesetcolumns{one, two, three}
+\leporellotypesetcolumns{one, two}
+
+\leporellotypesetcolumns[reverse order, reverse layout]{three, four}
 
 \end{document}
