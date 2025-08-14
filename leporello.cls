@@ -16,9 +16,10 @@
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \color_select:n { e }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { ceeceeee }
+\cs_generate_variant:Nn \msg_error:nnnn { nneV }
 \cs_generate_variant:Nn \prop_gput:Nnn { cnV , cne }
 \cs_generate_variant:Nn \tl_const:Nn { co }
-\cs_generate_variant:Nn \msg_error:nnnn { nneV }
+\cs_generate_variant:Nn \vbox_set_top:Nn { Ne }
 
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
 \prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
@@ -270,7 +271,7 @@
 
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_set_eq:NN \leporello_geometry_set:n \geometry
-\cs_new_protected:Npn \leoprello_graphics_use:nn #1#2 [
+\cs_new_protected:Npn \leoprello_graphics_use:nn #1#2 {
   \includegraphics [ #1 ] {#2}
 }
 
@@ -815,37 +816,36 @@
       g_leporello_box_ #1 _ #2 _ #3 _outer_coffin
     } { \l__leporello_typeset_box_width_dim } {
       \draw_suspend_begin:
-      \draw_begin:
-        \draw_path_rectangle:nn { 0mm , 0mm } {
-          \l__leporello_typeset_box_width_dim +
-          \l__leporello_typeset_box_bleed_x_dim ,
-          \l__leporello_typeset_box_height_dim +
-          \l__leporello_typeset_box_bleed_y_dim
-        }
-        \str_if_eq:enF {
-          \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
-        } { none } {
-          \group_begin:
-            \color_select:e {
-              \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
-            }
-            \draw_path_use:n { fill }
-          \group_end:
-        }
-        \draw_path_use_clear:n { clip }
-        \prop_if_in:cnT { g_leporello_box_ #3 _prop } { background ~ code } {
-          \exp_args:Ne
-          \vbox_set_top:Nn \l__leporello_box_background_box {
-            \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ code }
-          }
-          \draw_box_use:Nn \l__leporello_box_background_box {
-            0mm ,
+        \draw_begin:
+          \draw_path_rectangle:nn { 0mm , 0mm } {
+            \l__leporello_typeset_box_width_dim +
+            \l__leporello_typeset_box_bleed_x_dim ,
             \l__leporello_typeset_box_height_dim +
-            \l__leporello_typeset_box_bleed_y_dim -
-            \box_ht:N \l__leporello_box_background_box
+            \l__leporello_typeset_box_bleed_y_dim
           }
-        }
-      \draw_end:
+          \str_if_eq:enF {
+            \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
+          } { none } {
+            \group_begin:
+              \color_select:e {
+                \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ color }
+              }
+              \draw_path_use:n { fill }
+            \group_end:
+          }
+          \draw_path_use_clear:n { clip }
+          \prop_if_in:cnT { g_leporello_box_ #3 _prop } { background ~ code } {
+            \vbox_set_top:Ne \l__leporello_box_background_box {
+              \prop_item:cn { g_leporello_box_ #3 _prop } { background ~ code }
+            }
+            \draw_box_use:Nn \l__leporello_box_background_box {
+              0mm ,
+              \l__leporello_typeset_box_height_dim +
+              \l__leporello_typeset_box_bleed_y_dim -
+              \box_ht:N \l__leporello_box_background_box
+            }
+          }
+        \draw_end:
       \draw_suspend_end:
     }
 
@@ -1089,23 +1089,23 @@
             \l_leporello_current_column_int
         } {
           \draw_suspend_begin:
-          \draw_begin:
-            \draw_path_rectangle:nn { 0mm , 0mm } {
-              \clist_item:NV \l_leporello_columns_clist
-                \l_leporello_current_column_int ,
-              \l_leporello_layout_height_dim
-            }
-            \draw_path_use_clear:n { clip }
-            \vbox_set_top:Nn \l__leporello_typeset_column_box {
-              \draw_suspend_begin:
-                \str_set:Nn \l_leporello_current_column_str {##1}
-                \hook_use:n { leporello / column / before }
-                  \tl_use:c { g_leporello_column_ ##1 _tl }
-                \hook_use:n { leporello / column / after }
-              \draw_suspend_end:
-            }
-            \draw_box_use:N \l__leporello_typeset_column_box
-          \draw_end:
+            \draw_begin:
+              \draw_path_rectangle:nn { 0mm , 0mm } {
+                \clist_item:NV \l_leporello_columns_clist
+                  \l_leporello_current_column_int ,
+                \l_leporello_layout_height_dim
+              }
+              \draw_path_use_clear:n { clip }
+              \vbox_set_top:Nn \l__leporello_typeset_column_box {
+                \draw_suspend_begin:
+                  \str_set:Nn \l_leporello_current_column_str {##1}
+                  \hook_use:n { leporello / column / before }
+                    \tl_use:c { g_leporello_column_ ##1 _tl }
+                  \hook_use:n { leporello / column / after }
+                \draw_suspend_end:
+              }
+              \draw_box_use:N \l__leporello_typeset_column_box
+            \draw_end:
           \draw_suspend_end:
         }
 

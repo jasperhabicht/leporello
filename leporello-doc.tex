@@ -263,7 +263,7 @@
   {Version \leporellofileversion, released on \leporellofiledate}
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
-\changes{v0.8.0}{2025/08/12}{Added option to place arbitrary code to box background.}
+\changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
 
 \begin{document}
 \vspace*{-3em}%
@@ -387,9 +387,14 @@ A column is defined by the \macro{leporellocolumn} environment which takes one m
 Boxes can be positioned inside of columns. They can contain anything that can be placed in a TeX box in general. A box is defined by the \macro{leporellobox} environment which takes one optional argument to set box-specific options. These are the following:
 
 \begin{macrodef}
+|parent|={<integer>}
+\end{macrodef}
+Expects the ID of the box to which the current box is aligned. If not specified, the default value \macro{0} is assumed, denoting the current column box.
+
+\begin{macrodef}
 |align parent|={<tuple of poles>}
 \end{macrodef}
-Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current column that serves as anchor to align the current box. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are:
+Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the parent box (per default this is the current column box) that serves as anchor to align the current box. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are:
 
 \begin{longtable}{
   @{}
@@ -413,7 +418,7 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
 \begin{macrodef}
 |align self|={<tuple of poles>}
 \end{macrodef}
-Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to the current column. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
+Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to parent box (per default this is the current column box). If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
 
 \begin{macrodef}
 |offset|={<tuple of dimensions>}
