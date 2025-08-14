@@ -268,6 +268,12 @@
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
+\cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
+\cs_set_eq:NN \leporello_geometry_set:n \geometry
+\cs_set:protected:Npn \leoprello_graphics_use:nn #1#2 [
+  \includegraphics [ #1 ] {#2}
+}
+
 \cs_new_protected:Npn \leporello_draw_absolute:nn #1#2 {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -341,7 +347,7 @@
 }
 
 \hook_gput_code:nnn { begindocument / before } { . } {
-  \pagestyle { empty }
+  \leporello_pagestyle_set:n { empty }
   \dim_set:Nn \l__leporello_paper_height_dim {
     \l_leporello_layout_height_dim + 2 \l_leporello_info_area_dim
   }
@@ -349,7 +355,7 @@
     \l__leporello_layout_width_dim + 2 \l_leporello_info_area_dim
   }
   \bool_if:NTF \l_leporello_prepress_bool {
-    \geometry {
+    \leporello_geometry_set:n {
       layoutwidth = \l__leporello_layout_width_dim ,
       layoutheight = \l_leporello_layout_height_dim ,
       layouthoffset = \l_leporello_info_area_dim ,
@@ -372,7 +378,7 @@
       }
     }
   } {
-    \geometry {
+    \leporello_geometry_set:n {
       paperwidth = \l__leporello_layout_width_dim ,
       paperheight = \l_leporello_layout_height_dim ,
       margin = 0pt
@@ -417,7 +423,7 @@
     }
   
     \hbox_set:Nn \l__leporello_image_original_box {
-      \includegraphics {#2}
+      \leoprello_graphics_use:nn { } {#2}
     }
 
     \bool_if:NF \l_leporello_image_clip_width_bool {
@@ -567,7 +573,7 @@
 
     \skip_vertical:n { - \l_leporello_image_outer_offset_top_dim }
     \skip_horizontal:n { - \l_leporello_image_outer_offset_left_dim }
-    \includegraphics [
+    \leoprello_graphics_use:nn {
       scale = \fp_to_decimal:N \l_leporello_image_scale_fp ,
       clip ,
       viewport =
@@ -599,7 +605,7 @@
             ) / \l_leporello_image_scale_fp
           }
         }
-    ] {#2}
+    } {#2}
     \skip_horizontal:n { - \l_leporello_image_outer_offset_right_dim }
     \skip_vertical:n { - \l_leporello_image_outer_offset_bottom_dim }
   \group_end:
