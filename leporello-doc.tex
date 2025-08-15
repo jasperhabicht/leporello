@@ -264,7 +264,7 @@
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
 \changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
-\changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID.}
+\changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Support for RTL typesetting.}
 
 \begin{document}
 \printdoctitle
@@ -520,27 +520,16 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 \end{macrodef}
 The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
 
-\section{Hooks}
+\subsection{RTL typesetting}
 
-The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
+The document class natively supports right-to-left typesetting with LuaLaTeX. Since the \macro{babel} package also makes use of the native functions for bidirectional typesetting provided by LuaLaTeX, the package will work best with a combination of LuaLaTeX and \macro{babel}.
 
-Apart from that, the package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
+If the \macro{bidi} package is used (which is used by the \macro{polyglossia} package), the following addition to the preamble is needed:
 
-\begin{longtable}{
-  @{}
-  p{13em}
-  p{\dimexpr\linewidth-2\tabcolsep-13em}
-  @{}
-}
-  \toprule
-  \textbf{Hook}                   & \textbf{Position} \\*
-  \midrule
-  \macro{leporello/column/begin} & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that sets \macro{\l_leporello_current_column_str} to the name of the current column \\
-  \macro{leporello/column/end}  & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
-  \macro{leporello/box/begin}    & before the code block stored via the \macro{leporellobox} environment is typeset to the relevant box which is preceded by a line of code that sets \macro{\l_leporello_current_box_int} to the ID of the current column and immediately followed by the code defined via the \macro{pre} key \\
-  \macro{leporello/box/end}     & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
-  \bottomrule
-\end{longtable}
+\begin{codeexample}
+\AddToHook{leporello/typeset/before}{\setLTR}
+\AddToHook{leporello/box/begin}{\setRTL}
+\end{codeexample}
 
 \section{Other settings}
 
@@ -606,23 +595,38 @@ The command \macro{\leporellocolorselect} takes the name of the previously defin
 \end{macrodef}
 In order to simplify the setting of recurring options to the \macro{leporellobox} environment, it is possible to group several of these options as style via the \macro{\leporellosetstyle} command which takes as first argument the name of the newly defined style and as second argument the releevant options (key-value pairs). The style can then be used like an option to any \macro{leporellobox} environment.
 
-\subsection{Using right-to-left languages}
-
-The document class natively supports right-to-left typesetting with LuaLaTeX. Since the \macro{babel} package also makes use of the native functions for bidirectional typesetting provided by LuaLaTeX, the package will work best with a combination of LuaLaTeX and \macro{babel}.
-
-If the \macro{bidi} package is used (which is used by the \macro{polyglossia} package), the following addition to the preamble is needed:
-
-\begin{codeexample}
-\AddToHook{begindocument/end}{\setLTR}
-\AddToHook{leporello/box/begin}{\setRTL}
-\end{codeexample}
-
 \subsection{Restoring justified typesetting}
 
 \begin{macrodef}
 |\leporellojustified|
 \end{macrodef}
 In order to restore the default justified typesetting style of TeX after having set \macro{\raggedright}, \macro{\raggedleft} or \macro{\centering}, the packages defines the command \macro{\leporellojustified}.
+
+\subsection{Hooks}
+
+The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code. 
+
+The package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
+
+In the context of RTL typesetting, the package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset RTL mode.
+
+\begin{longtable}{
+  @{}
+  p{13em}
+  p{\dimexpr\linewidth-2\tabcolsep-13em}
+  @{}
+}
+  \toprule
+  \textbf{Hook}                    & \textbf{Position} \\*
+  \midrule
+  \macro{leporello/column/begin}   & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that sets \macro{\l_leporello_current_column_str} to the name of the current column \\
+  \macro{leporello/column/end}     & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
+  \macro{leporello/box/begin}      & before the code block stored via the \macro{leporellobox} environment is typeset to the relevant box which is preceded by a line of code that sets \macro{\l_leporello_current_box_int} to the ID of the current column and immediately followed by the code defined via the \macro{pre} key \\
+  \macro{leporello/box/end}        & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
+  \macro{leporello/typeset/before} & immediately after the start of the group that contains the typeset column \\
+  \macro{leporello/typeset/after}  & immediately before the end of the group that contains the typeset column \\
+  \bottomrule
+\end{longtable}
 
 \section{Example}
 
