@@ -1,6 +1,6 @@
 \documentclass[prepress, show frames]{leporello}
 \usepackage{lipsum}
-%\usepackage{lua-visual-debug}
+\usepackage{lua-visual-debug}
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
@@ -26,7 +26,7 @@
 \end{leporellobox}
 \end{leporellocolumn}
 
-\begin{document}
+\begin{document}\bodydir RTT\relax
 
 \leporellotypesetcolumns{one, two}
 
