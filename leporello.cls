@@ -289,6 +289,7 @@
 
 \hook_new_pair:nn { leporello / column / before } { leporello / column / after }
 \hook_new_pair:nn { leporello / box / before } { leporello / box / after }
+\hook_new_pair:nn { leporello / box / begin } { leporello / box / end }
 
 % ===
 
@@ -849,9 +850,9 @@
         \prop_item:cn { g_leporello_box_ #3 _prop } { padding ~ right }
     } {
       \draw_suspend_begin:
-        \int_set:Nn \l_leporello_current_box_int {#3}
-        \__leporello_box_break_flow:n {#3}
         \hook_use:n { leporello / box / before }
+          \int_set:Nn \l_leporello_current_box_int {#3}
+          \__leporello_box_break_flow:n {#3}
           \tl_use:c { g_leporello_box_ #3 _tl }
         \hook_use:n { leporello / box / after }
       \draw_suspend_end:
