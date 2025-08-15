@@ -308,18 +308,6 @@
           \tex_relax:D
         }
       }
-      { 2 } {
-        \tex_bodydir:D TLT
-        \tex_pardir:D TLT
-        \tex_textdir:D TLT
-        \tex_relax:D
-        \hook_gput_code:nnn { leporello / box / begin } { . } {
-          \tex_bodydir:D RTT
-          \tex_pardir:D RTT
-          \tex_textdir:D RTT
-          \tex_relax:D
-        }
-      }
     }
   }
 }
