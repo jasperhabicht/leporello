@@ -22,7 +22,7 @@
 \cs_generate_variant:Nn \vbox_set_top:Nn { Ne }
 
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
-\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { F }
+\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { T , F }
 
 \bool_new:N \l_leporello_show_frames_bool
 \bool_new:N \l_leporello_show_id_bool
@@ -287,9 +287,42 @@
 
 % ===
 
-\hook_new_pair:nn { leporello / column / before } { leporello / column / after }
-\hook_new_pair:nn { leporello / box / before } { leporello / box / after }
+\hook_new_pair:nn { leporello / typeset / before } { leporello / typeset / after }
+\hook_new_pair:nn { leporello / column / begin } { leporello / column / end }
 \hook_new_pair:nn { leporello / box / begin } { leporello / box / end }
+
+% ===
+
+\sys_if_engine_luatex:T {
+  \hook_gput_code:nnn { leporello / typeset / before } { . } {
+    \int_case:nn { \int_use:N \tex_bodydirection:D } { 
+      { 1 } {
+        \tex_bodydir:D TLT
+        \tex_pardir:D TLT
+        \tex_textdir:D TLT
+        \tex_relax:D
+        \hook_gput_code:nnn { leporello / box / begin } { . } {
+          \tex_bodydir:D TRT
+          \tex_pardir:D TRT
+          \tex_textdir:D TRT
+          \tex_relax:D
+        }
+      }
+      { 2 } {
+        \tex_bodydir:D TLT
+        \tex_pardir:D TLT
+        \tex_textdir:D TLT
+        \tex_relax:D
+        \hook_gput_code:nnn { leporello / box / begin } { . } {
+          \tex_bodydir:D RTT
+          \tex_pardir:D RTT
+          \tex_textdir:D RTT
+          \tex_relax:D
+        }
+      }
+    }
+  }
+}
 
 % ===
 
@@ -850,11 +883,11 @@
         \prop_item:cn { g_leporello_box_ #3 _prop } { padding ~ right }
     } {
       \draw_suspend_begin:
-        \hook_use:n { leporello / box / before }
-          \int_set:Nn \l_leporello_current_box_int {#3}
+        \int_set:Nn \l_leporello_current_box_int {#3}
+        \hook_use:n { leporello / box / begin }
           \__leporello_box_break_flow:n {#3}
           \tl_use:c { g_leporello_box_ #3 _tl }
-        \hook_use:n { leporello / box / after }
+        \hook_use:n { leporello / box / end }
       \draw_suspend_end:
     }
 
@@ -1168,6 +1201,7 @@
   }
 
   \group_begin:
+    \hook_use:n { leporello / typeset / before }
     \keys_set:nn { leporello / print } {#1}
     \bool_if:NT \l_leporello_reverse_layout_bool {
       \clist_reverse:N \l_leporello_columns_clist
@@ -1197,9 +1231,6 @@
           \int_incr:N \l_leporello_current_column_int
         }
 
-        \tl_analysis_log:N \l_leporello_current_column_int
-        \tl_analysis_log:n {#2}
-
         \tl_if_exist:cF { g_leporello_column_ ##1 _tl } {
           \msg_error:nnn { leporello } { column-undefined } {##1}
         }
@@ -1219,9 +1250,9 @@
               \vbox_set_top:Nn \l_leporello_typeset_column_box {
                 \draw_suspend_begin:
                   \str_set:Nn \l_leporello_current_column_str {##1}
-                  \hook_use:n { leporello / column / before }
+                  \hook_use:n { leporello / column / begin }
                     \tl_use:c { g_leporello_column_ ##1 _tl }
-                  \hook_use:n { leporello / column / after }
+                  \hook_use:n { leporello / column / end }
                 \draw_suspend_end:
               }
               \draw_box_use:N \l_leporello_typeset_column_box
@@ -1234,7 +1265,6 @@
             \l_leporello_current_page_int
             \l_leporello_current_column_int
             {####1}
-          \iow_log:n {####1}
           \__leporello_box_attach_children:n {####1}
         }
         \clist_map_inline:cn { g_leporello_column_ ##1 _boxes_clist } {
@@ -1246,7 +1276,7 @@
 
         \draw_coffin_use:Nnnn \l_leporello_current_column_coffin
           { l } { t } { \l_leporello_current_column_offset_dim , 0mm }
-
+        
         \bool_if:NTF \l_leporello_reverse_order_bool {
           \int_decr:N \l_leporello_current_column_int
         } {
@@ -1275,6 +1305,7 @@
         }
       }
     }
+    \hook_use:n { leporello / typeset / after }
   \group_end:
 }
 

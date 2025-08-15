@@ -1,23 +1,9 @@
 \documentclass[prepress, show frames]{leporello}
 \usepackage{lipsum}
 
-\usepackage[bidi=basic,layout=graphics]{babel}
-
+\usepackage[bidi=basic,layout=tabular]{babel}
 \babelprovide[main,import]{hebrew}
 \babelprovide{rl}
-
-\babelfont{rm}{FreeSerif}
-
-\ExplSyntaxOn
-\hook_gput_code:nnn { begindocument } { . } {
-    \bodydir TLT\pardir TLT\textdir TLT\relax
-}
-\hook_gput_code:nnn { leporello / box / before } { . } {
-    \bodydir TRT\pardir TRT\textdir TRT\relax
-}
-\ExplSyntaxOff
-
-\errorcontextlines100
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
