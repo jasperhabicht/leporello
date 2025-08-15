@@ -520,16 +520,20 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 \end{macrodef}
 The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
 
-\subsection{RTL typesetting}
+\subsection{Right-to-left and vertical typesetting}
 
-The document class natively supports right-to-left typesetting with LuaLaTeX. Since the \macro{babel} package also makes use of the native functions for bidirectional typesetting provided by LuaLaTeX, the package will work best with a combination of LuaLaTeX and \macro{babel}.
+The document class natively supports right-to-left and vertical typesetting using the mechanisms provided by LuaLaTeX. The \macro{babel} package also makes use of the mechanisms for bidirectional typesetting provided by LuaLaTeX, which means that this package will work best with a combination of LuaLaTeX and \macro{babel}for right-to-left or vertical typesetting.
 
-If the \macro{bidi} package is used (which is used by the \macro{polyglossia} package), the following addition to the preamble is needed:
+If the \macro{bidi} package is used (which is used by the \macro{polyglossia} package), the following addition to the preamble is needed to enable right-to-left typesetting:
 
 \begin{codeexample}
 \AddToHook{leporello/typeset/before}{\setLTR}
 \AddToHook{leporello/box/begin}{\setRTL}
 \end{codeexample}
+
+In general, it has to be made sure that only the inner boxes are affected by the right-to-left or vertical typesetting mechanism and not the overall layout. 
+
+Vertical typesetting will typically affect the measurements of the boxes. The package sets to true the boolean \macro{l_leporello_layout_vertical_ltr_bool} for vertical typesetting from left to right (for example used to write traditional Mongolian) and it sets to true the boolean \macro{l_leporello_layout_vertical_rtl_bool} for vertical typesetting from right to left (for example used to write Chinese, Japanese or Korean).
 
 \section{Other settings}
 

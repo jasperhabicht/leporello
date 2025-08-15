@@ -294,18 +294,22 @@
 
 % ===
 
-\bool_new:N \l_leporello_layout_vertical_bool
+\bool_new:N \l_leporello_layout_vertical_ltr_bool
 \bool_new:N \l_leporello_layout_vertical_rtl_bool
 
 \sys_if_engine_luatex:T {
   \hook_gput_code:nnn { leporello / typeset / before } { . } {
-    \int_case:nn { \int_use:N \tex_bodydirection:D } { 
+    \int_case:nnF { \int_use:N \tex_bodydirection:D } { 
       { 1 } {
+        \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
+        \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
         \tex_relax:D
-        \hook_gput_code:nnn { leporello / box / begin } { . } {
+        \hook_gput_code:nnn { leporello / box / begin } {
+          . / layout
+        } {
           \tex_bodydir:D TRT
           \tex_pardir:D TRT
           \tex_textdir:D TRT
@@ -313,12 +317,15 @@
         }
       }
       { 2 } {
-        \bool_set_true:N \l_leporello_layout_vertical_bool
+        \bool_set_true:N \l_leporello_layout_vertical_ltr_bool
+        \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
         \tex_relax:D
-        \hook_gput_code:nnn { leporello / box / begin } { . } {
+        \hook_gput_code:nnn { leporello / box / begin } {
+          . / layout
+        } {
           \tex_bodydir:D LTL
           \tex_pardir:D LTL
           \tex_textdir:D LTL
@@ -326,19 +333,25 @@
         }
       }
       { 3 } {
-        \bool_set_true:N \l_leporello_layout_vertical_bool
+        \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_true:N \l_leporello_layout_vertical_rtl_bool
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
         \tex_relax:D
-        \hook_gput_code:nnn { leporello / box / begin } { . } {
+        \hook_gput_code:nnn { leporello / box / begin } {
+          . / layout
+        } {
           \tex_bodydir:D RTT
           \tex_pardir:D RTT
           \tex_textdir:D RTT
           \tex_relax:D
         }
       }
+    } {
+      \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
+      \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
+      \hook_gremove_code:nn { leporello / box / begin } { . / layout }
     }
   }
 }
@@ -858,7 +871,11 @@
         \vbox_gset_split_to_ht:Ncn \g_leporello_box_flow_temp_box {
           g_leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
         } { 
-          \bool_if:NTF \l_leporello_layout_vertical_bool {
+          \bool_lazy_or:nnTF {
+            \l_leporello_layout_vertical_ltr_bool
+          } {
+            \l_leporello_layout_vertical_rtl_bool
+          } {
             \prop_if_in:cnTF { g_leporello_box_ #1 _prop } { width } {
               \prop_item:cn { g_leporello_box_ #1 _prop } { width }
             } {
@@ -894,7 +911,11 @@
 \cs_new_protected:Npn \__leporello_box_construct:nnn #1#2#3 {
   \coffin_if_exist:cF { g_leporello_box_ #1 _ #2 _ #3 _outer_coffin } {
     \dim_set:Nn \l_leporello_typeset_box_width_inner_dim {
-      \bool_if:NTF \l_leporello_layout_vertical_bool {
+      \bool_lazy_or:nnTF {
+        \l_leporello_layout_vertical_ltr_bool
+      } {
+        \l_leporello_layout_vertical_rtl_bool
+      } {
         \prop_if_in:cnTF { g_leporello_box_ #1 _prop } {height } {
           \prop_item:cn { g_leporello_box_ #3 _prop } { height }
         } {
