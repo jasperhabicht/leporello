@@ -283,6 +283,8 @@ The \macro{leporello} class is a simple LaTeX document class to create folded le
 
 A folded leaflet is sometimes called leporello in reference to the servant of Don Giovanni (known from the opera by Mozart) who, at one point, unfolds a lengthy zig-zag folded list of his master's love affairs.
 
+There are some requirements for the creation of print data for high-quality folded leaflets: Especially if the leaflet is folded inward, the inner pages should be a bit less wide, so in general the pages of a leaflet are not of the exact same width (although the widths only differ slightly). Also, borderless printing requires that the print data adds a so-called bleed area added to the layout if the final document into which the typset material extends. This area is trimmed off eventually to avoid unprinted edges due to natural movement of the paper during guillotining. Crop marks need to be added to the print data showing the layout of the final document. This packages takes into accout all these requirements.
+
 \section{Loading the document class}
 
 Use \macro{\documentclass{leporello}} to load the document class. The document class loads the \macro{geometry}, the \macro{graphicx} and the \macro{l3draw} package.
