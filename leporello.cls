@@ -692,6 +692,21 @@
       }
       \tl_clear:c { g_leporello_box_ #1 _tl }
       \vbox_gset_top:Nn \g_leporello_box_flow_temp_box {
+        \bool_lazy_or:nnT {
+          \l_leporello_layout_vertical_ltr_bool
+        } {
+          \l_leporello_layout_vertical_rtl_bool
+        } {
+          \skip_set:Nn \tex_hsize:D {
+            \prop_if_in:cnTF { g_leporello_box_ #1 _prop } { height } {
+              \prop_item:cn { g_leporello_box_ #1 _prop } { height }
+            } {
+              \l_leporello_layout_height_dim
+            } -
+            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ top } -
+            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ bottom }
+          }
+        }
         \prop_item:cn { g_leporello_box_ #1 _prop } { pre }
         \seq_item:Nn \g_leporello_box_flow_temp_seq { 1 }
         \group_begin:
@@ -709,6 +724,21 @@
       \vbox_gset_top:cn {
         g_leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
       } {
+        \bool_lazy_or:nnT {
+          \l_leporello_layout_vertical_ltr_bool
+        } {
+          \l_leporello_layout_vertical_rtl_bool
+        } {
+          \skip_set:Nn \tex_hsize:D {
+            \prop_if_in:cnTF { g_leporello_box_ #1 _prop } { height } {
+              \prop_item:cn { g_leporello_box_ #1 _prop } { height }
+            } {
+              \l_leporello_layout_height_dim
+            } -
+            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ top } -
+            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ bottom }
+          }
+        }
         \tl_use:c { g_leporello_box_ #1 _tl }
       }
       \tl_clear:c { g_leporello_box_ #1 _tl }
@@ -762,7 +792,7 @@
       } {
         \l_leporello_layout_vertical_rtl_bool
       } {
-        \prop_if_in:cnTF { g_leporello_box_ #1 _prop } {height } {
+        \prop_if_in:cnTF { g_leporello_box_ #3 _prop } { height } {
           \prop_item:cn { g_leporello_box_ #3 _prop } { height }
         } {
           \l_leporello_layout_height_dim
