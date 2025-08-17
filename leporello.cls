@@ -37,6 +37,7 @@
 \dim_new:N \l_leporello_paper_width_dim
 \dim_new:N \l_leporello_paper_height_dim
 
+\bool_new:N \l_leporello_continuous_pagination_bool
 \bool_new:N \l_leporello_auto_typeset_bool
 \clist_new:N \g_leporello_auto_typeset_clist
 \int_new:N \l_leporello_auto_typeset_int
@@ -55,6 +56,9 @@
   columns           .initial:n  = { 97mm , 100mm , 100mm } ,
   layout ~ height   .dim_set:N  = \l_leporello_layout_height_dim ,
   layout ~ height   .initial:n  = { 210mm } ,
+  cont ~ pagination .bool_set:N = \l_leporello_continuous_pagination_bool ,
+  cont ~ pagination .default:n  = { true } ,
+  cont ~ pagination .initial:n  = { false } ,
   auto ~ typeset    .bool_set:N = \l_leporello_auto_typeset_bool ,
   auto ~ typeset    .default:n  = { true } ,
   auto ~ typeset    .initial:n  = { false } ,
@@ -1161,10 +1165,28 @@
           \int_incr:N \l_leporello_current_column_int
         }
         \leporello_page_gset:n {
-          \int_eval:n {
-            ( \l_leporello_current_page_int - 1 ) *
-            \l_leporello_column_count_int +
-            \l_leporello_current_column_int
+          \bool_if:NTF \l_leporello_continuous_pagination_bool {
+            \int_eval:n {
+              ( \l_leporello_current_page_int - 1 ) *
+              \l_leporello_column_count_int +
+              \l_leporello_current_column_int
+            }
+          } {
+            \int_eval:n {
+              \int_div_truncate:nn {
+                \l_leporello_current_page_int - 1
+              } { 2 } *
+              \l_leporello_column_count_int * 2 +
+              \int_mod:nn {
+                \int_mod:nn {
+                  \l_leporello_current_page_int
+                } { 2 } *
+                \l_leporello_column_count_int +
+                \l_leporello_current_column_int
+              } {
+                \l_leporello_column_count_int * 2
+              } + 1
+            }
           }
         }
 

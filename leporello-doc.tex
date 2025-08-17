@@ -331,9 +331,19 @@ A few column layouts are predefined. These do not expect a value. The layouts wi
 Expects a dimension that sets the height of the final layout. If \macro{layout height} is not specified, the class assumes the default value of \macro{210mm} (the height of A4 landscape).
 
 \begin{macrodef}
+|auto typeset|
+\end{macrodef}
+If set, the columns are automatically typeset according to the order of the definition.
+
+\begin{macrodef}
+|cont pagination|
+\end{macrodef}
+If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10.
+
+\begin{macrodef}
 |show frames|
 \end{macrodef}
-If set, frames around the single pages (columns) are shown. Does not expect a value. 
+If set, frames around the single pages (columns) are shown. Does not expect a value.
 
 \begin{macrodef}
 |show ids|
@@ -374,7 +384,7 @@ Columns are grouped material to be typeset onto a specific page of the folded le
   <body>
 \end{|leporellocolumn|}
 \end{macrodef}
-A column is defined by the \macro{leporellocolumn} environment which takes one mandatory argument taking the name (ID) of the column.
+A column is defined by the \macro{leporellocolumn} environment which takes one mandatory argument taking the name (ID) of the column. A single dot (\macro{.}) is reserved as name for an empty column.
 
 \section{Positioning boxes}
 
@@ -499,7 +509,7 @@ Expects the ID of the box into which typeset material will flow into if it does 
 \begin{macrodef}
 |\leporellotypesetcolumns|[<options>]{<list of strings>}
 \end{macrodef}
-Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key.
+Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
 
 The command takes one optional argument that accepts one of the following keys:
 
@@ -535,7 +545,7 @@ If the \macro{bidi} package is used (which is used by the \macro{polyglossia} pa
 
 In general, it has to be made sure that only the inner boxes are affected by the right-to-left or vertical typesetting mechanism and not the overall layout. 
 
-Vertical typesetting will typically affect the measurements of the boxes. The package sets to true the boolean \macro{l_leporello_layout_vertical_ltr_bool} for vertical typesetting from left to right (for example used to write traditional Mongolian) and it sets to true the boolean \macro{l_leporello_layout_vertical_rtl_bool} for vertical typesetting from right to left (for example used to write Chinese, Japanese or Korean).
+Vertical typesetting will typically affect the measurements of the boxes. The package sets to true the boolean \macro{\l_leporello_layout_vertical_ltr_bool} for vertical typesetting from left to right (for example used to write traditional Mongolian). The package sets to true the boolean \macro{\l_leporello_layout_vertical_rtl_bool} for vertical typesetting from right to left (for example used to write Chinese, Japanese or Korean).
 
 \section{Other settings}
 
@@ -618,8 +628,8 @@ In the context of RTL typesetting, the package uses the hooks \macro{leporello/t
 
 \begin{longtable}{
   @{}
-  p{13em}
-  p{\dimexpr\linewidth-2\tabcolsep-13em}
+  p{13.5em}
+  p{\dimexpr\linewidth-2\tabcolsep-13.5em}
   @{}
 }
   \toprule
