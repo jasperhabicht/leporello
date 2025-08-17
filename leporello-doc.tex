@@ -308,9 +308,9 @@ Expects a comma-separated list of dimensions that describe the widths of the col
 A few column layouts are predefined. These do not expect a value. The layouts will set the following list of dimensions:
 
 \begin{longtable}{
-  @{} 
-  p{\dimexpr0.35\linewidth-\tabcolsep} 
-  p{\dimexpr0.65\linewidth-\tabcolsep} 
+  @{}
+  p{\dimexpr0.35\linewidth-\tabcolsep}
+  p{\dimexpr0.65\linewidth-\tabcolsep}
   @{}
 }
   \toprule
@@ -500,9 +500,9 @@ Expects a single control sequence (macro) to store the width of the current box.
 Expects a single control sequence (macro) to store the height of the current box.
 
 \begin{macrodef}
-|flow into|={<integer>}
+|flow into|={<string>}
 \end{macrodef}
-Expects the ID of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following (but not previous) column or on a following (but not previous) page. See section \ref{sec:flow} below.
+Expects a string denoting the name of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following column or on a following page. See section \ref{sec:flow} below.
 
 \section{Typesetting boxes into columns}
 
@@ -521,7 +521,7 @@ If set, the widths of the columns are reversed, but the placement of the columns
 \begin{macrodef}
 |reverse order|
 \end{macrodef}
-If set, the order of the columns is reversed, which means that the columns are typeset from right to left.
+If set, the order of the columns is reversed, which means that the columns are typeset from right to left. Pagination is not affected.
 
 \section{Flow mechanism}\label{sec:flow}
 
@@ -531,6 +531,8 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 |\leporelloboxbreak|
 \end{macrodef}
 The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
+
+Typeset material can only flow into boxes in the following column or page. If typeset material should flow backwards on the same page, this can be achieved using the key \macro{reverse order} on the relevant page.
 
 \subsection{Right-to-left and vertical typesetting}
 
@@ -543,7 +545,7 @@ If the \macro{bidi} package is used (which is used by the \macro{polyglossia} pa
 \AddToHook{leporello/box/begin}{\setRTL}
 \end{codeexample}
 
-In general, it has to be made sure that only the inner boxes are affected by the right-to-left or vertical typesetting mechanism and not the overall layout. 
+In general, it has to be made sure that only the inner boxes are affected by the right-to-left or vertical typesetting mechanism and not the overall layout.
 
 Vertical typesetting will typically affect the measurements of the boxes. The package sets to true the boolean \macro{\l_leporello_layout_vertical_ltr_bool} for vertical typesetting from left to right (for example used to write traditional Mongolian). The package sets to true the boolean \macro{\l_leporello_layout_vertical_rtl_bool} for vertical typesetting from right to left (for example used to write Chinese, Japanese or Korean).
 
@@ -592,7 +594,7 @@ If set, the image will spread into the bleed. This will result in a shift of the
 
 \subsection{Defining colors}
 
-The package uses the color model of the \macro{l3color} module. The \macro{xcolor} package is not supported. To provide a user interface to define and select colors, the commands \macro{\leporellocolordefine} and \macro{\leporellocolorselect} are defined. 
+The package uses the color model of the \macro{l3color} module. The \macro{xcolor} package is not supported. To provide a user interface to define and select colors, the commands \macro{\leporellocolordefine} and \macro{\leporellocolorselect} are defined.
 
 \begin{macrodef}
 |\leporellocolordefine|{<string>}{<color model>}{<list of values>}
@@ -620,7 +622,7 @@ In order to restore the default justified typesetting style of TeX after having 
 
 \subsection{Hooks}
 
-The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code. 
+The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
 The package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
 
