@@ -831,7 +831,19 @@
       \prop_if_in:cnTF { g_leporello_box_ #3 _prop } { width } {
         \prop_item:cn { g_leporello_box_ #3 _prop } { width }
       } {
-        \clist_item:Nn \l_leporello_columns_clist {#2}
+        \bool_lazy_or:nnTF {
+          \l_leporello_layout_vertical_ltr_bool
+        } {
+          \l_leporello_layout_vertical_rtl_bool
+        } {
+          \coffin_wd:c {
+            g_leporello_box_ #1 _ #2 _ #3 _inner_coffin
+          } +
+          \prop_item:cn { g_leporello_box_ #3 _prop } { padding ~ left } +
+          \prop_item:cn { g_leporello_box_ #3 _prop } { padding ~ right }
+        } {
+          \clist_item:Nn \l_leporello_columns_clist {#2}
+        }
       }
     }
 
@@ -851,14 +863,31 @@
     }
 
     \bool_if:nT { \prop_item:cn { g_leporello_box_ #3 _prop } { stretch ~ height } } {
-      \dim_set:Nn \l_leporello_typeset_box_height_dim {
-        \fp_to_dim:n {
-          \l_leporello_layout_height_dim -
-          (
-            \clist_item:en {
-              \prop_item:cn { g_leporello_box_ #3 _prop } { offset }
-            } { 2 }
-          )
+      \bool_lazy_or:nnTF {
+        \l_leporello_layout_vertical_ltr_bool
+      } {
+        \l_leporello_layout_vertical_rtl_bool
+      } {
+        \dim_set:Nn \l_leporello_typeset_box_width_dim {
+          \fp_to_dim:n {
+            \clist_item:Nn \l_leporello_columns_clist {#2} -
+            (
+              \clist_item:en {
+                \prop_item:cn { g_leporello_box_ #3 _prop } { offset }
+              } { 1 }
+            )
+          }
+        }
+      } {
+        \dim_set:Nn \l_leporello_typeset_box_height_dim {
+          \fp_to_dim:n {
+            \l_leporello_layout_height_dim -
+            (
+              \clist_item:en {
+                \prop_item:cn { g_leporello_box_ #3 _prop } { offset }
+              } { 2 }
+            )
+          }
         }
       }
     }
