@@ -1,60 +1,35 @@
 \documentclass[prepress, show frames]{leporello}
 \usepackage{lipsum}
-%\usepackage{lua-visual-debug}
+\usepackage{lua-visual-debug}
 
-\usepackage{luatexja}
-
-\usepackage{fontspec}
-\setfontfamily{\jap}{Noto Serif CJK JP}
-
-\begin{leporellocolumn}{one}
+\begin{leporellocolumn}{three}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
 \lipsum[1] foo foo foo foo foo foo \leporelloboxbreak foo foo \lipsum[2-4] \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
-\begin{leporellocolumn}{two}
-\begin{leporellobox}[background color=yellow, stretch height, bleed={t,b}, pre={\bfseries}, name={foo}]
+\begin{leporellocolumn}{four}
+\begin{leporellobox}[background color=yellow, stretch, bleed={t,b}, pre={\bfseries}, name={foo}]
 %\leporellojustified\lipsum[1-4]
 \end{leporellobox}
 \end{leporellocolumn}
 
-\begin{leporellocolumn}{three}
-\begin{leporellobox}[name={bar}, flow into={baz}, pre={\jap}]
-抗ケロ版担サノヘ岐質後テフヌネ局雇ぜで本動なが独手ムウレト庭揺に問97報著注ね表期さる覧強げ競頚ず船恋らて。準イル機構ぴいせず色家ぐぴ内38参セワ製更せん国金ど更輸ム参活ヌ長心空祭ト同説ト断16差並十覇ルぐ。民ぎ得責じさぎ銀和ノエリハ変所テセヌ要教ロ停断ぞ由後おちのか載87威敵沿2仕セ展典ぱぞ重地ミラハ実待起身コ育済アキカ見金乞伍佛侯て。
-
-皇ナヨユト眠屋ヨク同82永セナソ後入ヌ飼順メホイ以渡ヨトヤム演却ドざ対問ルみ長営かっ中示む容表だ士田ネニラ並産落図リノロ人重世頭野む。争イ女月25本ウ浩承ぞぜえる渡致覧わつむ構青めぶべ積帳ヲ区援うゅせゆ宏64空横のかい辺一め体天ホソ開法ぴ近査島92奈ヘキリ済企ねぜふ。
-
-用ヤヲノア省犯セ就9第へし益竹ごづ樹強ツサク剤96変索天36済ソセアコ区友リ表香オト要昇ていごづ。編線ニイセケ周快さろてし栄割ウセエル芸96木ょきて次挙ムル化人ゆ部帰くぜめま中矢あげせ在応スワラ教確うと役討なぼ型配山垣猛ひレリ。開るイばぎ質者ざるお準供治フ財相意き続伴ヨ面1平る扱南団蒼ざフし準埋そ討育ワレ援度街ワクソエ護卒ツノミオ統咲幼費は。
-
-会セメハホ小食イ揺汗訳ホ国際ルにフわ治新ルぽほト差航だでまず警穴者西識オ謙将みく揚条ロフヱシ止女ミヘホ港核ツユマ無回うぶ米誕九隊すきうる。社オキマチ写2護予出トぴ愛学こ億悪ムヲイ相金えめの党近ぞせけ高月ふくリド男放ワチ版務すほみ速向底ス健響すて投拉サ載係せべづっ造虐氏ま兵安唐寒桐しはラ。
-
-播ずこぞ読都ぶぞ腐面よ療64語をげ明重フたい法後ウラタメ季中原タモテ付内ネム無都紙記リ際8暮ミマテユ坊員ル液宅育げクっ。複アヤ田養意ヤ込18肉しうべん顧暮さなで報張トかめき際他カム内村会フ朝本ヲヨ先問コチ下漂さよ森新イヤカ経円賊べお読世ばほづ明者スヒホエ知目りむほぴ面団マサ一組殺っ。
-
-治ちてのざ著覧ゅ活製ぐきるぜ魅2載ヱオノハ南菓需ろゃわぴ文族べ載制モウ関民面じん策実車マステ真慎馬マ著態レアシミ安田整も。設てぎ視拡りラあ著右がじゃ晴棋売ヤ太本ンどれ主字子ヲイセ宴9件ワハモサ哲度8舎賛漫腹っ。様ぴ着内キユムヱ判阪どのゃ取学ぞク読証姿ノ賞成カスロソ名杯っンぴ無面の六戦ツタノナ強終ケ議村へぞ勇7昨メマヒ芸昨じ。
-
-評ークぶン場勧みえらぞ用間ヱ寄厘3社ぶねむき西果ス判清につもか民発実めやんし京都ヲウコ少美ヨレ大出要きてづ読転チシ提芝フせた。中んずど出伝ドルぴ判泳ヲ朝30状ホ舞分タ鉄山さやりざ小馬ルとあで送文きべねば話更源しゃ社面枠名ねぴ。明むけ実捜ウ残置マヲナミ家道トコ川点クウネ生婚ヱナア強誠やレづル止索止とらお勝灰ぎ囲界エソ限車71製じ目劇イ機2一ヲ夢全提7涼っぼつ。
-
-歴ホコリ億辞時シレフヘ科例ヤナヨ打施サオ妨管原タヨ中毎ー妻震イゅ利都み氏性ユソ用伎ドと庫夏まと挙5望旅むぼ。動部マムコ達策ぐのび般間フわ及遊の去授め安台千リキ候論後ユヲフネ無載ヨ宙険ヒウヌ察機ふもきめ合戦ユムタ全季勢土工トべせぶ。物ょあ王奏41巨克即脱7政富刈レぼひ転戦ワホサ区録ね本8圏ゅゆ両熊ラだぼっ警雑え客宜尋帽せわ。
-
-先げす題台室に制人ムシ強易江ゃ援6任ヘノア動聞サ演段りぜづ依顧テヲケワ得芸いわ能苦直模走の。務びも平43義6返方つねさっ越型べ各試エツ正経ムフ国70転げおリど穴防ほ題無ょれざ房表ア不注ホセ梗和ハ太池けさね図願しせじ目95漢レ。断ごにふ整縄エ勝氏不ちぴレ育就にーと敬教選ムテミラ能塁ニ読生レ成意づわぜら聞応ヤネヘフ野企チク前訳北長ごる道教止ば。
-
-企む転4木けれが転上タヒヨ機72今リ阿図テサ騎覧込選やびど争報ケロ竹新統どへか結注メヘ住第ご編年べ依子生意せで。観て数手ずべふ能6世ヨ穂処レニシア管録あかさイ連都ぜ言策タハルチ幅手はろ土改見ばた責要ぽも曜誘ぴ帰査丁侵じ。計ろみこち望利玉心りべばト治市ケ準天がふや少勤注スハサ顔分ホタカ責川そょ禁果議ノワト応端霊講喜ぶーう。\label{foo}
+\begin{leporellocolumn}{one}
+\begin{leporellobox}[name={bar}, flow into={baz}]
+\lipsum[1-3] \lipsum[4-6]
 \end{leporellobox}
 \end{leporellocolumn}
 
-\begin{leporellocolumn}{four}
+\begin{leporellocolumn}{two}
 \begin{leporellobox}[name={baz}]
-
+foo bar
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{document}
 
-\leporellotypesetcolumns{one, ., two}
-
 \bodydir RTT\relax
 
-\leporellotypesetcolumns[reverse order, reverse layout]{three, four}
+\leporellotypesetcolumns{one, two}
 
 \end{document}

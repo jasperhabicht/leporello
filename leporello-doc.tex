@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{0.9.0}
-\def\leporellofiledate{15 August 2025}
+\def\leporellofileversion{0.9.2}
+\def\leporellofiledate{18 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -265,6 +265,7 @@
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
 \changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
 \changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Enhanced pagination settings. Support for RTL and vertical typesetting.}
+\changes{v0.9.2}{2025/08/18}{Various improvements and bug fixes.}
 
 \begin{document}
 \printdoctitle
@@ -334,11 +335,6 @@ Expects a dimension that sets the height of the final layout. If \macro{layout h
 |auto typeset|
 \end{macrodef}
 If set, the columns are automatically typeset according to the order of the definition.
-
-\begin{macrodef}
-|continuous pagination|
-\end{macrodef}
-If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10.
 
 \begin{macrodef}
 |show frames|
@@ -511,7 +507,7 @@ Expects a string denoting the name of the box into which typeset material will f
 \end{macrodef}
 Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
 
-The command takes one optional argument that accepts one of the following keys:
+The command takes one optional argument that accepts the following keys:
 
 \begin{macrodef}
 |reverse layout|
@@ -522,6 +518,16 @@ If set, the widths of the columns are reversed, but the placement of the columns
 |reverse order|
 \end{macrodef}
 If set, the order of the columns is reversed, which means that the columns are typeset from right to left. Pagination is not affected.
+
+\begin{macrodef}
+|reverse pagination|
+\end{macrodef}
+If set, the pagination of the columns is reversed.
+
+\begin{macrodef}
+|continuous pagination|
+\end{macrodef}
+If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10.
 
 \section{Flow mechanism}\label{sec:flow}
 
