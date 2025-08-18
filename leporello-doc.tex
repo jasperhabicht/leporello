@@ -450,9 +450,9 @@ Expects a dimension to explicitly set the width of the current box. If not speci
 Expects a dimension to explicitly set the height of the current box. If not specified, the box takes its natural height which means that it is as high as necessary to fit the contents.
 
 \begin{macrodef}
-|stretch height|
+|stretch|
 \end{macrodef}
-If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom) meets the edge of the parent column. Does not expect a value.
+If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. Does not expect a value.
 
 \begin{macrodef}
 |padding left|={<dimension>}

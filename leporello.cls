@@ -43,7 +43,7 @@
 \int_new:N \l_leporello_auto_typeset_int
 
 \keys_define:nn { leporello / global } {
-  columns           .code:n     = {
+  columns           .code:n       = {
     \clist_set:Nn \l_leporello_columns_clist {#1}
     \int_set:Nn \l_leporello_column_count_int {
       \clist_count:N \l_leporello_columns_clist
@@ -53,48 +53,42 @@
       \dim_add:Nn \l_leporello_layout_width_dim {##1}
     }
   } ,
-  columns           .initial:n  = { 97mm , 100mm , 100mm } ,
-  layout ~ height   .dim_set:N  = \l_leporello_layout_height_dim ,
-  layout ~ height   .initial:n  = { 210mm } ,
-  continuous ~ pagination
-                    .bool_set:N = \l_leporello_continuous_pagination_bool ,
-  continuous ~ pagination
-                    .default:n  = { true } ,
-  continuous ~ pagination
-                    .initial:n  = { false } ,
-  auto ~ typeset    .bool_set:N = \l_leporello_auto_typeset_bool ,
-  auto ~ typeset    .default:n  = { true } ,
-  auto ~ typeset    .initial:n  = { false } ,
-  show ~ frames     .bool_set:N = \l_leporello_show_frames_bool ,
-  show ~ frames     .default:n  = { true } ,
-  show ~ frames     .initial:n  = { false } ,
-  show ~ ids        .bool_set:N = \l_leporello_show_id_bool ,
-  show ~ ids        .default:n  = { true } ,
-  show ~ ids        .initial:n  = { false } ,
-  prepress          .bool_set:N = \l_leporello_prepress_bool ,
-  prepress          .default:n  = { true } ,
-  prepress          .initial:n  = { false } ,
-  bleed             .dim_set:N  = \l_leporello_bleed_dim ,
-  bleed             .initial:n  = { 3mm } ,
-  info ~ area       .dim_set:N  = \l_leporello_info_area_dim ,
-  info ~ area       .initial:n  = { 10mm } ,
+  columns           .initial:n    = { 97mm , 100mm , 100mm } ,
+  layout ~ height   .dim_set:N    = \l_leporello_layout_height_dim ,
+  layout ~ height   .initial:n    = { 210mm } ,
+  auto ~ typeset    .bool_set:N   = \l_leporello_auto_typeset_bool ,
+  auto ~ typeset    .default:n    = { true } ,
+  auto ~ typeset    .initial:n    = { false } ,
+  show ~ frames     .bool_set:N   = \l_leporello_show_frames_bool ,
+  show ~ frames     .default:n    = { true } ,
+  show ~ frames     .initial:n    = { false } ,
+  show ~ ids        .bool_set:N   = \l_leporello_show_id_bool ,
+  show ~ ids        .default:n    = { true } ,
+  show ~ ids        .initial:n    = { false } ,
+  prepress          .bool_set:N   = \l_leporello_prepress_bool ,
+  prepress          .default:n    = { true } ,
+  prepress          .initial:n    = { false } ,
+  bleed             .dim_set:N    = \l_leporello_bleed_dim ,
+  bleed             .initial:n    = { 3mm } ,
+  info ~ area       .dim_set:N    = \l_leporello_info_area_dim ,
+  info ~ area       .initial:n    = { 10mm } ,
 
-  two ~ columns         .meta:n = {
+  two ~ columns         .meta:n   = {
     columns = { 99mm , 99mm }
   } ,
-  three ~ columns       .meta:n = {
+  three ~ columns       .meta:n   = {
     columns = { 97mm , 100mm , 100mm }
   } ,
-  four ~ columns        .meta:n = {
+  four ~ columns        .meta:n   = {
     columns = { 99mm , 99mm , 99mm , 100mm }
   } ,
-  four ~ columns ~ wrap .meta:n = {
+  four ~ columns ~ wrap .meta:n   = {
     columns = { 97mm , 99mm , 100mm , 101mm }
   } ,
-  five ~ columns        .meta:n = {
+  five ~ columns        .meta:n   = {
     columns = { 97mm , 97mm , 97mm , 99mm , 100mm }
   } ,
-  six ~ columns         .meta:n = {
+  six ~ columns         .meta:n   = {
     columns = { 99mm , 99mm , 96mm , 96mm , 100mm , 100mm }
   }
 }
@@ -209,7 +203,6 @@
       { height } {#1}
   } ,
   stretch            .bool_set:N  = \l__leporello_box_stretch_bool ,
-  stretch            .default:n   = { true } ,
   stretch            .initial:n   = { false } ,
   padding / left     .dim_set:N   = \l__leporello_box_padding_left_dim ,
   padding / right    .dim_set:N   = \l__leporello_box_padding_right_dim ,
@@ -241,14 +234,23 @@
 
 \bool_new:N \l_leporello_reverse_layout_bool
 \bool_new:N \l_leporello_reverse_order_bool
+\bool_new:N \l_leporello_reverse_pagination_bool
 
 \keys_define:nn { leporello / print } {
-  reverse ~ layout   .bool_set:N  = \l_leporello_reverse_layout_bool ,
-  reverse ~ layout   .default:n   = { true } ,
-  reverse ~ layout   .initial:n   = { false } ,
-  reverse ~ order    .bool_set:N  = \l_leporello_reverse_order_bool ,
-  reverse ~ order    .default:n   = { true } ,
-  reverse ~ order    .initial:n   = { false }
+  reverse ~ layout   .code:n      = {
+    \bool_set_inverse:N \l_leporello_reverse_layout_bool
+  } ,
+  reverse ~ order    .code:n      = {
+    \bool_set_inverse:N \l_leporello_reverse_order_bool
+  } ,
+  reverse ~ pagination
+                     .code:n      = {
+    \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+  } ,
+  continuous ~ pagination
+                    .bool_set:N   = \l_leporello_continuous_pagination_bool ,
+  continuous ~ pagination
+                    .initial:n    = { false }
 }
 
 \bool_new:N \l_leporello_image_fill_bleed_bool
@@ -296,7 +298,6 @@
   scale              .initial:n   = { 1 } ,
   ignore ~ padding   .clist_set:N = \l_leporello_image_ignore_padding_clist ,
   fill ~ bleed       .bool_set:N  = \l_leporello_image_fill_bleed_bool ,
-  fill ~ bleed       .default:n   = { true } ,
   fill ~ bleed       .initial:n   = { false }
 }
 
@@ -1228,26 +1229,52 @@
         }
         \leporello_page_gset:n {
           \bool_if:NTF \l_leporello_continuous_pagination_bool {
-            \int_eval:n {
-              ( \l_leporello_current_page_int - 1 ) *
-              \l_leporello_column_count_int +
-              \l_leporello_current_column_int
-            }
-          } {
-            \int_eval:n {
-              \int_div_truncate:nn {
-                \l_leporello_current_page_int - 1
-              } { 2 } *
-              \l_leporello_column_count_int * 2 +
-              \int_mod:nn {
-                \int_mod:nn {
-                  \l_leporello_current_page_int
-                } { 2 } *
+            \bool_if:NTF \l_leporello_reverse_pagination_bool {
+              \int_eval:n {
+                ( \l_leporello_current_page_int ) *
+                \l_leporello_column_count_int -
+                \l_leporello_current_column_int + 1
+              }
+            } {
+              \int_eval:n {
+                ( \l_leporello_current_page_int - 1 ) *
                 \l_leporello_column_count_int +
                 \l_leporello_current_column_int
-              } {
-                \l_leporello_column_count_int * 2
-              } + 1
+              }
+            }
+          } {
+            \bool_if:NTF \l_leporello_reverse_pagination_bool {
+              \int_eval:n {
+                \int_div_truncate:nn {
+                  \l_leporello_current_page_int - 1
+                } { 2 } *
+                \l_leporello_column_count_int * 2 -
+                \int_mod:nn {
+                  \int_mod:nn {
+                    \l_leporello_current_page_int
+                  } { 2 } *
+                  \l_leporello_column_count_int +
+                  \l_leporello_current_column_int + 1
+                } {
+                  \l_leporello_column_count_int * 2
+                } + \l_leporello_column_count_int * 2
+              }
+            } {
+              \int_eval:n {
+                \int_div_truncate:nn {
+                  \l_leporello_current_page_int - 1
+                } { 2 } *
+                \l_leporello_column_count_int * 2 +
+                \int_mod:nn {
+                  \int_mod:nn {
+                    \l_leporello_current_page_int
+                  } { 2 } *
+                  \l_leporello_column_count_int +
+                  \l_leporello_current_column_int
+                } {
+                  \l_leporello_column_count_int * 2
+                } + 1
+              }
             }
           }
         }
