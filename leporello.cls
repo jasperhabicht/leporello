@@ -208,9 +208,9 @@
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { height } {#1}
   } ,
-  stretch ~ height   .bool_set:N  = \l__leporello_box_stretch_height_bool ,
-  stretch ~ height   .default:n   = { true } ,
-  stretch ~ height   .initial:n   = { false } ,
+  stretch            .bool_set:N  = \l__leporello_box_stretch_bool ,
+  stretch            .default:n   = { true } ,
+  stretch            .initial:n   = { false } ,
   padding / left     .dim_set:N   = \l__leporello_box_padding_left_dim ,
   padding / right    .dim_set:N   = \l__leporello_box_padding_right_dim ,
   padding / top      .dim_set:N   = \l__leporello_box_padding_top_dim ,
@@ -862,7 +862,7 @@
       }
     }
 
-    \bool_if:nT { \prop_item:cn { g_leporello_box_ #3 _prop } { stretch ~ height } } {
+    \bool_if:nT { \prop_item:cn { g_leporello_box_ #3 _prop } { stretch } } {
       \bool_lazy_or:nnTF {
         \l_leporello_layout_vertical_ltr_bool
       } {
@@ -1445,8 +1445,8 @@
       { offset }
       { \clist_use:Nn \l__leporello_box_offset_clist { , } }
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
-      { stretch ~ height }
-      { \bool_if_p:N \l__leporello_box_stretch_height_bool }
+      { stretch }
+      { \bool_if_p:N \l__leporello_box_stretch_bool }
     \prop_gput:cnV { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { padding ~ left }
       \l__leporello_box_padding_left_dim
