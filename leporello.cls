@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/15} {0.9.0} {Document class for typesetting folded leaflets}
+  {2025/08/18} {0.9.2} {Document class for typesetting folded leaflets}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
@@ -699,21 +699,6 @@
       }
       \tl_clear:c { g_leporello_box_ #1 _tl }
       \vbox_gset_top:Nn \g_leporello_box_flow_temp_box {
-        \bool_lazy_or:nnT {
-          \l_leporello_layout_vertical_ltr_bool
-        } {
-          \l_leporello_layout_vertical_rtl_bool
-        } {
-          \skip_set:Nn \tex_hsize:D {
-            \prop_if_in:cnTF { g_leporello_box_ #1 _prop } { height } {
-              \prop_item:cn { g_leporello_box_ #1 _prop } { height }
-            } {
-              \l_leporello_layout_height_dim
-            } -
-            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ top } -
-            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ bottom }
-          }
-        }
         \prop_item:cn { g_leporello_box_ #1 _prop } { pre }
         \seq_item:Nn \g_leporello_box_flow_temp_seq { 1 }
         \group_begin:
@@ -731,21 +716,6 @@
       \vbox_gset_top:cn {
         g_leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
       } {
-        \bool_lazy_or:nnT {
-          \l_leporello_layout_vertical_ltr_bool
-        } {
-          \l_leporello_layout_vertical_rtl_bool
-        } {
-          \skip_set:Nn \tex_hsize:D {
-            \prop_if_in:cnTF { g_leporello_box_ #1 _prop } { height } {
-              \prop_item:cn { g_leporello_box_ #1 _prop } { height }
-            } {
-              \l_leporello_layout_height_dim
-            } -
-            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ top } -
-            \prop_item:cn { g_leporello_box_ #1 _prop } { padding ~ bottom }
-          }
-        }
         \tl_use:c { g_leporello_box_ #1 _tl }
       }
       \tl_clear:c { g_leporello_box_ #1 _tl }
@@ -829,7 +799,9 @@
         \int_set:Nn \l_leporello_current_box_int {#3}
         \hook_use:n { leporello / box / begin }
           \__leporello_box_break_flow:n {#3}
-          \tl_use:c { g_leporello_box_ #3 _tl }
+          \vbox_top:n {
+            \tl_use:c { g_leporello_box_ #3 _tl }
+          }
         \hook_use:n { leporello / box / end }
       \draw_suspend_end:
     }
