@@ -318,6 +318,9 @@
       { 1 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
+        \bool_set_inverse:N \l_leporello_reverse_layout_bool
+        \bool_set_inverse:N \l_leporello_reverse_order_bool
+        \bool_set_inverse:N \l_leporello_reverse_pagination_bool
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
@@ -350,6 +353,9 @@
       { 3 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_true:N \l_leporello_layout_vertical_rtl_bool
+        \bool_set_inverse:N \l_leporello_reverse_layout_bool
+        \bool_set_inverse:N \l_leporello_reverse_order_bool
+        \bool_set_inverse:N \l_leporello_reverse_pagination_bool
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
