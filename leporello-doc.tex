@@ -264,7 +264,7 @@
 
 \changes{v0.7.0}{2025/08/08}{First public beta release.}
 \changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
-\changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Enhanced pagination settings. Support for RTL and vertical typesetting.}
+\changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Enhanced pagination settings. Support for right-to-left and vertical typesetting.}
 \changes{v0.9.2}{2025/08/18}{Various improvements and bug fixes.}
 
 \begin{document}
@@ -334,22 +334,22 @@ Expects a dimension that sets the height of the final layout. If \macro{layout h
 \begin{macrodef}
 |auto typeset|
 \end{macrodef}
-If set, the columns are automatically typeset according to the order of the definition.
+If set, the columns are automatically typeset according to the order of the definition of the columns. This means that in a three-column layout for example, the first three defined columns will be placed on the first PDF page followed by the next three defined columns on the next PDF page. This key does not expect a value.
 
 \begin{macrodef}
 |show frames|
 \end{macrodef}
-If set, frames around the single pages (columns) are shown. Does not expect a value.
+If set, frames around the single pages (columns) are shown. This key does not expect a value.
 
 \begin{macrodef}
 |show ids|
 \end{macrodef}
-If set, the IDs of the boxes are shown. Does not expect a value. The IDs of the boxes are integers starting from 1 and increasing in the order of typesetting of the boxes.
+If set, the IDs of the boxes are shown. This key does not expect a value. The IDs of the boxes are integers starting from 1 and increasing in the order of typesetting of the boxes.
 
 \begin{macrodef}
 |prepress|
 \end{macrodef}
-If set, the paper size is increased at all four pages by the width of the info area and crop marks are shown. Does not expect a value.
+If set, the paper size is increased at all four edges by the width of the info area and crop marks are placed at the corners. This key does not expect a value.
 
 \begin{macrodef}
 |info area|={<dimension>}
@@ -369,7 +369,7 @@ Retrieves the width of the bleed in pt.
 \begin{macrodef}
 |\leporelloboxwidth|
 \end{macrodef}
-Retrieves the width of the current box including padding, but without bleed, in pt.
+Retrieves the width of the current box including padding, but without bleed, in pt. The width of the box excluding padding can be retrieved with the \macro{\linewidth} command.
 
 \section{Defining columns}
 
@@ -380,7 +380,7 @@ Columns are grouped material to be typeset onto a specific page of the folded le
   <body>
 \end{|leporellocolumn|}
 \end{macrodef}
-A column is defined by the \macro{leporellocolumn} environment which takes one mandatory argument taking the name (ID) of the column. A single dot (\macro{.}) is reserved as name for an empty column.
+A column is defined by the \macro{leporellocolumn} environment which takes one mandatory argument taking the name of the column. A single dot (\macro{.}) is reserved as name for an empty column.
 
 \section{Positioning boxes}
 
@@ -448,7 +448,7 @@ Expects a dimension to explicitly set the height of the current box. If not spec
 \begin{macrodef}
 |stretch|
 \end{macrodef}
-If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. Does not expect a value.
+If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
 
 \begin{macrodef}
 |padding left|={<dimension>}
@@ -512,22 +512,22 @@ The command takes one optional argument that accepts the following keys:
 \begin{macrodef}
 |reverse layout|
 \end{macrodef}
-If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed.
+If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed. This key does not expect a value.
 
 \begin{macrodef}
 |reverse order|
 \end{macrodef}
-If set, the order of the columns is reversed, which means that the columns are typeset from right to left. Pagination is not affected.
+If set, the order of the columns is reversed, which means that the columns are typeset from right to left. Pagination is not affected. This key does not expect a value.
 
 \begin{macrodef}
 |reverse pagination|
 \end{macrodef}
-If set, the pagination of the columns is reversed.
+If set, the pagination of the columns is reversed. This key does not expect a value.
 
 \begin{macrodef}
 |continuous pagination|
 \end{macrodef}
-If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10.
+If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10. This key does not expect a value.
 
 \section{Flow mechanism}\label{sec:flow}
 
@@ -542,7 +542,9 @@ Typeset material can only flow into boxes in the following column or page. If ty
 
 \subsection{Right-to-left and vertical typesetting}
 
-The document class natively supports right-to-left and vertical typesetting using the mechanisms provided by LuaLaTeX. The \macro{babel} package also makes use of the mechanisms for bidirectional typesetting provided by LuaLaTeX, which means that this package will work best with a combination of LuaLaTeX and \macro{babel}for right-to-left or vertical typesetting.
+The document class natively supports right-to-left and vertical typesetting using the mechanisms provided by LuaLaTeX. The \macro{babel} package also makes use of the mechanisms for bidirectional typesetting provided by LuaLaTeX, which means that this package will work best with a combination of LuaLaTeX and \macro{babel} for right-to-left or vertical typesetting.
+
+If right-to-left typesetting is activated, the layout, order and pagination of the layout will be reversed automatically.
 
 If the \macro{bidi} package is used (which is used by the \macro{polyglossia} package), the following addition to the preamble is needed to enable right-to-left typesetting:
 
@@ -596,7 +598,7 @@ Expects a comma-separated list consisting of up to four items with the values \m
 \begin{macrodef}
 |fill bleed|
 \end{macrodef}
-If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{offset}. Does not expect a value.
+If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{offset}. This key does not expect a value.
 
 \subsection{Defining colors}
 
@@ -628,11 +630,11 @@ In order to restore the default justified typesetting style of TeX after having 
 
 \subsection{Hooks}
 
-The package offers two pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
+The package offers three pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
 The package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
 
-In the context of RTL typesetting, the package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset RTL mode.
+In the context of right-to-left and vertical typesetting, the package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset right-to-left and vertical typesetting mode.
 
 \begin{longtable}{
   @{}
@@ -687,7 +689,7 @@ foo
 \begin{leporellobox}[
   background color=black!10,
   offset={0mm,50mm},
-  stretch height,
+  stretch,
   bleed={b}
 ]
 bar
