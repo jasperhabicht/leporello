@@ -24,6 +24,24 @@
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
 \prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { T , F }
 
+\cs_new:Npn \__leporello_fp_tuple_use_i:w ( #1 , #2 ) {#1}
+\cs_new:Npn \leporello_fp_tuple_use_i:n #1 {
+  \fp_to_dim:n {
+    \exp_last_unbraced:Ne
+      \__leporello_fp_tuple_use_i:w { \fp_eval:n {#1} }
+  }
+}
+\cs_generate_variant:Nn \leporello_fp_tuple_use_i:n { e }
+
+\cs_new:Npn \__leporello_fp_tuple_use_ii:w ( #1 , #2 ) {#2}
+\cs_new:Npn \leporello_fp_tuple_use_ii:n #1 {
+  \fp_to_dim:n {
+    \exp_last_unbraced:Ne
+      \__leporello_fp_tuple_use_ii:w { \fp_eval:n {#1} }
+  }
+}
+\cs_generate_variant:Nn \leporello_fp_tuple_use_ii:n { e }
+
 \bool_new:N \l_leporello_show_frames_bool
 \bool_new:N \l_leporello_show_id_bool
 \bool_new:N \l_leporello_prepress_bool
@@ -130,9 +148,9 @@
 \clist_new:N \g_leporello_parent_boxes_clist
 \prop_new:N \g_leporello_box_names_prop
 
-\tl_new:N \l__leporello_box_align_parent_clist
-\tl_new:N \l__leporello_box_align_self_clist
-\tl_new:N \l__leporello_box_offset_clist
+\clist_new:N \l__leporello_box_align_parent_clist
+\clist_new:N \l__leporello_box_align_self_clist
+\fp_new:N \l__leporello_box_offset_fp
 \tl_new:N \l__leporello_box_store_width_tl
 \tl_new:N \l__leporello_box_store_height_tl
 \dim_new:N \l__leporello_box_padding_left_dim
@@ -147,7 +165,6 @@
 
 \str_new:N \l_leporello_box_flow_into_str
 \box_new:N \g_leporello_box_flow_temp_box
-\seq_new:N \g_leporello_box_flow_temp_seq
 
 \dim_new:N \l_leporello_typeset_box_width_inner_dim
 \dim_new:N \l_leporello_typeset_box_width_dim
@@ -192,7 +209,7 @@
   align ~ parent     .initial:n   = { l , t } ,
   align ~ self       .clist_set:N = \l__leporello_box_align_self_clist ,
   align ~ self       .initial:n   = { l , t } ,
-  offset             .clist_set:N = \l__leporello_box_offset_clist ,
+  offset             .fp_set:N    = \l__leporello_box_offset_fp ,
   offset             .initial:n   = { 0mm , 0mm } ,
   width              .code:n      = {
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
@@ -290,8 +307,12 @@
     \dim_set:Nn \l_leporello_image_clip_height_dim {#1}
   } ,
   offset             .code:n      = {
-    \dim_set:Nn \l_leporello_image_offset_x_dim { \clist_item:nn {#1} { 1 } }
-    \dim_set:Nn \l_leporello_image_offset_y_dim { - \clist_item:nn {#1} { 2 } }
+    \dim_set:Nn \l_leporello_image_offset_x_dim { 
+      \leporello_fp_tuple_use_i:n {#1}
+    }
+    \dim_set:Nn \l_leporello_image_offset_y_dim { 
+      - \leporello_fp_tuple_use_ii:n {#1}
+    }
   } ,
   offset             .initial:n   = { 0mm , 0mm } ,
   scale              .fp_set:N    = \l_leporello_image_scale_fp ,
@@ -665,6 +686,20 @@
   \group_end:
 }
 
+\cs_new:Npn \__leporello_flow_split_use_i:w 
+  #1 \leporelloboxbreak #2 \q_stop {#1}
+\cs_new:Npn \__leporello_flow_split_use_i:n #1 {
+  \__leporello_flow_split_use_i:w #1 \q_stop
+}
+\cs_generate_variant:Nn \__leporello_flow_split_use_i:n { e }
+
+\cs_new:Npn \__leporello_flow_split_use_ii:w 
+  #1 \leporelloboxbreak #2 \q_stop {#2}
+\cs_new:Npn \__leporello_flow_split_use_ii:n #1 {
+  \__leporello_flow_split_use_ii:w #1 \q_stop
+}
+\cs_generate_variant:Nn \__leporello_flow_split_use_ii:n { e }
+
 \cs_new_protected:Npn \__leporello_box_break_flow:n #1 {
   \prop_if_in:cnT { g_leporello_box_ #1 _prop } { name } {
     \tl_if_exist:cT {
@@ -692,15 +727,11 @@
     \tl_if_in:cnTF { g_leporello_box_ #1 _tl } {
       \leporelloboxbreak
     } {
-      \seq_gset_split:Nne \g_leporello_box_flow_temp_seq {
-        \leporelloboxbreak
-      } {
-        \tl_use:c { g_leporello_box_ #1 _tl }
-      }
-      \tl_clear:c { g_leporello_box_ #1 _tl }
       \vbox_gset_top:Nn \g_leporello_box_flow_temp_box {
         \prop_item:cn { g_leporello_box_ #1 _prop } { pre }
-        \seq_item:Nn \g_leporello_box_flow_temp_seq { 1 }
+        \__leporello_flow_split_use_i:e {
+          \tl_use:c { g_leporello_box_ #1 _tl }
+        }
         \group_begin:
           \skip_zero:N \tex_parfillskip:D
           \tex_par:D
@@ -709,9 +740,12 @@
       \tl_gput_left:ce { g_leporello_box_ \str_use:N \l_leporello_box_flow_into_str _tl } {
         \prop_item:cn { g_leporello_box_ #1 _prop } { pre }
         \tex_noindent:D
-        \seq_item:Nn \g_leporello_box_flow_temp_seq { 2 }
+        \__leporello_flow_split_use_ii:e {
+          \tl_use:c { g_leporello_box_ #1 _tl }
+        }
         \tex_par:D
       }
+      \tl_gclear:c { g_leporello_box_ #1 _tl }
     } {
       \vbox_gset_top:cn {
         g_leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
@@ -851,9 +885,9 @@
           \fp_to_dim:n {
             \clist_item:Nn \l_leporello_columns_clist {#2} -
             (
-              \clist_item:en {
+              \leporello_fp_tuple_use_i:e {
                 \prop_item:cn { g_leporello_box_ #3 _prop } { offset }
-              } { 1 }
+              }
             )
           }
         }
@@ -862,9 +896,9 @@
           \fp_to_dim:n {
             \l_leporello_layout_height_dim -
             (
-              \clist_item:en {
+              \leporello_fp_tuple_use_ii:e {
                 \prop_item:cn { g_leporello_box_ #3 _prop } { offset }
-              } { 2 }
+              }
             )
           }
         }
@@ -1120,17 +1154,17 @@
     } { 2 }
   } {
     \fp_to_dim:n {
-      \clist_item:en {
+      \leporello_fp_tuple_use_i:e {
         \prop_item:cn { g_leporello_box_ #2 _prop } { offset }
-      } { 1 } -
+      } -
       \l__leporello_typeset_box_bleed_left_dim
     }
   } {
     \fp_to_dim:n {
       (
-        \clist_item:en {
+        \leporello_fp_tuple_use_ii:e {
           \prop_item:cn { g_leporello_box_ #2 _prop } { offset }
-        } { 2 } -
+        } -
         \l__leporello_typeset_box_bleed_top_dim
       ) * \l__leporello_typeset_coffin_attach_align_int
     }
@@ -1446,9 +1480,9 @@
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { align ~ self }
       { \clist_use:Nn \l__leporello_box_align_self_clist { , } }
-    \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
+    \prop_gput:cnV { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { offset }
-      { \clist_use:Nn \l__leporello_box_offset_clist { , } }
+      \l__leporello_box_offset_fp
     \prop_gput:cne { g_leporello_box_ \int_use:N \g_leporello_box_int _prop }
       { stretch }
       { \bool_if_p:N \l__leporello_box_stretch_bool }

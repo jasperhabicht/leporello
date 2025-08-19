@@ -21,7 +21,11 @@ FOO
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{page two}
-\begin{leporellobox}[align parent={b,l}, align self={t,l}, height=30mm, background color=cyan]
+\begin{leporellobox}[align parent={b,l}, align self={b,l}, bleed={b,l}, height=30mm, background color=cyan, name={bar}]
+FOO
+\end{leporellobox}
+
+\begin{leporellobox}[parent={bar}, align parent={t,r}, align self={b,r}, background color=magenta, stretch]
 FOO
 \end{leporellobox}
 \end{leporellocolumn}
@@ -30,6 +34,6 @@ FOO
 
 \leporellotypesetcolumns{page one, page one, page one}
 
-\leporellotypesetcolumns{page one}
+\leporellotypesetcolumns{page two}
 
 \end{document}

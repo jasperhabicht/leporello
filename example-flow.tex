@@ -1,6 +1,6 @@
 \documentclass[prepress, show frames]{leporello}
 \usepackage{lipsum}
-\usepackage{lua-visual-debug}
+%\usepackage{lua-visual-debug}
 
 \begin{leporellocolumn}{three}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
@@ -14,19 +14,26 @@
 \end{leporellobox}
 \end{leporellocolumn}
 
+\leporellosetstyle{right}{
+    align parent={r,t},
+    align self={r,t}
+}
+
 \begin{leporellocolumn}{one}
-\begin{leporellobox}[name={bar}, flow into={baz}]
+\begin{leporellobox}[name={bar}, flow into={baz}, right]
 \lipsum[1-3] \lipsum[4-6]
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
-\begin{leporellobox}[name={baz}]
+\begin{leporellobox}[name={baz}, right, background color=red!10]
 foo bar
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{document}
+
+\leporellotypesetcolumns{three, four}
 
 \bodydir RTT\relax
 
