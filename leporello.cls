@@ -307,10 +307,10 @@
     \dim_set:Nn \l_leporello_image_clip_height_dim {#1}
   } ,
   offset             .code:n      = {
-    \dim_set:Nn \l_leporello_image_offset_x_dim { 
+    \dim_set:Nn \l_leporello_image_offset_x_dim {
       \leporello_fp_tuple_use_i:n {#1}
     }
-    \dim_set:Nn \l_leporello_image_offset_y_dim { 
+    \dim_set:Nn \l_leporello_image_offset_y_dim {
       - \leporello_fp_tuple_use_ii:n {#1}
     }
   } ,
@@ -345,14 +345,14 @@
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
-        \tex_relax:D
+        \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
           . / layout
         } {
           \tex_bodydir:D TRT
           \tex_pardir:D TRT
           \tex_textdir:D TRT
-          \tex_relax:D
+          \scan_stop:
         }
       }
       { 2 } {
@@ -361,14 +361,14 @@
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
-        \tex_relax:D
+        \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
           . / layout
         } {
           \tex_bodydir:D LTL
           \tex_pardir:D LTL
           \tex_textdir:D LTL
-          \tex_relax:D
+          \scan_stop:
         }
       }
       { 3 } {
@@ -380,14 +380,14 @@
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
         \tex_textdir:D TLT
-        \tex_relax:D
+        \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
           . / layout
         } {
           \tex_bodydir:D RTT
           \tex_pardir:D RTT
           \tex_textdir:D RTT
-          \tex_relax:D
+          \scan_stop:
         }
       }
     } {
@@ -422,7 +422,7 @@
     #2
   \draw_end:
   \tex_par:D
-  \tex_vfil:D
+  \skip_vertical:n { 0pt plus 1fill }
   \tex_penalty:D -10000
 }
 
@@ -541,7 +541,7 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ left }
       }
-      \skip_add:Nn \tex_hfuzz:D {
+      \dim_add:Nn \tex_hfuzz:D {
         \prop_item:cn {
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ left }
@@ -558,7 +558,7 @@
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ right }
       }
-      \skip_add:Nn \tex_hfuzz:D {
+      \dim_add:Nn \tex_hfuzz:D {
         \prop_item:cn {
           g_leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ right }
@@ -686,14 +686,14 @@
   \group_end:
 }
 
-\cs_new:Npn \__leporello_flow_split_use_i:w 
+\cs_new:Npn \__leporello_flow_split_use_i:w
   #1 \leporelloboxbreak #2 \q_stop {#1}
 \cs_new:Npn \__leporello_flow_split_use_i:n #1 {
   \__leporello_flow_split_use_i:w #1 \q_stop
 }
 \cs_generate_variant:Nn \__leporello_flow_split_use_i:n { e }
 
-\cs_new:Npn \__leporello_flow_split_use_ii:w 
+\cs_new:Npn \__leporello_flow_split_use_ii:w
   #1 \leporelloboxbreak #2 \q_stop {#2}
 \cs_new:Npn \__leporello_flow_split_use_ii:n #1 {
   \__leporello_flow_split_use_ii:w #1 \q_stop
@@ -922,7 +922,7 @@
         \dim_add:Nn \l__leporello_typeset_box_bleed_x_dim { \l_leporello_bleed_dim }
       }
     }
-    \skip_set:Nn \tex_hfuzz:D { \l__leporello_typeset_box_bleed_x_dim }
+    \dim_add:Nn \tex_hfuzz:D { \l__leporello_typeset_box_bleed_x_dim }
 
     \clist_if_in:enT {
       \prop_item:cn { g_leporello_box_ #3 _prop } { bleed }
@@ -934,7 +934,7 @@
     } { b } {
       \dim_add:Nn \l__leporello_typeset_box_bleed_y_dim { \l_leporello_bleed_dim }
     }
-    \skip_set:Nn \tex_vfuzz:D { \l__leporello_typeset_box_bleed_y_dim }
+    \dim_add:Nn \tex_vfuzz:D { \l__leporello_typeset_box_bleed_y_dim }
 
     \coffin_new:c {
       g_leporello_box_ #1 _ #2 _ #3 _outer_coffin
@@ -1414,8 +1414,8 @@
       margin = 0pt
     }
   }
-  \dim_set:Nn \tex_topskip:D { 0pt }
-  \dim_set:Nn \tex_parindent:D { 0pt }
+  \skip_zero:N \tex_topskip:D
+  \dim_zero:N \tex_parindent:D
 }
 
 \clist_new:N \l_leporello_auto_typeset_temp_clist
@@ -1550,8 +1550,9 @@
   \dim_use:N \l_leporello_bleed_dim
 }
 
+\scan_new:N \s_leporello_split
 \NewDocumentCommand { \leporelloboxbreak } { } {
-  \tex_relax:D
+  \s_leporello_split
 }
 
 \NewDocumentCommand { \leporellojustified } { } {
