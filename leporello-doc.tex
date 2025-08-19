@@ -286,6 +286,8 @@ A folded leaflet is sometimes called leporello in reference to the servant of Do
 
 There are some requirements for the creation of print data for high-quality folded leaflets: Especially if the leaflet is folded inward, the inner pages should be a bit less wide, so in general the pages of a leaflet are not of the exact same width (although the widths only differ slightly). Also, borderless printing requires that the print data adds a so-called bleed area added to the layout if the final document into which the typeset material extends. This area is trimmed off eventually to avoid unprinted edges due to natural movement of the paper during guillotining. Crop marks need to be added to the print data showing the layout of the final document. This packages takes into account all these requirements while providing a lot of customization.
 
+\warning This document class is still in a beta phase which means that bugs cannot be ruled out and some things may not work properly. Also, updates may be published frequently. The author is grateful for reporting any bugs via GitHub at \url{https://github.com/jasperhabicht/leporello/issues}. A site for asking questions about the document class and for suggestions for improvement is available at \url{https://github.com/jasperhabicht/leporello/discussions}.
+
 \section{Loading the document class}
 
 Use \macro{\documentclass{leporello}} to load the document class. The document class loads the \macro{geometry}, the \macro{graphicx} and the \macro{l3draw} package.
@@ -433,7 +435,7 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
 \begin{macrodef}
 |offset|={<tuple of dimensions>}
 \end{macrodef}
-Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed.
+Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed. Internally, the value is parsed as a floating point variable.
 
 \begin{macrodef}
 |width|={<dimension>}
@@ -449,6 +451,8 @@ Expects a dimension to explicitly set the height of the current box. If not spec
 |stretch|
 \end{macrodef}
 If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
+
+\warning In the current version of the package, the \macro{stretch} key does not work in combination with attaching the box to another box (other than the column box).
 
 \begin{macrodef}
 |padding left|={<dimension>}
@@ -588,7 +592,7 @@ Expect a dimension to explicitly set the width and the height of the image. Sett
 \begin{macrodef}
 |offset|={<tuple of dimensions>}
 \end{macrodef}
-Expects a comma-separated list consisting of two values (tuple) that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction.
+Expects a comma-separated list consisting of two values (tuple) that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction. Internally, the value is parsed as a floating point variable.
 
 \begin{macrodef}
 |ignore padding|={<list of values>}
@@ -634,7 +638,7 @@ The package offers three pairs of hooks that are positioned at the start and end
 
 The package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
 
-In the context of right-to-left and vertical typesetting, the package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset right-to-left and vertical typesetting mode.
+The package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset right-to-left and vertical typesetting mode.
 
 \begin{longtable}{
   @{}
