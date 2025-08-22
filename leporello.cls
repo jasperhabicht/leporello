@@ -175,6 +175,8 @@
 \dim_new:N \l__leporello_typeset_box_bleed_top_dim
 \dim_new:N \l__leporello_typeset_box_bleed_x_dim
 \dim_new:N \l__leporello_typeset_box_bleed_y_dim
+\dim_new:N \l__leporello_typeset_box_stretch_x_dim
+\dim_new:N \l__leporello_typeset_box_stretch_y_dim
 \int_new:N \l__leporello_typeset_coffin_attach_align_int
 \box_new:N \l__leporello_typeset_column_box
 \coffin_new:N \l__leporello_typeset_mark_coffin
@@ -878,14 +880,15 @@
         \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ bottom }
       }
     }
-    
+
     \bool_if:nT { \prop_item:cn { g__leporello_box_ #3 _prop } { stretch } } {
       \bool_lazy_or:nnTF {
         \l_leporello_layout_vertical_ltr_bool
       } {
         \l_leporello_layout_vertical_rtl_bool
       } {
-        \__leporello_box_calculate_stretch_x:Nn \l_tmpa_dim {#3}
+        \__leporello_box_calculate_stretch_x:Nn
+          \l__leporello_typeset_box_stretch_x_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_width_dim {
           \fp_to_dim:n {
             \clist_item:Nn \l_leporello_columns_clist {#2} -
@@ -896,9 +899,12 @@
             )
           }
         }
-        \dim_add:Nn \l__leporello_typeset_box_width_dim { \l_tmpa_dim }
+        \dim_add:Nn \l__leporello_typeset_box_width_dim {
+          \l__leporello_typeset_box_stretch_x_dim
+        }
       } {
-        \__leporello_box_calculate_stretch_y:Nn \l_tmpa_dim {#3}
+        \__leporello_box_calculate_stretch_y:Nn
+          \l__leporello_typeset_box_stretch_y_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_height_dim {
           \fp_to_dim:n {
             \l_leporello_layout_height_dim -
@@ -909,7 +915,9 @@
             )
           }
         }
-        \dim_add:Nn \l__leporello_typeset_box_height_dim { \l_tmpa_dim }
+        \dim_add:Nn \l__leporello_typeset_box_height_dim {
+          \l__leporello_typeset_box_stretch_y_dim
+        }
       }
     }
 
@@ -1094,7 +1102,7 @@
       }
     }
   }
-  
+
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
   } { hc } {
