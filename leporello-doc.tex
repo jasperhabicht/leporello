@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{0.9.2}
-\def\leporellofiledate{18 August 2025}
+\def\leporellofileversion{0.9.3}
+\def\leporellofiledate{22 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -266,6 +266,7 @@
 \changes{v0.8.0}{2025/08/12}{Added box attachment mechanism and option to place arbitrary code to box background.}
 \changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Enhanced pagination settings. Support for right-to-left and vertical typesetting.}
 \changes{v0.9.2}{2025/08/18}{Various improvements and bug fixes.}
+\changes{v0.9.3}{2025/08/22}{Stretch mechanism fixed.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -456,8 +457,6 @@ Expects a dimension to explicitly set the height of the current box. If not spec
 |stretch|
 \end{macrodef}
 If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
-
-\warning In the current version of the package, the \macro{stretch} key does not work in combination with attaching the box to another box (other than the column box).
 
 \begin{macrodef}
 |padding left|={<dimension>}

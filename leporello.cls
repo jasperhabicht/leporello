@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/18} {0.9.2} {Document class for typesetting folded leaflets}
+  {2025/08/22} {0.9.3} {Document class for typesetting folded leaflets}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
@@ -147,7 +147,7 @@
 \coffin_new:N \l__leporello_current_column_coffin
 \dim_new:N \l__leporello_current_column_offset_dim
 \int_new:N \g__leporello_box_int
-\clist_new:N \g__leporello_parent_boxes_clist
+\clist_new:N \g__leporello_child_boxes_clist
 \prop_new:N \g__leporello_box_names_prop
 
 \clist_new:N \l__leporello_box_align_parent_clist
@@ -202,7 +202,9 @@
       \clist_gput_right:cV {
         g__leporello_box_ \prop_item:Nn \g__leporello_box_names_prop {#1} _children_clist
       } \g__leporello_box_int
-      \clist_gput_right:NV \g__leporello_parent_boxes_clist \g__leporello_box_int
+      \clist_gput_right:NV \g__leporello_child_boxes_clist \g__leporello_box_int
+      \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
+        { parent ~ id } { \prop_item:Nn \g__leporello_box_names_prop {#1} }
     } {
       \msg_error:nnn { leporello } { parent-box-undefined } {#1}
     }
@@ -876,13 +878,14 @@
         \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ bottom }
       }
     }
-
+    
     \bool_if:nT { \prop_item:cn { g__leporello_box_ #3 _prop } { stretch } } {
       \bool_lazy_or:nnTF {
         \l_leporello_layout_vertical_ltr_bool
       } {
         \l_leporello_layout_vertical_rtl_bool
       } {
+        \__leporello_box_calculate_stretch_x:Nn \l_tmpa_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_width_dim {
           \fp_to_dim:n {
             \clist_item:Nn \l_leporello_columns_clist {#2} -
@@ -893,7 +896,9 @@
             )
           }
         }
+        \dim_add:Nn \l__leporello_typeset_box_width_dim { \l_tmpa_dim }
       } {
+        \__leporello_box_calculate_stretch_y:Nn \l_tmpa_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_height_dim {
           \fp_to_dim:n {
             \l_leporello_layout_height_dim -
@@ -904,6 +909,7 @@
             )
           }
         }
+        \dim_add:Nn \l__leporello_typeset_box_height_dim { \l_tmpa_dim }
       }
     }
 
@@ -1064,6 +1070,210 @@
     \dim_add:Nn \l__leporello_typeset_box_bleed_top_dim { \l_leporello_bleed_dim }
   }
 }
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_x_aux:Nn #1#2 {
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { vc } {
+    \dim_add:Nn #1 {
+      \box_wd:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { r } {
+    \dim_add:Nn #1 {
+      \box_wd:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      }
+    }
+  }
+  
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { vc } {
+    \dim_sub:Nn #1 {
+      \box_wd:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { r } {
+    \dim_sub:Nn #1 {
+      \box_wd:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      }
+    }
+  }
+
+  \int_compare:nNnF {
+    \l_leporello_current_column_int
+  } = { 1 } {
+    \clist_if_in:enT {
+      \prop_item:cn {
+        g__leporello_box_ \prop_item:cn {
+          g__leporello_box_ #2 _prop
+        } { parent ~ id } _prop } { bleed }
+    } { l } {
+      \dim_add:Nn #1 { \l_leporello_bleed_dim }
+    }
+  }
+  \int_compare:nNnF {
+    \l_leporello_current_column_int
+  } = { \l_leporello_column_count_int } {
+    \clist_if_in:enT {
+      \prop_item:cn {
+        g__leporello_box_ \prop_item:cn {
+          g__leporello_box_ #2 _prop
+        } { parent ~ id } _prop } { bleed }
+    } { r } {
+      \dim_add:Nn #1 { \l_leporello_bleed_dim }
+    }
+  }
+}
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_y_aux:Nn #1#2 {
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { hc } {
+    \dim_add:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      } / 2 +
+      \box_dp:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { B } {
+    \dim_add:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      }
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { b } {
+    \dim_add:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      } +
+      \box_dp:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        #2 _outer_coffin
+      }
+    }
+  }
+
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { hc } {
+    \dim_sub:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      } / 2 +
+      \box_dp:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { B } {
+    \dim_sub:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      }
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { b } {
+    \dim_sub:Nn #1 {
+      \box_ht:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      } +
+      \box_dp:c { g__leporello_box_
+        \int_use:N \l_leporello_current_page_int _
+        \int_use:N \l_leporello_current_column_int _
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
+      }
+    }
+  }
+  
+  \clist_if_in:enT {
+    \prop_item:cn {
+      g__leporello_box_ \prop_item:cn {
+        g__leporello_box_ #2 _prop
+      } { parent ~ id } _prop } { bleed }
+  } { t } {
+    \dim_add:Nn #1 { \l_leporello_bleed_dim }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn {
+      g__leporello_box_ \prop_item:cn {
+        g__leporello_box_ #2 _prop
+      } { parent ~ id } _prop } { bleed }
+  } { b } {
+    \dim_add:Nn #1 { \l_leporello_bleed_dim }
+  }
+}
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_x:Nn #1#2 {
+  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
+    \__leporello_box_calculate_stretch_x:Ne #1 {
+      \prop_item:Nn \g__leporello_box_names_prop {
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      }
+    }
+    \__leporello_box_calculate_stretch_x_aux:Nn #1#2
+  }
+}
+\cs_generate_variant:Nn \__leporello_box_calculate_stretch_y:Nn { Ne }
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_y:Nn #1#2 {
+  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
+    \__leporello_box_calculate_stretch_y:Ne #1 {
+      \prop_item:Nn \g__leporello_box_names_prop {
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      }
+    }
+    \__leporello_box_calculate_stretch_y_aux:Nn #1#2
+  }
+}
+\cs_generate_variant:Nn \__leporello_box_calculate_stretch_y:Nn { Ne }
 
 \cs_new_protected:Npn \__leporello_boxes_attach:nn #1#2 {
   \clist_if_in:enTF {
@@ -1335,7 +1545,7 @@
             \__leporello_box_attach_children:n {####1}
           }
           \clist_map_inline:cn { g_leporello_column_ ##1 _boxes_clist } {
-            \clist_if_in:NnF \g__leporello_parent_boxes_clist {####1} {
+            \clist_if_in:NnF \g__leporello_child_boxes_clist {####1} {
               \__leporello_box_set_bleed:n {####1}
               \__leporello_boxes_attach:nn { 0 } {####1}
             }
