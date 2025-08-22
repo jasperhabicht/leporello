@@ -1,6 +1,8 @@
-\documentclass[prepress, show frames]{leporello}
+\documentclass[prepress, show frames, show ids]{leporello}
 \usepackage{lipsum}
 %\usepackage{lua-visual-debug}
+
+\errorcontextlines100
 
 \begin{leporellocolumn}{three}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
@@ -9,7 +11,12 @@
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{four}
-\begin{leporellobox}[background color=yellow, stretch, bleed={t,b}, pre={\bfseries}, name={foo}]
+\begin{leporellobox}[background color=cyan, name={qux}, bleed={t,l}, width=20mm, align parent={t,l}, align self={t,l}]
+foo
+%\leporellojustified\lipsum[1-4]
+\end{leporellobox}
+
+\begin{leporellobox}[background color=yellow, stretch, bleed={}, pre={\bfseries}, name={foo}, parent={qux}, align self={l,t}, align parent={l,B}]
 %\leporellojustified\lipsum[1-4]
 \end{leporellobox}
 \end{leporellocolumn}
@@ -26,16 +33,47 @@
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
-\begin{leporellobox}[name={baz}, right, background color=red!10]
+\begin{leporellobox}[background color=cyan, name={quz}, width={10mm}, align self={r,t}, align parent={r,t}]
+%\leporellojustified\lipsum[1-4]
+\end{leporellobox}
+
+\begin{leporellobox}[name={baz}, right, background color=red!10, parent={quz}, align parent={l,t}, stretch]
 foo bar
 \end{leporellobox}
 \end{leporellocolumn}
 
+\begin{leporellocolumn}{xxx}
+\begin{leporellobox}[background color=cyan, bleed={t,l}, width=20mm, height=20mm, align parent={t,l}, align self={t,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=magenta, width=20mm, height=20mm, align parent={t,l}, align self={t,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={b,l}, width=20mm, height=20mm, align parent={b,l}, align self={b,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={t,r}, width=20mm, height=20mm, align parent={t,r}, align self={t,r}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={b,r}, width=20mm, height=20mm, align parent={b,r}, align self={b,r}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=magenta, width=20mm, height=20mm, align parent={b,r}, align self={b,r}]
+foo
+\end{leporellobox}
+\end{leporellocolumn}
+
+
 \begin{document}
 
-\leporellotypesetcolumns{three, four}
+\leporellotypesetcolumns{three, four, xxx}
 
-\bodydir RTT\relax
+%\bodydir RTT\relax
 
 \leporellotypesetcolumns{one, two}
 
