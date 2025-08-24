@@ -1,4 +1,4 @@
-![Version 0.9.3](https://img.shields.io/badge/version-0.9.3-blue)
+![Version 0.9.5](https://img.shields.io/badge/version-0.9.5-blue)
 
 ![leporello](https://github.com/user-attachments/assets/51cf990a-7894-4e56-a4de-87e3be7ad592)
 

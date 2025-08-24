@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{0.9.3}
-\def\leporellofiledate{22 August 2025}
+\def\leporellofileversion{0.9.5}
+\def\leporellofiledate{25 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -267,6 +267,7 @@
 \changes{v0.9.0}{2025/08/15}{Box attachment mechanism and flow mechanism use box name instead of ID. Enhanced pagination settings. Support for right-to-left and vertical typesetting.}
 \changes{v0.9.2}{2025/08/18}{Various improvements and bug fixes.}
 \changes{v0.9.3}{2025/08/22}{Stretch mechanism fixed.}
+\changes{v0.9.5}{2025/08/25}{Improved alignment mechanism.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -428,7 +429,6 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
   \macro{r}    & right edge of the box        \\
   \macro{t}    & top edge of the box          \\
   \macro{vc}   & vertical center of the box   \\
-  \macro{B}    & baseline of the box          \\
   \macro{b}    & bottom edge of the box       \\
   \bottomrule
 \end{longtable}
