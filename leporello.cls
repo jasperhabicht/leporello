@@ -409,6 +409,30 @@
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
+\clist_map_inline:nn {
+  paperwidth ,
+  paperheight ,
+  textwidth ,
+  textheight ,
+  topmargin ,
+  oddsidemargin ,
+  evensidemargin ,
+  hoffset ,
+  voffset ,
+  headheight ,
+  headsep ,
+  footskip ,
+  marginparwidth ,
+  marginparsep ,
+  marginparpush
+} {
+  \cs_new_protected:cpn {
+    leporello_article_#1_set:n
+  } ##1 {
+    \dim_set:cn {#1} {##1}
+  }
+}
+
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_new_protected:Npn \leporello_page_gset:n #1 {
   \setcounter { page } {#1}
@@ -1587,10 +1611,10 @@
     \l_leporello_layout_width_dim + 2 \l_leporello_info_area_dim
   }
 
-  \dim_set:Nn \paperwidth { \l_leporello_layout_width_dim }
-  \dim_set:Nn \paperheight { \l_leporello_layout_height_dim }
-  \dim_set:Nn \textwidth { \l_leporello_layout_width_dim }
-  \dim_set:Nn \textheight { \l_leporello_layout_height_dim }
+  \leporello_article_paperwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_article_paperheight_set:n { \l_leporello_layout_height_dim }
+  \leporello_article_textwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_article_textheight_set:n { \l_leporello_layout_height_dim }
   \clist_map_inline:nn {
     hoffset ,
     voffset ,
@@ -1601,14 +1625,14 @@
     marginparsep ,
     marginparpush
   } {
-    \dim_set:cn {#1} { 0pt }
+    \use:c { leporello_article_ #1 _set:n } { 0pt }
   }
   \clist_map_inline:nn {
     topmargin ,
     oddsidemargin ,
     evensidemargin
   } {
-    \dim_set:cn {#1} { -1in }
+    \use:c { leporello_article_ #1 _set:n } { -1in }
   }
   
   \bool_if:NT \l_leporello_prepress_bool {
@@ -1617,12 +1641,12 @@
       oddsidemargin ,
       evensidemargin
     } {
-      \dim_add:cn {#1} {
-        \l_leporello_info_area_dim
+      \use:c { leporello_article_ #1 _set:n } {
+        \l_leporello_info_area_dim - 1in
       }
     } 
-    \dim_set:Nn \paperwidth { \l_leporello_paper_width_dim }
-    \dim_set:Nn \paperheight { \l_leporello_paper_height_dim }
+    \leporello_article_paperwidth_set:n { \l_leporello_paper_width_dim }
+    \leporello_article_paperheight_set:n { \l_leporello_paper_height_dim }
 
     \hook_gput_code:nnn { shipout / foreground } { . } {
       \__leporello_cropmarks:
