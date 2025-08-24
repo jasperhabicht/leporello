@@ -1176,6 +1176,16 @@
       }
     }
   }
+
+  \dim_add:Nn #1 {
+    \fp_to_dim:n {
+      \leporello_fp_tuple_use_i:e {
+        \prop_item:cn { g__leporello_box_
+          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop } { offset }
+      }
+    }
+  }
 }
 
 \cs_new_protected:Npn \__leporello_box_calculate_stretch_y_aux:Nn #1#2 {
@@ -1265,6 +1275,16 @@
       \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
     } { b } {
       \dim_add:Nn #1 { \l_leporello_bleed_dim }
+    }
+  }
+
+  \dim_add:Nn #1 {
+    \fp_to_dim:n {
+      \leporello_fp_tuple_use_ii:e {
+        \prop_item:cn { g__leporello_box_
+          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop } { offset }
+      }
     }
   }
 }
