@@ -1849,17 +1849,23 @@
   list ~ style      .initial:n    = { enumerate }
 }
 
-\NewDocumentCommand { \leporellonote } { m } {
-  \int_gincr:N \g_leporello_notes_int
-  \seq_gput_right:Nn \g_leporello_notes_seq {#1}
+\NewDocumentCommand { \leporellonote } { o m } {
+  \IfValueTF {#1} {
+    \int_gset:Nn \g_leporello_notes_int {#1}
+  } {
+    \int_gincr:N \g_leporello_notes_int
+  }
+  \seq_gput_right:Nn \g_leporello_notes_seq {#2}
   \leporello_note_mark:n { \g_leporello_notes_int }
 }
 
 \NewDocumentCommand { \leporelloprintnotes } { } {
-  \begin { \str_use:N \l_leporello_list_name_str }
-    \seq_map_tokens:Nn \g_leporello_notes_seq { \item }
-  \end { \str_use:N \l_leporello_list_name_str }
-  \seq_gclear:N \g_leporello_notes_seq
+  \seq_if_empty:NF \g_leporello_notes_seq {
+    \begin { \str_use:N \l_leporello_list_name_str }
+      \seq_map_tokens:Nn \g_leporello_notes_seq { \item }
+    \end { \str_use:N \l_leporello_list_name_str }
+    \seq_gclear:N \g_leporello_notes_seq
+  }
 }
 
 % EOF

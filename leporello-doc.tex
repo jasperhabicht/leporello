@@ -643,14 +643,14 @@ In order to restore the default justified typesetting style of TeX after having 
 Due to the layout specifications, this document class does not support footnotes. Instead, it provides its own note mechanism that allows to insert marks for notes and printing the notes combined as list.
 
 \begin{macrodef}
-|\leporellonote|{<code>}
+|\leporellonote|[<integer>]{<code>}
 \end{macrodef}
-The command \macro{\leporellonote} increases the internal note counter and inserts a mark. It stores the actual note provided in the argument in an internal sequence.
+The command \macro{\leporellonote} increases the internal note counter and inserts a mark. It stores the actual note provided in the argument in an internal sequence. Using the optional argument, the counter for the mark can be set explicitly.
 
 \begin{macrodef}
 |\leporelloprintnotes|
 \end{macrodef}
-The command \macro{\leporelloprintnotes} prints all notes as list. Per default, this is an \macro{enumerate} environment.
+The command \macro{\leporelloprintnotes} prints all notes as list. Per default, this is an \macro{enumerate} environment. It also empties the internal sequence to store notes.
 
 Using the command \macro{\leporelloset}, note marks and note lists can be styled. The following options are available:
 
