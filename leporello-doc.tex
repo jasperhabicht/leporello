@@ -302,18 +302,18 @@ Use \macro{\documentclass{leporello}} to load the document class. The document c
 The document class is based on the \macro{article} class to enable basic typesetting commands. But due to the redefinition of the layout, certain functions of the \macro{article} class, such as placing material into the header, the footer or the margin (which do not exist in the leporello layout) or using floats or footnotes won't work. Instead of floats, the document class provides a sophisticated alignment mechanism for boxes. Instead of footnotes, it provides its own note mechanism.
 
 \begin{macrodef}
-|\leporelloset|{<options>}
+|\leporelloset|[<prefix>]{<options>}
 \end{macrodef}
-Use \macro{\leporelloset} or use the optional argument of the \macro{\documentclass} command to globally set the document layout. The following options are available:
+Use \macro{\leporelloset} or use the optional argument of the \macro{\documentclass} command to globally set the document layout. The optional argument can be used to set a common prefix to all options. Options should be used without the \macro{global/} prefix when used as option to the \macro{\documentclass} command. The following options are available:
 
 \begin{macrodef}
-|columns|={<list of dimensions>}
-|two columns|
-|three columns|
-|four columns|
-|four columns wrap|
-|five columns|
-|six columns|
+global/|columns|={<list of dimensions>}
+global/|two columns|
+global/|three columns|
+global/|four columns|
+global/|four columns wrap|
+global/|five columns|
+global/|six columns|
 \end{macrodef}
 Expects a comma-separated list of dimensions that describe the widths of the columns in the layout. If \macro{columns} is not specified, the class assumes the default value of \macro{97mm, 100mm, 100mm}. The width of the document layout is automatically calculated from the dimensions set via \macro{columns}.
 
@@ -338,37 +338,37 @@ A few column layouts are predefined. These do not expect a value. The layouts wi
 \end{longtable}
 
 \begin{macrodef}
-|layout height|={<dimension>}
+global/|layout height|={<dimension>}
 \end{macrodef}
 Expects a dimension that sets the height of the final layout. If \macro{layout height} is not specified, the class assumes the default value of \macro{210mm} (the height of A4 landscape).
 
 \begin{macrodef}
-|auto typeset|
+global/|auto typeset|
 \end{macrodef}
 If set, the columns are automatically typeset according to the order of the definition of the columns. This means that in a three-column layout for example, the first three defined columns will be placed on the first PDF page followed by the next three defined columns on the next PDF page. This key does not expect a value.
 
 \begin{macrodef}
-|show frames|
+global/|show frames|
 \end{macrodef}
 If set, frames around the single pages (columns) are shown. This key does not expect a value.
 
 \begin{macrodef}
-|show ids|
+global/|show ids|
 \end{macrodef}
 If set, the IDs of the boxes are shown. This key does not expect a value. The IDs of the boxes are integers starting from 1 and increasing in the order of typesetting of the boxes.
 
 \begin{macrodef}
-|prepress|
+global/|prepress|
 \end{macrodef}
 If set, the paper size is increased at all four edges by the width of the info area and crop marks are placed at the corners. This key does not expect a value.
 
 \begin{macrodef}
-|info area|={<dimension>}
+global/|info area|={<dimension>}
 \end{macrodef}
 Expects a dimension for the width of the info area that is shown if \macro{prepress} is set. If \macro{info area} is not specified, the class assumes the default value of \macro{10mm}.
 
 \begin{macrodef}
-|bleed|={<dimension>}
+global/|bleed|={<dimension>}
 \end{macrodef}
 Expects a dimension for the width of the bleed that is added to boxes with background and other material reaching to the edges of the document layout. If \macro{bleed} is not specified, the class assumes the default value of \macro{3mm}.
 
@@ -400,20 +400,20 @@ A column is defined by the \macro{leporellocolumn} environment which takes one m
   <body>
 \end{|leporellobox|}
 \end{macrodef}
-Boxes can be positioned inside of columns. They can contain anything that can be placed in a TeX box in general. A box is defined by the \macro{leporellobox} environment which takes one optional argument to set box-specific options. These are the following:
+Boxes can be positioned inside of columns. They can contain anything that can be placed in a TeX box in general. A box is defined by the \macro{leporellobox} environment which takes one optional argument to set box-specific options. Options should be used without the \macro{box/} prefix when used as option to the \macro{leporellobox} environment. These are the following:
 
 \begin{macrodef}
-|name|={<string>}
+box/|name|={<string>}
 \end{macrodef}
 Expects a (unique) string denoting the name of the box which can be used for attaching boxes to each other or assigning boxes for the flow mechanism.
 
 \begin{macrodef}
-|parent|={<string>}
+box/|parent|={<string>}
 \end{macrodef}
 Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box. The parent box needs to be in the same column as the box that should be aligned to it.
 
 \begin{macrodef}
-|align parent|={<tuple of poles>}
+box/|align parent|={<tuple of poles>}
 \end{macrodef}
 Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the parent box (per default this is the current column box) that serves as anchor to align the current box. If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are:
 
@@ -436,37 +436,37 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
 \end{longtable}
 
 \begin{macrodef}
-|align self|={<tuple of poles>}
+box/|align self|={<tuple of poles>}
 \end{macrodef}
 Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to parent box (per default this is the current column box). If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
 
 \begin{macrodef}
-|offset|={<tuple of dimensions>}
+box/|offset|={<tuple of dimensions>}
 \end{macrodef}
 Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed. Internally, the value is parsed as a floating point variable.
 
 \begin{macrodef}
-|width|={<dimension>}
+box/|width|={<dimension>}
 \end{macrodef}
 Expects a dimension to explicitly set the width of the current box. If not specified, the box is as wide as the parent column.
 
 \begin{macrodef}
-|height|={<dimension>}
+box/|height|={<dimension>}
 \end{macrodef}
 Expects a dimension to explicitly set the height of the current box. If not specified, the box takes its natural height which means that it is as high as necessary to fit the contents.
 
 \begin{macrodef}
-|stretch|
+box/|stretch|
 \end{macrodef}
 If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
 
 \begin{macrodef}
-|padding left|={<dimension>}
-|padding right|={<dimension>}
-|padding top|={<dimension>}
-|padding bottom|={<dimension>}
-|padding|={<key-value list>}
-|no padding|
+box/|padding left|={<dimension>}
+box/|padding right|={<dimension>}
+box/|padding top|={<dimension>}
+box/|padding bottom|={<dimension>}
+box/|padding|={<key-value list>}
+box/|no padding|
 \end{macrodef}
 \macro{padding left}, \macro{padding right}, \macro{padding top} and \macro{padding bottom} each expect a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
 
@@ -475,38 +475,38 @@ All four padding settings can also be stated using the \macro{padding} key and t
 The key \macro{no padding} sets all paddings to zero. This key does not expect a value.
 
 \begin{macrodef}
-|pre|={<code>}
+box/|pre|={<code>}
 \end{macrodef}
 Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This key should be used if boxes are manually split using the \macro{\leporelloboxbreak} command.
 
 \begin{macrodef}
-|background color|={<color name>}
-|background color|={none}
+box/|background color|={<color name>}
+box/|background color|={none}
 \end{macrodef}
 Expects a color name as defined via \macro{l3color} or \macro{none} which will not fill the background. If not specified, the default value of \macro{none} is assumed.
 
 \begin{macrodef}
-|background code|={<code>}
+box/|background code|={<code>}
 \end{macrodef}
 Expects typeset material that will be placed into the background of the box aligned at the upper left corner of the box. THe typeset material is clipped to the size of the box.
 
 \begin{macrodef}
-|bleed|={<list of values>}
+box/|bleed|={<list of values>}
 \end{macrodef}
 Expects a comma-separated list consisting of up to four items with the values \macro{l} and \macro{r}, \macro{t} and \macro{b} that describe the edges (left, right, top and bottom) where bleed should be added to the box. Note that bleed is never added to the inner edges where the columns meet.
 
 \begin{macrodef}
-|store width|={<control sequence>}
+box/|store width|={<control sequence>}
 \end{macrodef}
 Expects a single control sequence (macro) to store the width of the current box.
 
 \begin{macrodef}
-|store height|={<control sequence>}
+box/|store height|={<control sequence>}
 \end{macrodef}
 Expects a single control sequence (macro) to store the height of the current box.
 
 \begin{macrodef}
-|flow into|={<string>}
+box/|flow into|={<string>}
 \end{macrodef}
 Expects a string denoting the name of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following column or on a following page. See section \ref{sec:flow} below.
 
@@ -517,25 +517,25 @@ Expects a string denoting the name of the box into which typeset material will f
 \end{macrodef}
 Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
 
-The command takes one optional argument that accepts the following keys:
+The command takes one optional argument. Options should be used without the \macro{typeset/} prefix when used as option to the \macro{\leporellotypesetcolumns} command. The command accepts the following options:
 
 \begin{macrodef}
-|reverse layout|
+typeset/|reverse layout|
 \end{macrodef}
 If set, the widths of the columns are reversed, but the placement of the columns is still from left to right. This option does not take a value. The option should be used to typeset the verso of a folded leaflet that naturally has the widths of the columns reversed. This key does not expect a value.
 
 \begin{macrodef}
-|reverse order|
+typeset/|reverse order|
 \end{macrodef}
 If set, the order of the columns is reversed, which means that the columns are typeset from right to left. Pagination is not affected. This key does not expect a value.
 
 \begin{macrodef}
-|reverse pagination|
+typeset/|reverse pagination|
 \end{macrodef}
 If set, the pagination of the columns is reversed. This key does not expect a value.
 
 \begin{macrodef}
-|continuous pagination|
+typeset/|continuous pagination|
 \end{macrodef}
 If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10. This key does not expect a value.
 
@@ -576,37 +576,37 @@ One way to insert images is via the \macro{\includegraphics} command provided by
 \begin{macrodef}
 |\leporelloimage|[<options>]{<file name>}
 \end{macrodef}
-With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding and it should only be used inside a \macro{leporellobox} environment. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take the following options:
+With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding and it should only be used inside a \macro{leporellobox} environment. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take options which should be used without the \macro{image/} prefix when used as option to the \macro{\leporelloimage} command. The following options are available:
 
 \begin{macrodef}
-|clip width|={<dimension>}
-|clip height|={<dimension>}
+image/|clip width|={<dimension>}
+image/|clip height|={<dimension>}
 \end{macrodef}
 Expect a dimension depicting the width and the height of the boxed image.
 
 \begin{macrodef}
-|scale|={<floating point number>}
+image/|scale|={<floating point number>}
 \end{macrodef}
 Expects a floating point number depicting the scaling factor of the image. This factor will not affect the size of the box.
 
 \begin{macrodef}
-|width|={<dimension>}
-|height|={<dimension>}
+image/|width|={<dimension>}
+image/|height|={<dimension>}
 \end{macrodef}
 Expect a dimension to explicitly set the width and the height of the image. Setting \macro{width} will override a \macro{scale} value. Setting \macro{height} will override a \macro{width} or \macro{scale} value. The aspect ratio of the original image will always be kept.
 
 \begin{macrodef}
-|offset|={<tuple of dimensions>}
+image/|offset|={<tuple of dimensions>}
 \end{macrodef}
 Expects a comma-separated list consisting of two values (tuple) that describe the offset of the image that will be positioned per default so that the upper left corner sits at the upper left corner of the box. A positive offset will shift the image in upper left direction. Internally, the value is parsed as a floating point variable.
 
 \begin{macrodef}
-|ignore padding|={<list of values>}
+image/|ignore padding|={<list of values>}
 \end{macrodef}
 Expects a comma-separated list consisting of up to four items with the values \macro{l} and \macro{r}, \macro{t} and \macro{b} that describe the edges (left, right, top and bottom) where the image should ignore the padding of the current box.
 
 \begin{macrodef}
-|fill bleed|
+image/|fill bleed|
 \end{macrodef}
 If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{offset}. This key does not expect a value.
 
@@ -627,9 +627,21 @@ The command \macro{\leporellocolorselect} takes the name of the previously defin
 \subsection{Defining styles}
 
 \begin{macrodef}
-|\leporellosetstyle|{<string>}{<key-value list>}
+|\leporellosetstyle|[<prefix>]{<string>}{<key-value list>}
 \end{macrodef}
-In order to simplify the setting of recurring options to the \macro{leporellobox} environment, it is possible to group several of these options as style via the \macro{\leporellosetstyle} command which takes as first argument the name of the newly defined style and as second argument the releevant options (key-value pairs). The style can then be used like an option to any \macro{leporellobox} environment.
+In order to simplify the setting of recurring options to the \macro{leporellobox} environment, it is possible to group several of these options as style via the \macro{\leporellosetstyle} command which takes as first argument the name of the newly defined style and as second argument the releevant options (key-value pairs). The style can then be used like an option to any \macro{leporellobox} environment. The optional argument can be used to set a common prefix for the style definition. The following two expressions are equivalent:
+
+\begin{codeexample}
+\leporellosetstyle[box]{align bottom}{
+  align parent={l,b},
+  align self={l,b}
+}
+
+\leporellosetstyle{box/align bottom}{
+  box/align parent={l,b},
+  box/align self={l,b}
+}
+\end{codeexample}
 
 \subsection{Restoring justified typesetting}
 
@@ -713,7 +725,7 @@ The following example shows some of the basic ideas of the package by providing 
   show ids
 ]{leporello}
 
-\leporellosetstyle{align bottom}{
+\leporellosetstyle[box]{align bottom}{
   align parent={l,b},
   align self={l,b}
 }

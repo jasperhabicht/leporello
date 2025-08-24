@@ -1,15 +1,17 @@
 \documentclass{leporello}
 \leporelloset{
-  three columns,
-  prepress,
-  show frames
+  global={
+    three columns,
+    prepress,
+    show frames
+  }
 }
 
 \usepackage{lipsum, graphicx} \sloppy
 
 \leporellocolordefine{darkred}{cmyk}{0.25,1,0.5,0.25}
 
-\leporellosetstyle{mystyle}{
+\leporellosetstyle[box]{mystyle}{
   offset={0mm,20mm}, bleed={l,r}, background color=darkred
 }
 

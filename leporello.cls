@@ -62,6 +62,21 @@
 \clist_new:N \l__leporello_auto_typeset_temp_clist
 \int_new:N \l__leporello_auto_typeset_int
 
+\keys_define:nn { leporello } {
+  global            .code:n       = {
+    \keys_set:nn { leporello / global } {#1}
+  } ,
+  box               .code:n       = {
+    \keys_set:nn { leporello / box } {#1}
+  } ,
+  typeset           .code:n       = {
+    \keys_set:nn { leporello / typeset } {#1}
+  } ,
+  image             .code:n       = {
+    \keys_set:nn { leporello / image } {#1}
+  }
+}
+
 \keys_define:nn { leporello / global } {
   columns           .code:n       = {
     \clist_set:Nn \l_leporello_columns_clist {#1}
@@ -259,7 +274,7 @@
 \bool_new:N \l_leporello_reverse_order_bool
 \bool_new:N \l_leporello_reverse_pagination_bool
 
-\keys_define:nn { leporello / print } {
+\keys_define:nn { leporello / typeset } {
   reverse ~ layout   .code:n      = {
     \bool_set_inverse:N \l_leporello_reverse_layout_bool
   } ,
@@ -1439,7 +1454,7 @@
 
   \group_begin:
     \hook_use:n { leporello / typeset / before }
-    \keys_set:nn { leporello / print } {#1}
+    \keys_set:nn { leporello / typeset } {#1}
     \bool_if:NT \l_leporello_reverse_layout_bool {
       \clist_reverse:N \l_leporello_columns_clist
     }
@@ -1781,13 +1796,23 @@
   \group_end:
 } { }
 
-\NewDocumentCommand { \leporelloset } { m } {
-  \keys_set:nn { leporello / global } {#1}
+\NewDocumentCommand { \leporelloset } { o m } {
+  \IfValueTF {#1} {
+    \keys_set:nn { leporello / #1 } {#2}
+  } {
+    \keys_set:nn { leporello } {#2}
+  }
 }
 
-\NewDocumentCommand { \leporellosetstyle } { m m } {
-  \keys_define:nn { leporello / box } {
-    #1  .meta:n = {#2}
+\NewDocumentCommand { \leporellosetstyle } { o m m } {
+  \IfValueTF {#1} {
+    \keys_define:nn { leporello / #1 } {
+      #2  .meta:n = {#3}
+    }
+  } {
+    \keys_define:nn { leporello } {
+      #2  .meta:n = {#3}
+    }
   }
 }
 
@@ -1835,13 +1860,13 @@
   \textsuperscript { \int_use:N #1 }
 }
 
-\keys_define:nn { leporello / global } {
+\keys_define:nn { leporello } {
   notes           .code:n       = {
-    \keys_set:nn { leporello / global / notes } {#1}
+    \keys_set:nn { leporello / notes } {#1}
   }
 }
 
-\keys_define:nn { leporello / global / notes } {
+\keys_define:nn { leporello / notes } {
   mark ~ cmd        .code:n       = {
     \cs_set_eq:NN \leporello_note_mark:n #1
   } ,
