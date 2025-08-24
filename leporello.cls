@@ -406,12 +406,10 @@
 
 \ProcessKeyOptions [ leporello / global ]
 \LoadClass { article }
-\RequirePackage { geometry }
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
-\cs_set_eq:NN \leporello_geometry_set:n \geometry
 \cs_new_protected:Npn \leporello_page_gset:n #1 {
   \setcounter { page } {#1}
 }
@@ -1581,22 +1579,51 @@
 
 \hook_gput_code:nnn { begindocument / before } { . } {
   \leporello_pagestyle_set:n { empty }
+  
   \dim_set:Nn \l_leporello_paper_height_dim {
     \l_leporello_layout_height_dim + 2 \l_leporello_info_area_dim
   }
   \dim_set:Nn \l_leporello_paper_width_dim {
     \l_leporello_layout_width_dim + 2 \l_leporello_info_area_dim
   }
-  \bool_if:NTF \l_leporello_prepress_bool {
-    \leporello_geometry_set:n {
-      layoutwidth = \l_leporello_layout_width_dim ,
-      layoutheight = \l_leporello_layout_height_dim ,
-      layouthoffset = \l_leporello_info_area_dim ,
-      layoutvoffset = \l_leporello_info_area_dim ,
-      paperwidth = \l_leporello_paper_width_dim ,
-      paperheight = \l_leporello_paper_height_dim ,
-      margin = 0pt
-    }
+
+  \dim_set:Nn \paperwidth { \l_leporello_layout_width_dim }
+  \dim_set:Nn \paperheight { \l_leporello_layout_height_dim }
+  \dim_set:Nn \textwidth { \l_leporello_layout_width_dim }
+  \dim_set:Nn \textheight { \l_leporello_layout_height_dim }
+  \clist_map_inline:nn {
+    hoffset ,
+    voffset ,
+    headheight ,
+    headsep ,
+    footskip ,
+    marginparwidth ,
+    marginparsep ,
+    marginparpush
+  } {
+    \dim_set:cn {#1} { 0pt }
+  }
+  \clist_map_inline:nn {
+    topmargin ,
+    oddsidemargin ,
+    evensidemargin
+  } {
+    \dim_set:cn {#1} { -1in }
+  }
+  
+  \bool_if:NT \l_leporello_prepress_bool {
+    \clist_map_inline:nn {
+      topmargin ,
+      oddsidemargin ,
+      evensidemargin
+    } {
+      \dim_add:cn {#1} {
+        \l_leporello_info_area_dim
+      }
+    } 
+    \dim_set:Nn \paperwidth { \l_leporello_paper_width_dim }
+    \dim_set:Nn \paperheight { \l_leporello_paper_height_dim }
+
     \hook_gput_code:nnn { shipout / foreground } { . } {
       \__leporello_cropmarks:
       \dim_set:Nn \l__leporello_current_column_offset_dim {
@@ -1610,13 +1637,8 @@
         \__leporello_cropmarks:n { \l__leporello_current_column_offset_dim }
       }
     }
-  } {
-    \leporello_geometry_set:n {
-      paperwidth = \_leporello_layout_width_dim ,
-      paperheight = \l_leporello_layout_height_dim ,
-      margin = 0pt
-    }
   }
+  
   \skip_zero:N \tex_topskip:D
   \dim_zero:N \tex_parindent:D
 }
