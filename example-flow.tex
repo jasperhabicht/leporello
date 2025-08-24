@@ -2,11 +2,22 @@
 \usepackage{lipsum}
 %\usepackage{lua-visual-debug}
 
-\errorcontextlines100
+\usepackage{enumitem}
+\newlist{notes}{enumerate}{1}
+\setlist[notes]{label*=\roman*.}
+
+\newcommand{\romansuper}[1]{\,\textsuperscript{\romannumeral #1}}
+
+\leporelloset{
+  notes = { 
+    mark cmd = \romansuper,
+    list style = notes
+  }
+}
 
 \begin{leporellocolumn}{three}
 \begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
-\lipsum[1] foo foo foo foo foo foo \leporelloboxbreak foo foo \lipsum[2-4] \pageref{foo}
+\lipsum[1] foo foo foo foo\leporellonote{hello} foo foo \leporelloboxbreak foo foo \lipsum[2-4] \pageref{foo} bar
 \end{leporellobox}
 \end{leporellocolumn}
 
@@ -16,8 +27,11 @@ foo
 %\leporellojustified\lipsum[1-4]
 \end{leporellobox}
 
-\begin{leporellobox}[background color=yellow, stretch, bleed={}, pre={\bfseries}, name={foo}, parent={qux}, align self={l,t}, align parent={l,b}]
+\begin{leporellobox}[background color=yellow, stretch, bleed={}, name={foo}, parent={qux}, align self={l,t}, align parent={l,b}]
 %\leporellojustified\lipsum[1-4]
+
+\par
+\leporelloprintnotes
 \end{leporellobox}
 \end{leporellocolumn}
 
@@ -38,7 +52,7 @@ foo
 \end{leporellobox}
 
 \begin{leporellobox}[name={baz}, right, background color=red!10, parent={quz}, align parent={l,t}, stretch]
-foo bar
+foo bar\label{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 

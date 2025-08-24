@@ -229,7 +229,9 @@
   padding / right    .dim_set:N   = \l__leporello_box_padding_right_dim ,
   padding / top      .dim_set:N   = \l__leporello_box_padding_top_dim ,
   padding / bottom   .dim_set:N   = \l__leporello_box_padding_bottom_dim ,
-  padding            .code:n      = { \keys_set:nn { leporello / box / padding } {#1} } ,
+  padding            .code:n      = {
+    \keys_set:nn { leporello / box / padding } {#1}
+  } ,
   padding            .initial:n   = {
     left   = 7.5mm ,
     right  = 7.5mm ,
@@ -427,7 +429,7 @@
   marginparpush
 } {
   \cs_new_protected:cpn {
-    leporello_article_#1_set:n
+    leporello_ltlayout_ #1 _set:n
   } ##1 {
     \dim_set:cn {#1} {##1}
   }
@@ -1611,10 +1613,10 @@
     \l_leporello_layout_width_dim + 2 \l_leporello_info_area_dim
   }
 
-  \leporello_article_paperwidth_set:n { \l_leporello_layout_width_dim }
-  \leporello_article_paperheight_set:n { \l_leporello_layout_height_dim }
-  \leporello_article_textwidth_set:n { \l_leporello_layout_width_dim }
-  \leporello_article_textheight_set:n { \l_leporello_layout_height_dim }
+  \leporello_ltlayout_paperwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_ltlayout_paperheight_set:n { \l_leporello_layout_height_dim }
+  \leporello_ltlayout_textwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_ltlayout_textheight_set:n { \l_leporello_layout_height_dim }
   \clist_map_inline:nn {
     hoffset ,
     voffset ,
@@ -1625,14 +1627,14 @@
     marginparsep ,
     marginparpush
   } {
-    \use:c { leporello_article_ #1 _set:n } { 0pt }
+    \use:c { leporello_ltlayout_ #1 _set:n } { 0pt }
   }
   \clist_map_inline:nn {
     topmargin ,
     oddsidemargin ,
     evensidemargin
   } {
-    \use:c { leporello_article_ #1 _set:n } { -1in }
+    \use:c { leporello_ltlayout_ #1 _set:n } { -1in }
   }
   
   \bool_if:NT \l_leporello_prepress_bool {
@@ -1641,12 +1643,12 @@
       oddsidemargin ,
       evensidemargin
     } {
-      \use:c { leporello_article_ #1 _set:n } {
+      \use:c { leporello_ltlayout_ #1 _set:n } {
         \l_leporello_info_area_dim - 1in
       }
     } 
-    \leporello_article_paperwidth_set:n { \l_leporello_paper_width_dim }
-    \leporello_article_paperheight_set:n { \l_leporello_paper_height_dim }
+    \leporello_ltlayout_paperwidth_set:n { \l_leporello_paper_width_dim }
+    \leporello_ltlayout_paperheight_set:n { \l_leporello_paper_height_dim }
 
     \hook_gput_code:nnn { shipout / foreground } { . } {
       \__leporello_cropmarks:
@@ -1821,6 +1823,43 @@
 
 \NewDocumentCommand { \leporellotypesetcolumns } { O{} m } {
   \leporello_typeset_columns:nn {#1} {#2}
+}
+
+% ===
+
+\int_new:N \g_leporello_notes_int
+\seq_new:N \g_leporello_notes_seq
+\str_new:N \l_leporello_list_name_str
+
+\cs_new:Npn \leporello_note_mark:n #1 {
+  \textsuperscript { \int_use:N #1 }
+}
+
+\keys_define:nn { leporello / global } {
+  notes           .code:n       = {
+    \keys_set:nn { leporello / global / notes } {#1}
+  }
+}
+
+\keys_define:nn { leporello / global / notes } {
+  mark ~ cmd        .code:n       = {
+    \cs_set_eq:NN \leporello_note_mark:n #1
+  } ,
+  list ~ style      .str_set:N    = \l_leporello_list_name_str ,
+  list ~ style      .initial:n    = { enumerate }
+}
+
+\NewDocumentCommand { \leporellonote } { m } {
+  \int_gincr:N \g_leporello_notes_int
+  \seq_gput_right:Nn \g_leporello_notes_seq {#1}
+  \leporello_note_mark:n { \g_leporello_notes_int }
+}
+
+\NewDocumentCommand { \leporelloprintnotes } { } {
+  \begin { \str_use:N \l_leporello_list_name_str }
+    \seq_map_tokens:Nn \g_leporello_notes_seq { \item }
+  \end { \str_use:N \l_leporello_list_name_str }
+  \seq_gclear:N \g_leporello_notes_seq
 }
 
 % EOF

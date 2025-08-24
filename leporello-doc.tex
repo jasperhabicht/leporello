@@ -297,7 +297,9 @@ There are some requirements for the creation of print data for high-quality fold
 
 \section{Loading the document class}
 
-Use \macro{\documentclass{leporello}} to load the document class. The document class loads the \macro{geometry}, the \macro{graphicx} and the \macro{l3draw} package.
+Use \macro{\documentclass{leporello}} to load the document class. The document class loads the \macro{graphicx} and the \macro{l3draw} package.
+
+The document class is based on the \macro{article} class to enable basic typesetting commands. But due to the redefinition of the layout, certain functions of the \macro{article} class, such as placing material into the header, the footer or the margin (which do not exist in the leporello layout) or using floats or footnotes won't work. Instead of floats, the document class provides a sophisticated alignment mechanism for boxes. Instead of footnotes, it provides its own note mechanism.
 
 \begin{macrodef}
 |\leporelloset|{<options>}
@@ -635,6 +637,39 @@ In order to simplify the setting of recurring options to the \macro{leporellobox
 |\leporellojustified|
 \end{macrodef}
 In order to restore the default justified typesetting style of TeX after having set \macro{\raggedright}, \macro{\raggedleft} or \macro{\centering}, the packages defines the command \macro{\leporellojustified}.
+
+\subsection{Notes}
+
+Due to the layout specifications, this document class does not support footnotes. Instead, it provides its own note mechanism that allows to insert marks for notes and printing the notes combined as list.
+
+\begin{macrodef}
+|\leporellonote|{<code>}
+\end{macrodef}
+The command \macro{\leporellonote} increases the internal note counter and inserts a mark. It stores the actual note provided in the argument in an internal sequence.
+
+\begin{macrodef}
+|\leporelloprintnotes|
+\end{macrodef}
+The command \macro{\leporelloprintnotes} prints all notes as list. Per default, this is an \macro{enumerate} environment.
+
+Using the command \macro{\leporelloset}, note marks and note lists can be styled. The following options are available:
+
+\begin{macrodef}
+notes/|mark cmd|={<control sequence>}
+\end{macrodef}
+Expects a control sequence that takes exactly one argument being the value of the counter of the note. The counter has the L3 integer type. To print the marks as Roman numerals in square brackets separated by a space, for example, the following settings could be used:
+
+\begin{codeexample}
+\NewDocumentCommand{\squaredroman}{m}{\,[\romannumeral #1]}
+\leporellonotesset{
+  mark cmd = {\squaredroman}
+}
+\end{codeexample}
+
+\begin{macrodef}
+notes/|list style|={<string>}
+\end{macrodef}
+Expects a name of the list environment such as \macro{enumerate} or \macro{itemize}. Using the \macro{enumitem} package, for example, a custom list can be created and styled individually.
 
 \subsection{Hooks}
 
