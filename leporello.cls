@@ -850,6 +850,7 @@
     }
   }
 }
+\cs_generate_variant:Nn \__leporello_box_update_poles:nnn { VVn }
 
 \cs_new_protected:Npn \__leporello_box_construct:nnn #1#2#3 {
   \coffin_if_exist:cF { g__leporello_box_ #1 _ #2 _ #3 _outer_coffin } {
@@ -1348,11 +1349,10 @@
   }
 
   \int_compare:nNnF {#1} = { 0 } {
-    \__leporello_box_update_poles:nnn {
-      \int_use:N \l_leporello_current_page_int
-    } {
-      \int_use:N \l_leporello_current_column_int
-    } {#1}
+    \__leporello_box_update_poles:VVn
+      \l_leporello_current_page_int
+      \l_leporello_current_column_int
+      {#1}
   }
 }
 
