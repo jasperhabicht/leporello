@@ -6,6 +6,7 @@
     show frames
   }
 }
+\usepackage{tabularray}
 
 \usepackage{lipsum, graphicx} \sloppy
 
@@ -63,8 +64,41 @@
 
 \end{leporellocolumn}
 
+
+\begin{leporellocolumn}{table}
+\begin{leporellobox}[flow into={tableb}, background color=cyan, stretch]
+
+\bfseries
+\lipsum[1]
+
+\pagebreak
+
+\lipsum[3]
+
+\begin{longtblr}{ colspec={ll} }
+ foo & bar \\
+ foo & bar \\
+ foo & bar \\
+ foo & bar \\
+ foo & bar \\ 
+ foo & bar \\
+ foo & bar \\
+ foo & bar \\
+\end{longtblr}
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{tableii}
+\begin{leporellobox}[name={tableb}, background color=cyan]
+\end{leporellobox}
+\end{leporellocolumn}
+
 \leporellotypesetcolumns{page three, page three, page one}
 
 \leporellotypesetcolumns[reverse layout]{page one, page two, page three}
+
+\leporellotypesetcolumns{table, tableii}
+
+
 
 \end{document}

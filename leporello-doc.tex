@@ -478,7 +478,7 @@ The key \macro{no padding} sets all paddings to zero. This key does not expect a
 \begin{macrodef}
 box/|pre|={<code>}
 \end{macrodef}
-Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This key should be used if boxes are manually split using the \macro{\leporelloboxbreak} command.
+Expects a token list that is placed before the actual contents of the box. Should not contain typeset material. This can be handy, if multiple boxes should be styled in a similar way.
 
 \begin{macrodef}
 box/|background color|={<color name>}
@@ -547,7 +547,7 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 \begin{macrodef}
 |\leporelloboxbreak|
 \end{macrodef}
-The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place.
+The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place, especially for justified typesetting. Otherwise, a \macro{\pagebreak} command can be used to insert a manual break of the typesetting material.
 
 Typeset material can only flow into boxes in the following column or page. If typeset material should flow backwards on the same page, this can be achieved using the key \macro{reverse order} on the relevant page.
 
@@ -643,13 +643,6 @@ In order to simplify the setting of recurring options to the \macro{leporellobox
   box/align self={l,b}
 }
 \end{codeexample}
-
-\subsection{Restoring justified typesetting}
-
-\begin{macrodef}
-|\leporellojustified|
-\end{macrodef}
-In order to restore the default justified typesetting style of TeX after having set \macro{\raggedright}, \macro{\raggedleft} or \macro{\centering}, the packages defines the command \macro{\leporellojustified}.
 
 \subsection{Notes}
 
