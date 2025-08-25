@@ -154,6 +154,52 @@
   Parent ~ box ~ #1 ~ undefined.
 }
 
+\msg_new:nnn { leporello } { command-unsupported } {
+  \msg_error_text:n { leporello } \iow_newline:
+  Unsupported ~ command: ~ #1.
+}
+
+\msg_new:nnn { leporello } { environment-unsupported } {
+  \msg_error_text:n { leporello } \iow_newline:
+  Unsupported ~ environment: ~ #1.
+}
+
+\hook_gput_code:nnn { cmd / footnote / before } { . } {
+  \msg_error:nne { leporello } { command-unsupported } {
+    \token_to_str:N \footnote
+  }
+}
+
+\hook_gput_code:nnn { cmd / footnote / before } { . } {
+  \msg_error:nne { leporello } { command-unsupported } {
+    \token_to_str:N \footnotemark
+  }
+}
+
+\hook_gput_code:nnn { cmd / footnote / before } { . } {
+  \msg_error:nne { leporello } { command-unsupported } {
+    \token_to_str:N \footnotetext
+  }
+}
+
+\hook_gput_code:nnn { cmd / marginpar / before } { . } {
+  \msg_error:nne { leporello } { command-unsupported } {
+    \token_to_str:N \marginpar
+  }
+}
+
+\hook_gput_code:nnn { env / figure / before } { . } {
+  \msg_error:nnn { leporello } { environment-unsupported } {
+    figure
+  }
+}
+
+\hook_gput_code:nnn { env / table / before } { . } {
+  \msg_error:nnn { leporello } { environment-unsupported } {
+    table
+  }
+}
+
 \int_new:N \l_leporello_current_page_int
 \int_new:N \l_leporello_current_column_int
 \str_new:N \l_leporello_current_column_str
