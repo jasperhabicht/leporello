@@ -1824,20 +1824,25 @@
   }
 }
 
-\NewDocumentCommand { \leporelloboxwidth } { } {
-  \dim_use:N \l__leporello_typeset_box_width_dim
-}
-
-\NewDocumentCommand { \leporellobleed } { } {
-  \dim_use:N \l_leporello_bleed_dim
+\NewDocumentCommand { \leporellotypesetcolumns } { O{} m } {
+  \leporello_typeset_columns:nn {#1} {#2}
 }
 
 \NewDocumentCommand { \leporelloboxbreak } { } {
   \group_begin:
     \skip_zero:N \tex_parfillskip:D
     \tex_par:D
-    \tex_penalty:D -100000
+    \skip_vertical:n { 0pt plus 1fill }
+    \tex_penalty:D -10000
   \group_end:
+}
+
+\NewDocumentCommand { \leporelloboxwidth } { } {
+  \dim_use:N \l__leporello_typeset_box_width_dim
+}
+
+\NewDocumentCommand { \leporellobleed } { } {
+  \dim_use:N \l_leporello_bleed_dim
 }
 
 \NewDocumentCommand { \leporellocolordefine } { m m m } {
@@ -1850,10 +1855,6 @@
 
 \NewDocumentCommand { \leporelloimage } { O{} m } {
   \leporello_typeset_image:nn {#1} {#2}
-}
-
-\NewDocumentCommand { \leporellotypesetcolumns } { O{} m } {
-  \leporello_typeset_columns:nn {#1} {#2}
 }
 
 % ===

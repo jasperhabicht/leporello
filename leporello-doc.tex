@@ -547,7 +547,7 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 \begin{macrodef}
 |\leporelloboxbreak|
 \end{macrodef}
-The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} should be inserted at the point where the break should take place, especially for justified typesetting. Otherwise, a \macro{\pagebreak} command can be used to insert a manual break of the typesetting material.
+The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} or \macro{\pagebreak} should be inserted at the point where the break should take place. The command \macro{\leporelloboxbreak} is especially suited for justified typesetting as it will keep the last line before the break justified in contrast to the \macro{\pagebreak} command.
 
 Typeset material can only flow into boxes in the following column or page. If typeset material should flow backwards on the same page, this can be achieved using the key \macro{reverse order} on the relevant page.
 
