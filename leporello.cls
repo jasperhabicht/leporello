@@ -154,49 +154,63 @@
   Parent ~ box ~ #1 ~ undefined.
 }
 
-\msg_new:nnn { leporello } { command-unsupported } {
+\msg_new:nnn { leporello } { command-not-supported } {
   \msg_error_text:n { leporello } \iow_newline:
-  Unsupported ~ command: ~ #1.
+  Command ~ #1 ~ not ~ supported. 
+  \tl_if_empty:nF {#2} {
+    \iow_newline: #2
+  }
 }
 
-\msg_new:nnn { leporello } { environment-unsupported } {
+\msg_new:nnn { leporello } { environment-not-supported } {
   \msg_error_text:n { leporello } \iow_newline:
-  Unsupported ~ environment: ~ #1.
-}
-
-\hook_gput_code:nnn { cmd / footnote / before } { . } {
-  \msg_error:nne { leporello } { command-unsupported } {
-    \token_to_str:N \footnote
+  Environment ~ #1 ~ not ~ supported.
+  \tl_if_empty:nF {#2} {
+    \iow_newline: #2
   }
 }
 
 \hook_gput_code:nnn { cmd / footnote / before } { . } {
-  \msg_error:nne { leporello } { command-unsupported } {
+  \msg_error:nnee { leporello } { command-not-supported } {
+    \token_to_str:N \footnote
+  } {
+    Consider ~ using ~ \token_to_str:N \leporellonote \c_space_tl instead.
+  }
+}
+
+\hook_gput_code:nnn { cmd / footnote / before } { . } {
+  \msg_error:nne { leporello } { command-not-supported } {
     \token_to_str:N \footnotemark
   }
 }
 
 \hook_gput_code:nnn { cmd / footnote / before } { . } {
-  \msg_error:nne { leporello } { command-unsupported } {
+  \msg_error:nne { leporello } { command-not-supported } {
     \token_to_str:N \footnotetext
   }
 }
 
 \hook_gput_code:nnn { cmd / marginpar / before } { . } {
-  \msg_error:nne { leporello } { command-unsupported } {
+  \msg_error:nnee { leporello } { command-not-supported } {
     \token_to_str:N \marginpar
+  } {
+    Consider ~ using ~ \token_to_str:N \leporellonote ~ instead.
   }
 }
 
 \hook_gput_code:nnn { env / figure / before } { . } {
-  \msg_error:nnn { leporello } { environment-unsupported } {
+  \msg_error:nnnn { leporello } { environment-not-supported } {
     figure
+  } {
+    Document ~ class ~ does ~ not ~ support ~ floats.
   }
 }
 
 \hook_gput_code:nnn { env / table / before } { . } {
-  \msg_error:nnn { leporello } { environment-unsupported } {
+  \msg_error:nnnn { leporello } { environment-not-supported } {
     table
+  } {
+    Document ~ class ~ does ~ not ~ support ~ floats.
   }
 }
 

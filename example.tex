@@ -6,7 +6,7 @@
     show frames
   }
 }
-\usepackage{tabularray}
+\usepackage{tabularray, longtable}
 
 \usepackage{lipsum, graphicx} \sloppy
 
@@ -71,11 +71,11 @@
 \bfseries
 \lipsum[1]
 
-\pagebreak
+%\pagebreak
 
-\lipsum[3]
+\lipsum[3] foo bar baz
 
-\begin{longtblr}{ colspec={ll} }
+\begin{longtable}{ll}
  foo & bar \\
  foo & bar \\
  foo & bar \\
@@ -84,7 +84,10 @@
  foo & bar \\
  foo & bar \\
  foo & bar \\
-\end{longtblr}
+ foo & bar \\
+ foo & bar \\
+ foo & bar \\
+\end{longtable}
 \end{leporellobox}
 \end{leporellocolumn}
 
