@@ -837,7 +837,7 @@
     } {
       \tl_use:c { g__leporello_box_ #1 _tl }
     }
-    \tl_clear:c { g__leporello_box_ #1 _tl }
+    \tl_gclear:c { g__leporello_box_ #1 _tl }
     \group_begin:
       \skip_zero:N \tex_splittopskip:D
       \vbox_gset_split_to_ht:Ncn \g__leporello_box_flow_temp_box {
@@ -889,8 +889,8 @@
     \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
   } { l } {
     \int_compare:nNnT {#2} = { 1 } {
-      \coffin_gset_vertical_pole:cnn {
-        g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+      \coffin_set_vertical_pole:cnn {
+        l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
       } { l } {
         \l_leporello_bleed_dim
       }
@@ -900,11 +900,11 @@
     \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
   } { r } {
     \int_compare:nNnT {#2} = { \l_leporello_column_count_int } {
-      \coffin_gset_vertical_pole:cnn {
-        g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+      \coffin_set_vertical_pole:cnn {
+        l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
       } { r } {
         \coffin_wd:c {
-          g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+          l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
         } -
         \l_leporello_bleed_dim
       }
@@ -913,11 +913,11 @@
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
   } { t } {
-    \coffin_gset_horizontal_pole:cnn {
-      g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+    \coffin_set_horizontal_pole:cnn {
+      l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
     } { t } {
       \coffin_ht:c {
-        g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+        l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
       } -
       \l_leporello_bleed_dim
     }
@@ -925,11 +925,11 @@
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
   } { b } {
-    \coffin_gset_horizontal_pole:cnn {
-      g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+    \coffin_set_horizontal_pole:cnn {
+      l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
     } { b } {
       - \coffin_dp:c {
-        g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+        l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
       } +
       \l_leporello_bleed_dim
     }
@@ -938,7 +938,7 @@
 \cs_generate_variant:Nn \__leporello_box_update_poles:nnn { VVn }
 
 \cs_new_protected:Npn \__leporello_box_construct:nnn #1#2#3 {
-  \coffin_if_exist:cF { g__leporello_box_ #1 _ #2 _ #3 _outer_coffin } {
+  \coffin_if_exist:cF { l__leporello_box_ #1 _ #2 _ #3 _outer_coffin } {
     \dim_set:Nn \l__leporello_typeset_box_width_inner_dim {
       \bool_lazy_or:nnTF {
         \l_leporello_layout_vertical_ltr_bool
@@ -964,10 +964,10 @@
     }
 
     \coffin_new:c {
-      g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+      l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
     }
-    \vcoffin_gset:cnn {
-      g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+    \vcoffin_set:cnn {
+      l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
     } {
       \l__leporello_typeset_box_width_inner_dim
     } {
@@ -992,7 +992,7 @@
           \l_leporello_layout_vertical_rtl_bool
         } {
           \coffin_wd:c {
-            g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+            l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
           } +
           \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ left } +
           \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ right }
@@ -1007,10 +1007,10 @@
         \prop_item:cn { g__leporello_box_ #3 _prop } { height }
       } {
         \coffin_ht:c {
-          g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+          l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
         } +
         \coffin_dp:c {
-          g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+          l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
         } +
         \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ top } +
         \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ bottom }
@@ -1089,10 +1089,10 @@
     \dim_add:Nn \tex_vfuzz:D { \l__leporello_typeset_box_bleed_y_dim }
 
     \coffin_new:c {
-      g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+      l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
     }
-    \vcoffin_gset:cnn {
-      g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+    \vcoffin_set:cnn {
+      l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
     } {
       \l__leporello_typeset_box_width_dim +
       \l__leporello_typeset_box_bleed_x_dim
@@ -1149,18 +1149,18 @@
         \__leporello_id_mark:n { #3 }
       }
       \coffin_attach:cnnNnnnn {
-        g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+        l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
       } { hc } { vc }
         \l__leporello_typeset_mark_coffin
         { hc } { vc } { 0pt } { 0pt }
     }
 
     \coffin_attach:cencennn {
-      g__leporello_box_ #1 _ #2 _ #3 _outer_coffin
+      l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
     } {
       \bool_if:NTF \l_leporello_layout_vertical_rtl_bool { r } { l }
     } { t } {
-      g__leporello_box_ #1 _ #2 _ #3 _inner_coffin
+      l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
     } {
       \bool_if:NTF \l_leporello_layout_vertical_rtl_bool { r } { l }
     } { t } {
@@ -1189,7 +1189,7 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
   } { hc } {
     \dim_add:Nn #1 {
-      \box_wd:c { g__leporello_box_
+      \box_wd:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1200,7 +1200,7 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
   } { r } {
     \dim_add:Nn #1 {
-      \box_wd:c { g__leporello_box_
+      \box_wd:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1212,7 +1212,7 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
   } { hc } {
     \dim_sub:Nn #1 {
-      \box_wd:c { g__leporello_box_
+      \box_wd:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1223,7 +1223,7 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
   } { r } {
     \dim_sub:Nn #1 {
-      \box_wd:c { g__leporello_box_
+      \box_wd:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1278,12 +1278,12 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
   } { vc } {
     \dim_sub:Nn #1 {
-      \box_ht:c { g__leporello_box_
+      \box_ht:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2 +
-      \box_dp:c { g__leporello_box_
+      \box_dp:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1294,12 +1294,12 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
   } { b } {
     \dim_sub:Nn #1 {
-      \box_ht:c { g__leporello_box_
+      \box_ht:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } +
-      \box_dp:c { g__leporello_box_
+      \box_dp:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1311,12 +1311,12 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
   } { vc } {
     \dim_sub:Nn #1 {
-      \box_ht:c { g__leporello_box_
+      \box_ht:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2 +
-      \box_dp:c { g__leporello_box_
+      \box_dp:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1327,12 +1327,12 @@
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
   } { b } {
     \dim_sub:Nn #1 {
-      \box_ht:c { g__leporello_box_
+      \box_ht:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } +
-      \box_dp:c { g__leporello_box_
+      \box_dp:c { l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
@@ -1411,7 +1411,7 @@
     \int_compare:nNnTF {#1} = { 0 } {
       l__leporello_current_column_coffin
     } {
-      g__leporello_box_
+      l__leporello_box_
         \int_use:N \l_leporello_current_page_int _
         \int_use:N \l_leporello_current_column_int _
         #1 _outer_coffin
@@ -1425,7 +1425,7 @@
       \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
     } { 2 }
   } {
-    g__leporello_box_
+    l__leporello_box_
       \int_use:N \l_leporello_current_page_int _
       \int_use:N \l_leporello_current_column_int _
       #2 _outer_coffin
