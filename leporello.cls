@@ -1239,11 +1239,7 @@
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
       _prop } { bleed }
     } { l } {
-      \clist_if_in:enF {
-        \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-      } { l } {
-        \dim_add:Nn #1 { \l_leporello_bleed_dim }
-      }
+      \dim_add:Nn #1 { \l_leporello_bleed_dim }
     }
   }
   \int_compare:nNnF {
@@ -1254,11 +1250,7 @@
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
       _prop } { bleed }
     } { r } {
-      \clist_if_in:enF {
-        \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-      } { r } {
-        \dim_add:Nn #1 { \l_leporello_bleed_dim }
-      }
+      \dim_add:Nn #1 { \l_leporello_bleed_dim }
     }
   }
 
@@ -1345,22 +1337,14 @@
       \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
     _prop } { bleed }
   } { t } {
-    \clist_if_in:enF {
-      \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-    } { t } {
-      \dim_add:Nn #1 { \l_leporello_bleed_dim }
-    }
+    \dim_add:Nn #1 { \l_leporello_bleed_dim }
   }
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_
       \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
     _prop } { bleed }
   } { b } {
-    \clist_if_in:enF {
-      \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-    } { b } {
-      \dim_add:Nn #1 { \l_leporello_bleed_dim }
-    }
+    \dim_add:Nn #1 { \l_leporello_bleed_dim }
   }
 
   \dim_add:Nn #1 {
