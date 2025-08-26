@@ -129,33 +129,34 @@
 }
 
 \msg_new:nnn { leporello } { too-many-columns } {
-  \msg_error_text:n { leporello } \iow_newline:
   #1 ~ columns ~ specified ~ for ~ typesetting \iow_newline:
   but ~ only ~ #2 ~ columns ~ defined ~ for ~ layout.
 }
 
 \msg_new:nnn { leporello } { box-outside-column } {
-  \msg_error_text:n { leporello } \iow_newline:
   Box ~ #1 ~ defined ~ outside ~ column.
 }
 
 \msg_new:nnn { leporello } { image-outside-box } {
-  \msg_error_text:n { leporello } \iow_newline:
   Image ~ defined ~ outside ~ box.
 }
 
 \msg_new:nnn { leporello } { column-undefined } {
-  \msg_error_text:n { leporello } \iow_newline:
   Column ~ #1 ~ undefined.
 }
 
 \msg_new:nnn { leporello } { parent-box-undefined } {
-  \msg_error_text:n { leporello } \iow_newline:
   Parent ~ box ~ #1 ~ undefined.
 }
 
+\msg_new:nnn { leporello } { break-different-width } {
+  Break ~ across ~ boxes ~ of ~ different ~ width. \iow_newline:
+  Box ~ width: ~ #1. \iow_newline:
+  Column ~ width: ~ #2. \iow_newline:
+  Consider ~ using ~ \token_to_str:N \leporelloboxbreak .
+}
+
 \msg_new:nnn { leporello } { command-not-supported } {
-  \msg_error_text:n { leporello } \iow_newline:
   Command ~ #1 ~ not ~ supported. 
   \tl_if_empty:nF {#2} {
     \iow_newline: #2
@@ -163,7 +164,6 @@
 }
 
 \msg_new:nnn { leporello } { environment-not-supported } {
-  \msg_error_text:n { leporello } \iow_newline:
   Environment ~ #1 ~ not ~ supported.
   \tl_if_empty:nF {#2} {
     \iow_newline: #2
@@ -415,40 +415,40 @@
 \bool_new:N \l_leporello_layout_vertical_rtl_bool
 
 \sys_if_engine_luatex:T {
-  \hook_gput_code:nnn { leporello / typeset / before } { . } {
-    \int_case:nnF { \int_use:N \tex_bodydirection:D } {
+  \hook_gput_code:nnn { leporello / typeset / before } {
+    leporello / layout
+  } {
+    \int_case:nnF { \tex_bodydirection:D } {
       { 1 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
         \bool_set_inverse:N \l_leporello_reverse_layout_bool
         \bool_set_inverse:N \l_leporello_reverse_order_bool
         \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+        \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
-        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
-          . / layout
+          leporello / layout
         } {
           \tex_bodydir:D TRT
           \tex_pardir:D TRT
-          \tex_textdir:D TRT
           \scan_stop:
         }
       }
       { 2 } {
         \bool_set_true:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
+        \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
-        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
-          . / layout
+          leporello / layout
         } {
           \tex_bodydir:D LTL
           \tex_pardir:D LTL
-          \tex_textdir:D LTL
           \scan_stop:
         }
       }
@@ -458,23 +458,27 @@
         \bool_set_inverse:N \l_leporello_reverse_layout_bool
         \bool_set_inverse:N \l_leporello_reverse_order_bool
         \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+        \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
-        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / box / begin } {
-          . / layout
+          leporello / layout
         } {
           \tex_bodydir:D RTT
           \tex_pardir:D RTT
-          \tex_textdir:D RTT
           \scan_stop:
         }
       }
     } {
       \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
       \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
-      \hook_gremove_code:nn { leporello / box / begin } { . / layout }
+      \tex_pagedir:D TLT
+      \tex_pardir:D TLT
+      \group_begin:
+        \msg_redirect_name:nnn { hooks } { cannot-remove } { none }
+        \hook_gremove_code:nn { leporello / box / begin } { leporello / layout }
+      \group_end:
     }
   }
 }
@@ -789,6 +793,21 @@
   \group_end:
 }
 
+\cs_new_protected:Npn \__leporello_box_break_check_width:n #1 {
+  \dim_compare:nNnF {#1} = {
+    \clist_item:Nn \l_leporello_columns_clist {
+      \int_use:N \l_leporello_current_column_int
+    }
+  } {
+    \msg_warning:nnne { leporello } { break-different-width } {#1} {
+      \clist_item:Nn \l_leporello_columns_clist {
+        \int_use:N \l_leporello_current_column_int
+      }
+    }
+  }
+}
+\cs_generate_variant:Nn \__leporello_box_break_check_width:n { e }
+
 \cs_new_protected:Npn \__leporello_box_break_flow:n #1 {
   \prop_if_in:cnT { g__leporello_box_ #1 _prop } { name } {
     \tl_if_exist:cT {
@@ -850,6 +869,11 @@
       }
     \group_end:
     \tl_gput_left:ce { g__leporello_box_ \str_use:N \l_leporello_box_flow_into_str _tl } {
+      \__leporello_box_break_check_width:e {
+        \clist_item:Nn \l_leporello_columns_clist {
+          \int_use:N \l_leporello_current_column_int
+        }
+      }
       \exp_not:N \box_use_drop:c {
         g__leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
       }
@@ -1842,6 +1866,7 @@
   \leporello_typeset_columns:nn {#1} {#2}
 }
 
+% inspired by the flowfram package by Nicola Talbot
 \NewDocumentCommand { \leporelloboxbreak } { } {
   \group_begin:
     \skip_zero:N \tex_parfillskip:D

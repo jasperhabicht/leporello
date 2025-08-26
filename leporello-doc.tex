@@ -294,7 +294,7 @@ A folded leaflet is sometimes called leporello in reference to the servant of Do
 
 There are some requirements for the creation of print data for high-quality folded leaflets: Especially if the leaflet is folded inward, the inner pages should be a bit less wide, so in general the pages of a leaflet are not of the exact same width (although the widths only differ slightly). Also, borderless printing requires that the print data adds a so-called bleed area added to the layout if the final document into which the typeset material extends. This area is trimmed off eventually to avoid unprinted edges due to natural movement of the paper during guillotining. Crop marks need to be added to the print data showing the layout of the final document. This packages takes into account all these requirements while providing a lot of customization.
 
-\warning This document class is still in a beta phase which means that bugs cannot be ruled out and some things may not work properly. Also, updates may be published frequently. The author is grateful for reporting any bugs via GitHub at \url{https://github.com/jasperhabicht/leporello/issues}. A site for asking questions about the document class and for suggestions for improvement is available at \url{https://github.com/jasperhabicht/leporello/discussions}.
+\warning This document class is still in an early development phase which means that bugs cannot be ruled out and some things may not work properly. Also, updates may be published frequently. The author is grateful for reporting any bugs via GitHub at \url{https://github.com/jasperhabicht/leporello/issues}. A site for asking questions about the document class and for suggestions for improvement is available at \url{https://github.com/jasperhabicht/leporello/discussions}.
 
 \section{Loading the document class}
 
@@ -460,6 +460,8 @@ Expects a dimension to explicitly set the height of the current box. If not spec
 box/|stretch|
 \end{macrodef}
 If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
+
+This key can also help to align the relevant edges in cases where stretchable glue close to the edge would otherwise make the box overlap the edge of the parent column. 
 
 \begin{macrodef}
 box/|padding left|={<dimension>}
