@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/27} {1.0.0} {Document class for typesetting folded leaflets}
+  {2025/08/30} {1.0.1} {Document class for typesetting folded leaflets}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }

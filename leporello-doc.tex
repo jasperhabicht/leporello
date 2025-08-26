@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{1.0.0}
-\def\leporellofiledate{27 August 2025}
+\def\leporellofileversion{1.0.1}
+\def\leporellofiledate{30 August 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -269,6 +269,7 @@
 \changes{v0.9.3}{2025/08/22}{Stretch mechanism fixed.}
 \changes{v0.9.5}{2025/08/25}{Improved alignment mechanism.}
 \changes{v1.0.0}{2025/08/27}{Improved key management and flow mechanism. Added note mechanism.}
+\changes{v1.0.1}{2025/08/30}{Minor fixes in right-to-left and vertical support.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -579,7 +580,7 @@ One way to insert images is via the \macro{\includegraphics} command provided by
 \begin{macrodef}
 |\leporelloimage|[<options>]{<file name>}
 \end{macrodef}
-With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding and it should only be used inside a \macro{leporellobox} environment. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take options which should be used without the \macro{image/} prefix when used as option to the \macro{\leporelloimage} command. The following options are available:
+With the command \macro{\leporelloimage} images that cover full boxes can be inserted. This command can be placed in a \macro{leporellobox} with zero padding and it should only be used inside a \macro{leporellobox} environment. The command has one mandatory argument that takes a relative path and file name to select the image to be inserted. It also has one optional argument to take options to be used without the \macro{image/} prefix. The following options are available:
 
 \begin{macrodef}
 image/|clip width|={<dimension>}
