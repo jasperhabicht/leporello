@@ -1,6 +1,6 @@
 ![Version 1.0.1](https://img.shields.io/badge/version-1.0.1-blue)
 
-![leporello](https://github.com/user-attachments/assets/51cf990a-7894-4e56-a4de-87e3be7ad592)
+![leporello](https://github.com/user-attachments/assets/d97a94d7-6764-4633-94e6-8a2ee41ac375)
 
 # The `leporello` class
 
