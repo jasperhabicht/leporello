@@ -1,0 +1,32 @@
+\documentclass{leporello}
+\leporelloset{
+  global={
+    three columns,
+    prepress,
+    show frames
+  }
+}
+
+\begin{document}
+
+\begin{leporellocolumn}{one}
+
+\begin{leporellobox}[
+    background color=cyan,
+    store height=\firstht
+]
+\Huge\leporellocolorselect{white} FOO
+\end{leporellobox}
+
+\begin{leporellobox}[
+    background color=magenta,
+    offset={0pt,\firstht+2pt}
+]
+\Huge\leporellocolorselect{white} FOO
+\end{leporellobox}
+
+\end{leporellocolumn}
+
+\leporellotypesetcolumns{one}
+
+\end{document}

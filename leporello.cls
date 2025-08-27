@@ -227,7 +227,7 @@
 
 \clist_new:N \l__leporello_box_align_parent_clist
 \clist_new:N \l__leporello_box_align_self_clist
-\fp_new:N \l__leporello_box_offset_fp
+\tl_new:N \l__leporello_box_offset_tl
 \tl_new:N \l__leporello_box_store_width_tl
 \tl_new:N \l__leporello_box_store_height_tl
 \dim_new:N \l__leporello_box_padding_left_dim
@@ -288,7 +288,7 @@
   align ~ parent     .initial:n   = { l , t } ,
   align ~ self       .clist_set:N = \l__leporello_box_align_self_clist ,
   align ~ self       .initial:n   = { l , t } ,
-  offset             .fp_set:N    = \l__leporello_box_offset_fp ,
+  offset             .tl_set:N    = \l__leporello_box_offset_tl ,
   offset             .initial:n   = { 0mm , 0mm } ,
   width              .code:n      = {
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
@@ -1051,6 +1051,7 @@
             )
           }
         }
+
         \dim_add:Nn \l__leporello_typeset_box_height_dim {
           \l__leporello_typeset_box_stretch_y_dim
         }
@@ -1135,13 +1136,15 @@
 
     \tl_if_exist:cT { c__leporello_box_ #3 _store_width_tl } {
       \exp_args:NNo \exp_args:No
-        \dim_set_eq:NN { \use:c { c__leporello_box_ #3 _store_width_tl } }
+        \dim_gset:Nn { \use:c { c__leporello_box_ #3 _store_width_tl } } {
           \l__leporello_typeset_box_width_dim
+        }
     }
     \tl_if_exist:cT { c__leporello_box_ #3 _store_height_tl } {
       \exp_args:NNo \exp_args:No
-        \dim_set_eq:NN { \use:c { c__leporello_box_ #3 _store_height_tl } }
+        \dim_gset:Nn { \use:c { c__leporello_box_ #3 _store_height_tl } } {
           \l__leporello_typeset_box_height_dim
+        }
     }
 
     \bool_if:NT \l_leporello_show_id_bool {
@@ -1359,6 +1362,7 @@
 }
 
 \cs_new_protected:Npn \__leporello_box_calculate_stretch_x:Nn #1#2 {
+  \dim_zero:N #1
   \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
     \__leporello_box_calculate_stretch_x:Ne #1 {
       \prop_item:Nn \g__leporello_box_names_prop {
@@ -1371,6 +1375,7 @@
 \cs_generate_variant:Nn \__leporello_box_calculate_stretch_x:Nn { Ne }
 
 \cs_new_protected:Npn \__leporello_box_calculate_stretch_y:Nn #1#2 {
+  \dim_zero:N #1
   \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
     \__leporello_box_calculate_stretch_y:Ne #1 {
       \prop_item:Nn \g__leporello_box_names_prop {
@@ -1774,9 +1779,9 @@
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { align ~ self }
       { \clist_use:Nn \l__leporello_box_align_self_clist { , } }
-    \prop_gput:cnV { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
+    \prop_gput:cno { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { offset }
-      \l__leporello_box_offset_fp
+      \l__leporello_box_offset_tl
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { stretch }
       { \bool_if_p:N \l__leporello_box_stretch_bool }
