@@ -157,7 +157,7 @@
 }
 
 \msg_new:nnn { leporello } { command-not-supported } {
-  Command ~ #1 ~ not ~ supported. 
+  Command ~ #1 ~ not ~ supported.
   \tl_if_empty:nF {#2} {
     \iow_newline: #2
   }
@@ -1051,7 +1051,6 @@
             )
           }
         }
-
         \dim_add:Nn \l__leporello_typeset_box_height_dim {
           \l__leporello_typeset_box_stretch_y_dim
         }
@@ -1655,7 +1654,7 @@
 
 \hook_gput_code:nnn { begindocument / before } { . } {
   \leporello_pagestyle_set:n { empty }
-  
+
   \dim_set:Nn \l_leporello_paper_height_dim {
     \l_leporello_layout_height_dim + 2 \l_leporello_info_area_dim
   }
@@ -1686,7 +1685,7 @@
   } {
     \use:c { leporello_ltlayout_ #1 _set:n } { -1in }
   }
-  
+
   \bool_if:NT \l_leporello_prepress_bool {
     \clist_map_inline:nn {
       topmargin ,
@@ -1696,7 +1695,7 @@
       \use:c { leporello_ltlayout_ #1 _set:n } {
         \l_leporello_info_area_dim - 1in
       }
-    } 
+    }
     \leporello_ltlayout_paperwidth_set:n { \l_leporello_paper_width_dim }
     \leporello_ltlayout_paperheight_set:n { \l_leporello_paper_height_dim }
 
@@ -1714,7 +1713,7 @@
       }
     }
   }
-  
+
   \skip_zero:N \tex_topskip:D
   \dim_zero:N \tex_parindent:D
 }
