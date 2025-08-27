@@ -1780,7 +1780,7 @@
       { \clist_use:Nn \l__leporello_box_align_self_clist { , } }
     \prop_gput:cno { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { offset }
-      \l__leporello_box_offset_tl
+      { \l__leporello_box_offset_tl }
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { stretch }
       { \bool_if_p:N \l__leporello_box_stretch_bool }
