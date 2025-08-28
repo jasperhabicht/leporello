@@ -11,8 +11,8 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \documentclass[a4paper]{article}
-\def\leporellofileversion{1.0.1}
-\def\leporellofiledate{30 August 2025}
+\def\leporellofileversion{1.0.2}
+\def\leporellofiledate{10 September 2025}
 
 \usepackage[T1]{fontenc}
 \usepackage{Alegreya}
@@ -269,7 +269,8 @@
 \changes{v0.9.3}{2025/08/22}{Stretch mechanism fixed.}
 \changes{v0.9.5}{2025/08/25}{Improved alignment mechanism.}
 \changes{v1.0.0}{2025/08/27}{Improved key management and flow mechanism. Added note mechanism.}
-\changes{v1.0.1}{2025/08/30}{Fix of a bug that prevented the dimensions set with \titlemacro{store width} or \titlemacro{store height} from having the correct value when used as value to the \titlemacro{offset} key. Fix of a bug in the stretch mechanism. Fix of a bug in right-to-left typesetting.}
+\changes{v1.0.1}{2025/08/30}{Fix of a bug that prevented the dimensions set with the keys \titlemacro{store width} and \titlemacro{store height} from having the correct value when used as value to the \titlemacro{offset} key. Fix of a bug in the stretch mechanism. Fix of a bug in right-to-left typesetting.}
+\changes{v1.0.2}{2025/09/10}{Documented L3 commands.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -775,90 +776,170 @@ The default layout has three pages which are shown here. Three columns named \ma
 
 % =====
 
-\iffalse
-
 \section{L3 commands}
 
-\l_leporello_layout_width_dim
-\l_leporello_layout_height_dim
-\l_leporello_paper_width_dim
-\l_leporello_paper_height_dim
+\begin{macrodef}
+|\l_leporello_layout_width_dim|
+|\l_leporello_layout_height_dim|
+\end{macrodef}
+These variables hold the width and height of the layout which is the width and the height of the final printed matter without info area.
 
-\l_leporello_bleed_dim
-\l_leporello_info_area_dim
+\begin{macrodef}
+|\l_leporello_paper_width_dim|
+|\l_leporello_paper_height_dim|
+\end{macrodef}
+These variables hold the width and height of the paper including info area.
 
-\l_leporello_columns_clist
-\l_leporello_column_count_int
+\begin{macrodef}
+|\l_leporello_bleed_dim|
+|\l_leporello_info_area_dim|
+\end{macrodef}
+These variables hold the size of the bleed and the info area.
 
-\l_leporello_reverse_layout_bool
-\l_leporello_reverse_order_bool
-\l_leporello_reverse_pagination_bool
+\begin{macrodef}
+|\l_leporello_columns_clist|
+\end{macrodef}
+This variable holds the list of dimensions that represent the widths of the columns in the layout.
 
-\l_leporello_layout_vertical_ltr_bool
-\l_leporello_layout_vertical_rtl_bool
+\begin{macrodef}
+|\l_leporello_column_count_int|
+\end{macrodef}
+This variable holds the number of columns in the layout. It is calculated from the list of dimensions given to the \macro{global/columns} key.
 
-\l_leporello_auto_typeset_bool
-\l_leporello_continuous_pagination_bool
+\begin{macrodef}
+|\l_leporello_prepress_bool|
+|\l_leporello_show_frames_bool|
+|\l_leporello_show_id_bool|
+|\l_leporello_auto_typeset_bool|
+\end{macrodef}
+{\raggedright These variables hold the relevant values of the \macro{global/prepress}, \macro{global/show frames}, \macro{global/show id} and \macro{global/auto typeset} keys. \par}
 
-\l_leporello_prepress_bool
-\l_leporello_show_frames_bool
-\l_leporello_show_id_bool
+\begin{macrodef}
+|\l_leporello_typeset_reverse_layout_bool|
+|\l_leporello_typeset_reverse_order_bool|
+|\l_leporello_typeset_reverse_pagination_bool|
+|\l_leporello_typeset_continuous_pagination_bool|
+\end{macrodef}
+{\raggedright These variables hold the relevant values of the \macro{typeset/reverse layout}, \macro{typeset/reverse order}, \macro{typeset/reverse pagination} and \macro{typeset/continuous pagination} keys. \par}
 
-\l_leporello_current_page_int
-\l_leporello_current_column_int
-\l_leporello_current_column_str
-\l_leporello_current_box_int
+\begin{macrodef}
+|\l_leporello_layout_vertical_ltr_bool|
+|\l_leporello_layout_vertical_rtl_bool|
+\end{macrodef}
+These variables are set to true if the current layout is set to vertical and left-to-right or to vertical and right-to-left.
 
-\l_leporello_box_flow_into_str
+\begin{macrodef}
+|\l_leporello_current_page_int|
+|\l_leporello_current_column_int|
+|\l_leporello_current_box_int|
+\end{macrodef}
+These variables hold the ID of the current page, the current column and the current box as integer respectively.
 
-\l_leporello_image_fill_bleed_bool
-\l_leporello_image_width_dim
-\l_leporello_image_height_dim
-\l_leporello_image_clip_width_dim
-\l_leporello_image_clip_height_dim
-\l_leporello_image_scale_fp
+\begin{macrodef}
+|\l_leporello_current_column_str|
+\end{macrodef}
+This variable holds the name of the current column.
 
-\g_leporello_notes_int
-\l_leporello_notes_list_str
+\begin{macrodef}
+|\l_leporello_box_flow_into_str|
+\end{macrodef}
+This variable holds the name of the box into which the current box flows into (if any).
 
-\leporello_draw_absolute:nn
-\leporello_typeset_image:nn
-\leporello_typeset_columns:nn
-\leporello_typeset_columns:nV
+\begin{macrodef}
+|\l_leporello_image_width_dim|
+|\l_leporello_image_height_dim|
+|\l_leporello_image_clip_width_dim|
+|\l_leporello_image_clip_height_dim|
+|\l_leporello_image_scale_fp|
+|\l_leporello_image_fill_bleed_bool|
+\end{macrodef}
+{\raggedright These variables hold the relevant values of the \macro{image/width}, \macro{image/height}, \macro{image/clip width}, \macro{image/clip height},  \macro{image/scale} and \macro{image/fill bleed} keys. \par}
 
-\leporello_fp_tuple_use_i:n
-\leporello_fp_tuple_use_i:e
-\leporello_fp_tuple_use_ii:n
-\leporello_fp_tuple_use_ii:e
+\begin{macrodef}
+|\g_leporello_notes_int|
+\end{macrodef}
+This variable holds the current counter for notes.
 
-\leporello_note_mark:n
+\begin{macrodef}
+|\l_leporello_notes_list_style_str|
+\end{macrodef}
+This variable holds the name of the environment of the notes list. It can be changed via the key \macro{notes/list style}.
 
-Compatibility:
+\begin{macrodef}
+|\leporello_draw_absolute:nn| {<tuple of dimensions>} {<code>}
+\end{macrodef}
+This command typesets the code consisting of commands that are placed between \macro{\draw_begin:} and \macro{\draw_end:} by shifting it according to the offset given in the first argument. It sets the bounding box of the drawing to zero and appends a page break.
 
-\leporello_ltlayout_paperwidth_set:n
-\leporello_ltlayout_paperheight_set:n
-\leporello_ltlayout_textwidth_set:n
-\leporello_ltlayout_textheight_set:n
-\leporello_ltlayout_topmargin_set:n
-\leporello_ltlayout_oddsidemargin_set:n
-\leporello_ltlayout_evensidemargin_set:n
-\leporello_ltlayout_hoffset_set:n
-\leporello_ltlayout_voffset_set:n
-\leporello_ltlayout_headheight_set:n
-\leporello_ltlayout_headsep_set:n
-\leporello_ltlayout_footskip_set:n
-\leporello_ltlayout_marginparwidth_set:n
-\leporello_ltlayout_marginparsep_set:n
-\leporello_ltlayout_marginparpush_set:n
+\begin{macrodef}
+|\leporello_typeset_image:nn| {<key-value list>} {<file>}
+\end{macrodef}
+This command typesets the image from the relevant file using the options set via \macro{image/} keys.
 
-\leporello_pagestyle_set:n
- = \pagestyle{#1}
-\leporello_page_gset:n
- = \setcounter{page}{#1}
-\leoprello_graphics_use:nn
- = \includegraphics[#1]{#2}
+\begin{macrodef}
+|\leporello_typeset_columns:nn| {<key-value list>} {<list of strings>}
+|\leporello_typeset_columns:nV| {<key-value list>} <clist varliable>
+\end{macrodef}
+This command is the equivalent of the user-level command \macro{\leporellotypesetcolumns}. It takes as first argument options set via \macro{typeset/} keys and as second argument a list of strings consisting of the names of the columns to be typeset.
 
-\fi
+\begin{macrodef}
+|\leporello_fp_tuple_use_i:n| {<fp tuple>}
+|\leporello_fp_tuple_use_i:e| {<fp tuple>}
+|\leporello_fp_tuple_use_ii:n| {<fp tuple>}
+|\leporello_fp_tuple_use_ii:e| {<fp tuple>}
+\end{macrodef}
+These commands extract the first or the second item of a floating point tuple.
+
+\begin{macrodef}
+|\leporello_note_mark:n| {<integer>}
+\end{macrodef}
+This command expects as argument the value of the current note counter as integer and typesets a corresponding mark. It can be changed via the key \macro{notes/mark cmd}. The default defintion is as follows:
+
+\begin{codeexample}
+\cs_new:Npn \leporello_note_mark:n #1 {
+  \leporello_text_superscript:n { \int_use:N #1 }
+}
+\end{codeexample}
+
+\noindent The following commands have been defined for consistency of the syntax.
+
+\begin{macrodef}
+|\leporello_ltlayout_paperwidth_set:n| {<dimension>}
+|\leporello_ltlayout_paperheight_set:n| {<dimension>}
+|\leporello_ltlayout_textwidth_set:n| {<dimension>}
+|\leporello_ltlayout_textheight_set:n| {<dimension>}
+|\leporello_ltlayout_topmargin_set:n| {<dimension>}
+|\leporello_ltlayout_oddsidemargin_set:n| {<dimension>}
+|\leporello_ltlayout_evensidemargin_set:n| {<dimension>}
+|\leporello_ltlayout_hoffset_set:n| {<dimension>}
+|\leporello_ltlayout_voffset_set:n| {<dimension>}
+|\leporello_ltlayout_headheight_set:n| {<dimension>}
+|\leporello_ltlayout_headsep_set:n| {<dimension>}
+|\leporello_ltlayout_footskip_set:n| {<dimension>}
+|\leporello_ltlayout_marginparwidth_set:n| {<dimension>}
+|\leporello_ltlayout_marginparsep_set:n| {<dimension>}
+|\leporello_ltlayout_marginparpush_set:n| {<dimension>}
+\end{macrodef}
+These commands set the relevant LaTeX dimension to the argument given. To give an example, \macro{\leporello_ltlayout_paperwidth_set:n {297mm}} sets \macro{\paperwidth} to 297mm.
+
+\begin{macrodef}
+|\leporello_pagestyle_set:n| {<string>}
+\end{macrodef}
+The command \macro{\leporello_pagestyle_gset:n {#1}} is a wrapper for \macro{\pagestyle{#1}} to set the page style.
+
+\begin{macrodef}
+|\leporello_page_gset:n| {<integer>}
+\end{macrodef}
+The command \macro{\leporello_page_gset:n {#1}} is a wrapper for \macro{\setcounter{page}{#1}} to set the current page number.
+
+\begin{macrodef}
+|\leporello_text_superscript:n| {<token list>}
+\end{macrodef}
+{\raggedright The command \macro{\leporello_text_superscript:n {#1}} is a wrapper for \macro{\textsuperscript{#1}}. \par}
+
+\begin{macrodef}
+|\leoprello_graphics_use:nn| {<key-value list>} {<file>}
+\end{macrodef}
+{\raggedright The command \macro{\leoprello_graphics_use:nn {#1} {#2}} is a wrapper for \macro{\includegraphics[#1]{#2}}. \par}
 
 % =====
 

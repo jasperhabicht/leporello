@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/08/30} {1.0.1} {Document class for typesetting folded leaflets}
+  {2025/09/10} {1.0.2} {Document class for typesetting folded leaflets}
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
@@ -55,9 +55,7 @@
 \dim_new:N \l_leporello_paper_width_dim
 \dim_new:N \l_leporello_paper_height_dim
 
-\bool_new:N \l_leporello_continuous_pagination_bool
 \bool_new:N \l_leporello_auto_typeset_bool
-
 \clist_new:N \g__leporello_auto_typeset_clist
 \clist_new:N \l__leporello_auto_typeset_temp_clist
 \int_new:N \l__leporello_auto_typeset_int
@@ -330,23 +328,24 @@
   store ~ height     .tl_set:N    = \l__leporello_box_store_height_tl
 }
 
-\bool_new:N \l_leporello_reverse_layout_bool
-\bool_new:N \l_leporello_reverse_order_bool
-\bool_new:N \l_leporello_reverse_pagination_bool
+\bool_new:N \l_leporello_typeset_reverse_layout_bool
+\bool_new:N \l_leporello_typeset_reverse_order_bool
+\bool_new:N \l_leporello_typeset_reverse_pagination_bool
+\bool_new:N \l_leporello_typeset_continuous_pagination_bool
 
 \keys_define:nn { leporello / typeset } {
   reverse ~ layout   .code:n      = {
-    \bool_set_inverse:N \l_leporello_reverse_layout_bool
+    \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
   } ,
   reverse ~ order    .code:n      = {
-    \bool_set_inverse:N \l_leporello_reverse_order_bool
+    \bool_set_inverse:N \l_leporello_typeset_reverse_order_bool
   } ,
   reverse ~ pagination
                      .code:n      = {
-    \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+    \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
   } ,
   continuous ~ pagination
-                    .bool_set:N   = \l_leporello_continuous_pagination_bool ,
+                    .bool_set:N   = \l_leporello_typeset_continuous_pagination_bool ,
   continuous ~ pagination
                     .initial:n    = { false }
 }
@@ -422,9 +421,9 @@
       { 1 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
-        \bool_set_inverse:N \l_leporello_reverse_layout_bool
-        \bool_set_inverse:N \l_leporello_reverse_order_bool
-        \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_order_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
         \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
@@ -455,9 +454,9 @@
       { 3 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_true:N \l_leporello_layout_vertical_rtl_bool
-        \bool_set_inverse:N \l_leporello_reverse_layout_bool
-        \bool_set_inverse:N \l_leporello_reverse_order_bool
-        \bool_set_inverse:N \l_leporello_reverse_pagination_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_order_bool
+        \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
         \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
@@ -515,6 +514,7 @@
 }
 
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
+\cs_set_eq:NN \leporello_text_superscript:n \textsuperscript
 \cs_new_protected:Npn \leporello_page_gset:n #1 {
   \setcounter { page } {#1}
 }
@@ -1489,11 +1489,11 @@
   \group_begin:
     \hook_use:n { leporello / typeset / before }
     \keys_set:nn { leporello / typeset } {#1}
-    \bool_if:NT \l_leporello_reverse_layout_bool {
+    \bool_if:NT \l_leporello_typeset_reverse_layout_bool {
       \clist_reverse:N \l_leporello_columns_clist
     }
 
-    \bool_if:NTF \l_leporello_reverse_order_bool {
+    \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
       \int_set:Nn \l_leporello_current_column_int {
         \l_leporello_column_count_int
       }
@@ -1508,7 +1508,7 @@
 
     \leporello_draw_absolute:nn { 0mm , 0mm } {
       \clist_map_inline:nn {#2} {
-        \bool_if:NTF \l_leporello_reverse_order_bool {
+        \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
           \dim_sub:Nn \l__leporello_current_column_offset_dim {
             \clist_item:NV \l_leporello_columns_clist
               \l_leporello_current_column_int
@@ -1517,8 +1517,8 @@
           \int_incr:N \l_leporello_current_column_int
         }
         \leporello_page_gset:n {
-          \bool_if:NTF \l_leporello_continuous_pagination_bool {
-            \bool_if:NTF \l_leporello_reverse_pagination_bool {
+          \bool_if:NTF \l_leporello_typeset_continuous_pagination_bool {
+            \bool_if:NTF \l_leporello_typeset_reverse_pagination_bool {
               \int_eval:n {
                 ( \l_leporello_current_page_int ) *
                 \l_leporello_column_count_int -
@@ -1532,7 +1532,7 @@
               }
             }
           } {
-            \bool_if:NTF \l_leporello_reverse_pagination_bool {
+            \bool_if:NTF \l_leporello_typeset_reverse_pagination_bool {
               \int_eval:n {
                 \int_div_truncate:nn {
                   \l_leporello_current_page_int - 1
@@ -1619,7 +1619,7 @@
         \draw_coffin_use:Nnnn \l__leporello_current_column_coffin
           { l } { t } { \l__leporello_current_column_offset_dim , 0mm }
 
-        \bool_if:NTF \l_leporello_reverse_order_bool {
+        \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
           \int_decr:N \l_leporello_current_column_int
         } {
           \dim_add:Nn \l__leporello_current_column_offset_dim {
@@ -1887,11 +1887,11 @@
 % ===
 
 \int_new:N \g_leporello_notes_int
-\str_new:N \l_leporello_notes_list_str
+\str_new:N \l_leporello_notes_list_style_str
 \seq_new:N \g__leporello_notes_seq
 
 \cs_new:Npn \leporello_note_mark:n #1 {
-  \textsuperscript { \int_use:N #1 }
+  \leporello_text_superscript:n { \int_use:N #1 }
 }
 
 \keys_define:nn { leporello } {
@@ -1904,7 +1904,7 @@
   mark ~ cmd        .code:n       = {
     \cs_set_eq:NN \leporello_note_mark:n #1
   } ,
-  list ~ style      .str_set:N    = \l_leporello_notes_list_str ,
+  list ~ style      .str_set:N    = \l_leporello_notes_list_style_str ,
   list ~ style      .initial:n    = { enumerate }
 }
 
@@ -1920,9 +1920,9 @@
 
 \NewDocumentCommand { \leporelloprintnotes } { } {
   \seq_if_empty:NF \g__leporello_notes_seq {
-    \begin { \str_use:N \l_leporello_notes_list_str }
+    \begin { \str_use:N \l_leporello_notes_list_style_str }
       \seq_map_tokens:Nn \g__leporello_notes_seq { \item }
-    \end { \str_use:N \l_leporello_notes_list_str }
+    \end { \str_use:N \l_leporello_notes_list_style_str }
     \seq_gclear:N \g__leporello_notes_seq
   }
 }
