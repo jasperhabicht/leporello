@@ -1887,15 +1887,15 @@
 % ===
 
 \int_new:N \g_leporello_notes_int
-\seq_new:N \g_leporello_notes_seq
-\str_new:N \l_leporello_list_name_str
+\str_new:N \l_leporello_notes_list_str
+\seq_new:N \g__leporello_notes_seq
 
 \cs_new:Npn \leporello_note_mark:n #1 {
   \textsuperscript { \int_use:N #1 }
 }
 
 \keys_define:nn { leporello } {
-  notes           .code:n       = {
+  notes             .code:n       = {
     \keys_set:nn { leporello / notes } {#1}
   }
 }
@@ -1904,7 +1904,7 @@
   mark ~ cmd        .code:n       = {
     \cs_set_eq:NN \leporello_note_mark:n #1
   } ,
-  list ~ style      .str_set:N    = \l_leporello_list_name_str ,
+  list ~ style      .str_set:N    = \l_leporello_notes_list_str ,
   list ~ style      .initial:n    = { enumerate }
 }
 
@@ -1914,16 +1914,16 @@
   } {
     \int_gincr:N \g_leporello_notes_int
   }
-  \seq_gput_right:Nn \g_leporello_notes_seq {#2}
+  \seq_gput_right:Nn \g__leporello_notes_seq {#2}
   \leporello_note_mark:n { \g_leporello_notes_int }
 }
 
 \NewDocumentCommand { \leporelloprintnotes } { } {
-  \seq_if_empty:NF \g_leporello_notes_seq {
-    \begin { \str_use:N \l_leporello_list_name_str }
-      \seq_map_tokens:Nn \g_leporello_notes_seq { \item }
-    \end { \str_use:N \l_leporello_list_name_str }
-    \seq_gclear:N \g_leporello_notes_seq
+  \seq_if_empty:NF \g__leporello_notes_seq {
+    \begin { \str_use:N \l_leporello_notes_list_str }
+      \seq_map_tokens:Nn \g__leporello_notes_seq { \item }
+    \end { \str_use:N \l_leporello_notes_list_str }
+    \seq_gclear:N \g__leporello_notes_seq
   }
 }
 
