@@ -227,7 +227,7 @@
 
 \clist_new:N \l__leporello_box_align_parent_clist
 \clist_new:N \l__leporello_box_align_self_clist
-\tl_new:N \l__leporello_box_offset_tl
+\tl_new:N \l__leporello_box_offset_tuple_tl
 \tl_new:N \l__leporello_box_store_width_tl
 \tl_new:N \l__leporello_box_store_height_tl
 \dim_new:N \l__leporello_box_padding_left_dim
@@ -288,7 +288,7 @@
   align ~ parent     .initial:n   = { l , t } ,
   align ~ self       .clist_set:N = \l__leporello_box_align_self_clist ,
   align ~ self       .initial:n   = { l , t } ,
-  offset             .tl_set:N    = \l__leporello_box_offset_tl ,
+  offset             .tl_set:N    = \l__leporello_box_offset_tuple_tl ,
   offset             .initial:n   = { 0mm , 0mm } ,
   width              .code:n      = {
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
@@ -518,7 +518,7 @@
 \cs_new_protected:Npn \leporello_page_gset:n #1 {
   \setcounter { page } {#1}
 }
-\cs_new_protected:Npn \leoprello_graphics_use:nn #1#2 {
+\cs_new_protected:Npn \leporello_graphics_use:nn #1#2 {
   \includegraphics [ #1 ] {#2}
 }
 
@@ -605,7 +605,7 @@
     }
 
     \hbox_set:Nn \l__leporello_image_original_box {
-      \leoprello_graphics_use:nn { } {#2}
+      \leporello_graphics_use:nn { } {#2}
     }
 
     \bool_if:NF \l__leporello_image_clip_width_bool {
@@ -755,7 +755,7 @@
 
     \skip_vertical:n { - \l__leporello_image_outer_offset_top_dim }
     \skip_horizontal:n { - \l__leporello_image_outer_offset_left_dim }
-    \leoprello_graphics_use:nn {
+    \leporello_graphics_use:nn {
       scale = \fp_to_decimal:N \l_leporello_image_scale_fp ,
       clip ,
       viewport =
@@ -1780,7 +1780,7 @@
       { \clist_use:Nn \l__leporello_box_align_self_clist { , } }
     \prop_gput:cno { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { offset }
-      { \l__leporello_box_offset_tl }
+      { \l__leporello_box_offset_tuple_tl }
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { stretch }
       { \bool_if_p:N \l__leporello_box_stretch_bool }
