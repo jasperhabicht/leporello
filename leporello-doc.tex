@@ -408,12 +408,12 @@ Boxes can be positioned inside of columns. They can contain anything that can be
 \begin{macrodef}
 box/|name|={<string>}
 \end{macrodef}
-Expects a (unique) string denoting the name of the box which can be used for attaching boxes to each other or assigning boxes for the flow mechanism.
+Expects a (unique) string denoting the name of the box which can be used for attaching boxes to one another or for assigning boxes for the flow mechanism. This key can only be set locally to the \macro{leporellobox} environment.
 
 \begin{macrodef}
 box/|parent|={<string>}
 \end{macrodef}
-Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box. The parent box needs to be in the same column as the box that should be aligned to it.
+Expects a string denoting the name of the box to which the current box is aligned. If not specified, the current column box is assumed as parent box. The parent box needs to be in the same column as the box that should be aligned to it. This key can only be set locally to the \macro{leporellobox} environment.
 
 \begin{macrodef}
 box/|align parent|={<tuple of poles>}
@@ -513,7 +513,7 @@ Expects a single control sequence (macro) to store the height of the current box
 \begin{macrodef}
 box/|flow into|={<string>}
 \end{macrodef}
-Expects a string denoting the name of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following column or on a following page. See section \ref{sec:flow} below.
+Expects a string denoting the name of the box into which typeset material will flow into if it does not fit into the current box. The box to flow into can be in a following column or on a following page. See section \ref{sec:flow} below. This key can only be set locally to the \macro{leporellobox} environment.
 
 \section{Typesetting boxes into columns}
 
@@ -839,11 +839,6 @@ These variables hold the ID of the current page, the current column and the curr
 |\l_leporello_current_column_str|
 \end{macrodef}
 This variable holds the name of the current column.
-
-\begin{macrodef}
-|\l_leporello_box_flow_into_str|
-\end{macrodef}
-This variable holds the name of the box into which the current box flows into (if any).
 
 \begin{macrodef}
 |\l_leporello_image_width_dim|

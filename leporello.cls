@@ -226,8 +226,10 @@
 \clist_new:N \l__leporello_box_align_parent_clist
 \clist_new:N \l__leporello_box_align_self_clist
 \tl_new:N \l__leporello_box_offset_tuple_tl
-\tl_new:N \l__leporello_box_store_width_tl
-\tl_new:N \l__leporello_box_store_height_tl
+\bool_new:N \l__leporello_box_width_bool
+\bool_new:N \l__leporello_box_height_bool
+\dim_new:N \l__leporello_box_width_dim
+\dim_new:N \l__leporello_box_height_dim
 \dim_new:N \l__leporello_box_padding_left_dim
 \dim_new:N \l__leporello_box_padding_right_dim
 \dim_new:N \l__leporello_box_padding_top_dim
@@ -237,8 +239,10 @@
 \tl_new:N \l__leporello_box_background_code_tl
 \box_new:N \l__leporello_box_background_box
 \clist_new:N \l__leporello_box_bleed_clist
+\tl_new:N \l__leporello_box_store_width_tl
+\tl_new:N \l__leporello_box_store_height_tl
 
-\str_new:N \l_leporello_box_flow_into_str
+\str_new:N \l__leporello_box_flow_into_str
 \box_new:N \g__leporello_box_flow_temp_box
 
 \dim_new:N \l__leporello_typeset_box_width_inner_dim
@@ -259,10 +263,12 @@
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { name } {#1}
   } ,
+  name               .groups:n    = { local } ,
   flow ~ into        .code:n      = {
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { flow ~ into } {#1}
   } ,
+  flow ~ into        .groups:n    = { local } ,
   parent             .code:n      = {
     \prop_if_in:NnTF \g__leporello_box_names_prop {#1} {
       \clist_if_exist:cF {
@@ -282,6 +288,7 @@
       \msg_error:nnn { leporello } { parent-box-undefined } {#1}
     }
   } ,
+  parent             .groups:n    = { local } ,
   align ~ parent     .clist_set:N = \l__leporello_box_align_parent_clist ,
   align ~ parent     .initial:n   = { l , t } ,
   align ~ self       .clist_set:N = \l__leporello_box_align_self_clist ,
@@ -289,12 +296,12 @@
   offset             .tl_set:N    = \l__leporello_box_offset_tuple_tl ,
   offset             .initial:n   = { 0mm , 0mm } ,
   width              .code:n      = {
-    \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
-      { width } {#1}
+    \bool_set_true:N \l__leporello_box_width_bool
+    \dim_set:Nn \l__leporello_box_width_dim {#1}
   } ,
   height             .code:n      = {
-    \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
-      { height } {#1}
+    \bool_set_true:N \l__leporello_box_height_bool
+    \dim_set:Nn \l__leporello_box_height_dim {#1}
   } ,
   stretch            .bool_set:N  = \l__leporello_box_stretch_bool ,
   stretch            .initial:n   = { false } ,
@@ -821,19 +828,19 @@
     }
   }
   \prop_if_in:cnT { g__leporello_box_ #1 _prop } { flow ~ into } {
-    \str_set:Ne \l_leporello_box_flow_into_str {
+    \str_set:Ne \l__leporello_box_flow_into_str {
       \prop_item:cn { g__leporello_box_ #1 _prop } { flow ~ into }
     }
 
     \box_new:c {
-      g__leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
+      g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
     }
-    \tl_if_exist:cF { g__leporello_box_ \str_use:N \l_leporello_box_flow_into_str _tl } {
-      \tl_new:c { g__leporello_box_ \str_use:N \l_leporello_box_flow_into_str _tl }
+    \tl_if_exist:cF { g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl } {
+      \tl_new:c { g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl }
     }
 
     \vbox_gset_top:cn {
-      g__leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
+      g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
     } {
       \tl_use:c { g__leporello_box_ #1 _tl }
     }
@@ -841,7 +848,7 @@
     \group_begin:
       \skip_zero:N \tex_splittopskip:D
       \vbox_gset_split_to_ht:Ncn \g__leporello_box_flow_temp_box {
-        g__leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
+        g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
       } {
         \bool_lazy_or:nnTF {
           \l_leporello_layout_vertical_ltr_bool
@@ -868,14 +875,14 @@
         }
       }
     \group_end:
-    \tl_gput_left:ce { g__leporello_box_ \str_use:N \l_leporello_box_flow_into_str _tl } {
+    \tl_gput_left:ce { g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl } {
       \__leporello_box_break_check_width:e {
         \clist_item:Nn \l_leporello_columns_clist {
           \int_use:N \l_leporello_current_column_int
         }
       }
       \exp_not:N \box_use_drop:c {
-        g__leporello_box_flow_ \str_use:N \l_leporello_box_flow_into_str _box
+        g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
       }
     }
     \vbox_top:n {
@@ -1781,6 +1788,16 @@
     \prop_gput:cno { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { offset }
       { \l__leporello_box_offset_tuple_tl }
+    \bool_if:NT \l__leporello_box_width_bool {
+      \prop_gput:cnV { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
+        { width }
+        \l__leporello_box_width_dim
+    }
+    \bool_if:NT \l__leporello_box_height_bool {
+      \prop_gput:cnV { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
+        { height }
+        \l__leporello_box_height_dim
+    }
     \prop_gput:cne { g__leporello_box_ \int_use:N \g__leporello_box_int _prop }
       { stretch }
       { \bool_if_p:N \l__leporello_box_stretch_bool }
@@ -1832,9 +1849,9 @@
 
 \NewDocumentCommand { \leporelloset } { o m } {
   \IfValueTF {#1} {
-    \keys_set:nn { leporello / #1 } {#2}
+    \keys_set_exclude_groups:nnn { leporello / #1 } { local } {#2}
   } {
-    \keys_set:nn { leporello } {#2}
+    \keys_set_exclude_groups:nnn { leporello } { local } {#2}
   }
 }
 
