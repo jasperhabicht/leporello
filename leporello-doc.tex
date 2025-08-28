@@ -269,7 +269,7 @@
 \changes{v0.9.3}{2025/08/22}{Stretch mechanism fixed.}
 \changes{v0.9.5}{2025/08/25}{Improved alignment mechanism.}
 \changes{v1.0.0}{2025/08/27}{Improved key management and flow mechanism. Added note mechanism.}
-\changes{v1.0.1}{2025/08/30}{Various bug fixes.}
+\changes{v1.0.1}{2025/08/30}{Fix of a bug that prevented the dimensions set with \titlemacro{store width} or \titlemacro{store height} from having the correct value when used as value to the \titlemacro{offset} key. Fix of a bug in the stretch mechanism. Fix of a bug in right-to-left typesetting.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -772,6 +772,11 @@ baz
 The example shows the use of the \macro{prepress} key that adds cropmarks to the layout. It also shows how the \macro{show frames} key adds frames around the columns. Finally, the \macro{show box} key adds the box IDs to the boxes.
 
 The default layout has three pages which are shown here. Three columns named \macro{example-a}, \macro{example-b} and \macro{example-c} are defined and contain one box each. A custom style is defined to combine the two keys needed to bottom-align the third box. A fixed height is set to for the first box and the second box has and offset and its height stretched to the bottom of the column. Bleed is added to the relevant edges of the three columns.
+
+% =====
+
+\section{L3 commands}
+
 
 % =====
 
