@@ -522,10 +522,10 @@
 
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_set_eq:NN \leporello_text_superscript:n \textsuperscript
-\cs_new_protected:Npn \leporello_page_gset:n #1 {
+\cs_new_protected_nopar:Npn \leporello_page_gset:n #1 {
   \setcounter { page } {#1}
 }
-\cs_new_protected:Npn \leporello_graphics_use:nn #1#2 {
+\cs_new_protected_nopar:Npn \leporello_graphics_use:nn #1#2 {
   \includegraphics [ #1 ] {#2}
 }
 
