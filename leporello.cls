@@ -13,6 +13,20 @@
 \ProvidesExplClass{leporello}
   {2025/09/10} {1.0.2} {Document class for typesetting folded leaflets}
 
+\msg_new:nnn { leporello } { latex-too-old } {
+  LaTeX ~ kernel ~ too ~ old. \iow_newline:
+  The ~ leporello ~ package ~ does ~ not ~ support ~ this ~ LaTeX ~ version. \iow_newline:
+  Please ~ update ~ to ~ a ~ newer ~ version.
+}
+
+\cs_if_exist:NTF \IfExplAtLeastTF {
+  \IfExplAtLeastTF { 2024-01-10 } { } {
+    \msg_critical:nn { leporello } { latex-too-old }
+  }
+} {
+  \msg_critical:nn { leporello } { latex-too-old }
+}
+
 \cs_generate_variant:Nn \clist_item:Nn { NV }
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
 \cs_generate_variant:Nn \color_select:n { e }
