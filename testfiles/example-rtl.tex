@@ -1,0 +1,99 @@
+\documentclass[prepress, show frames, show ids]{leporello}
+\usepackage{lipsum}
+%\usepackage{lua-visual-debug}
+
+\usepackage{enumitem}
+\newlist{notes}{enumerate}{1}
+\setlist[notes]{label*=\roman*.}
+
+\newcommand{\romansuper}[1]{\,\textsuperscript{\romannumeral #1}}
+
+\leporelloset{
+  notes = { 
+    mark cmd = \romansuper,
+    list style = notes
+  }
+}
+
+\begin{leporellocolumn}{three}
+\begin{leporellobox}[flow into={foo}, pre={\raggedright\leporellocolorselect{red}}]
+\lipsum[1] foo foo foo foo\leporellonote{hello} foo foo \leporelloboxbreak foo foo \lipsum[2-4] \pageref{foo} bar
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{four}
+\begin{leporellobox}[background color=cyan, name={qux}, bleed={t,l}, width=20mm, align parent={t,l}, align self={t,l}]
+foo
+%\leporellojustified\lipsum[1-4]
+\end{leporellobox}
+
+\begin{leporellobox}[background color=yellow, stretch, bleed={}, name={foo}, parent={qux}, align self={l,t}, align parent={l,b}]
+%\leporellojustified\lipsum[1-4]
+
+\par
+\leporelloprintnotes
+\end{leporellobox}
+\end{leporellocolumn}
+
+\leporellosetstyle{box/right}{
+  box={
+    align parent={r,t},
+    align self={r,t}
+  }
+}
+
+\begin{leporellocolumn}{one}
+\begin{leporellobox}[name={bar}, flow into={baz}, right]
+\lipsum[1-3] \lipsum[4-6]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{two}
+\begin{leporellobox}[background color=cyan, name={quz}, width={10mm}, align self={r,t}, align parent={r,t}]
+%\leporellojustified\lipsum[1-4]
+\end{leporellobox}
+
+\begin{leporellobox}[name={baz}, right, background color=red!10, parent={quz}, align parent={l,t}, stretch]
+foo bar\label{foo}
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{xxx}
+\begin{leporellobox}[background color=cyan, bleed={t,l}, width=20mm, height=20mm, align parent={t,l}, align self={t,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=magenta, width=20mm, height=20mm, align parent={t,l}, align self={t,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={b,l}, width=20mm, height=20mm, align parent={b,l}, align self={b,l}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={t,r}, width=20mm, height=20mm, align parent={t,r}, align self={t,r}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=cyan, bleed={b,r}, width=20mm, height=20mm, align parent={b,r}, align self={b,r}]
+foo
+\end{leporellobox}
+
+\begin{leporellobox}[background color=magenta, width=20mm, height=20mm, align parent={b,r}, align self={b,r}]
+foo
+\end{leporellobox}
+\end{leporellocolumn}
+
+
+\begin{document}
+
+\leporellotypesetcolumns{three, four, xxx}
+
+\bodydir RTT\relax
+
+\leporellotypesetcolumns{one, two}
+
+\bodydir TLT\relax
+
+
+\end{document}

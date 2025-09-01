@@ -829,7 +829,7 @@
 }
 \cs_generate_variant:Nn \__leporello_box_break_check_width:n { e }
 
-\cs_new_protected:Npn \__leporello_box_break_flow:n #1 {
+\cs_new_protected:Npn \__leporello_box_break_flow:nn #1#2 {
   \prop_if_in:cnT { g__leporello_box_ #1 _prop } { name } {
     \tl_if_exist:cT {
       g__leporello_box_ \prop_item:cn { g__leporello_box_ #1 _prop } { name } _tl
@@ -861,6 +861,9 @@
     \tl_gclear:c { g__leporello_box_ #1 _tl }
     \group_begin:
       \skip_zero:N \tex_splittopskip:D
+      \tl_if_empty:nF {#2} {
+        \dim_set:Nn \tex_hsize:D {#2}
+      }
       \vbox_gset_split_to_ht:Ncn \g__leporello_box_flow_temp_box {
         g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
       } {
@@ -899,8 +902,10 @@
         g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
       }
     }
-    \vbox_top:n {
-      \vbox_unpack_drop:N \g__leporello_box_flow_temp_box
+    \tl_gput_right:ce { g__leporello_box_ #1 _tl } {
+      \vbox_top:n {
+        \vbox_unpack_drop:N \g__leporello_box_flow_temp_box
+      }
     }
   }
 }
@@ -995,7 +1000,7 @@
       \draw_suspend_begin:
         \int_set:Nn \l_leporello_current_box_int {#3}
         \hook_use:n { leporello / box / begin }
-          \__leporello_box_break_flow:n {#3}
+          \__leporello_box_break_flow:nn {#3} { }
           \vbox_top:n {
             \tl_use:c { g__leporello_box_ #3 _tl }
           }
