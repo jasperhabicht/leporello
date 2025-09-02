@@ -1656,10 +1656,8 @@
       }
 
       \bool_if:NT \l_leporello_show_frames_bool {
-        \int_zero:N \l_leporello_current_column_int
         \dim_zero:N \l__leporello_current_column_offset_dim
         \clist_map_inline:Nn \l_leporello_columns_clist {
-          \int_incr:N \l_leporello_current_column_int
           \draw_path_rectangle:nn {
             \l__leporello_current_column_offset_dim , 0mm
           } {
