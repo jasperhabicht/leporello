@@ -856,6 +856,31 @@
     \vbox_gset_top:cn {
       g__leporello_box_flow_ \str_use:N \l__leporello_box_flow_into_str _box
     } {
+      \dim_set:Nn \tex_hsize:D {
+        \bool_lazy_or:nnTF {
+          \l_leporello_layout_vertical_ltr_bool
+        } {
+          \l_leporello_layout_vertical_rtl_bool
+        } {
+          \prop_if_in:cnTF { g__leporello_box_ #1 _prop } { height } {
+            \prop_item:cn { g__leporello_box_ #1 _prop } { height }
+          } {
+            \l_leporello_layout_height_dim
+          } -
+          \prop_item:cn { g__leporello_box_ #1 _prop } { padding ~ top } -
+          \prop_item:cn { g__leporello_box_ #1 _prop } { padding ~ bottom }
+        } {
+          \prop_if_in:cnTF { g__leporello_box_ #1 _prop } { width } {
+            \prop_item:cn { g__leporello_box_ #1 _prop } { width }
+          } {
+            \clist_item:Nn \l_leporello_columns_clist {
+              \int_use:N \l_leporello_current_column_int
+            }
+          } -
+          \prop_item:cn { g__leporello_box_ #1 _prop } { padding ~ left } -
+          \prop_item:cn { g__leporello_box_ #1 _prop } { padding ~ right }
+        }
+      }
       \tl_use:c { g__leporello_box_ #1 _tl }
     }
     \tl_gclear:c { g__leporello_box_ #1 _tl }
