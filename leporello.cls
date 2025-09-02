@@ -69,10 +69,10 @@
 \dim_new:N \l_leporello_paper_width_dim
 \dim_new:N \l_leporello_paper_height_dim
 
+\int_new:N \l__leporello_typeset_int
+\clist_new:N \l__leporello_typeset_temp_clist
 \bool_new:N \l_leporello_auto_typeset_bool
 \clist_new:N \g__leporello_auto_typeset_clist
-\clist_new:N \l__leporello_auto_typeset_temp_clist
-\int_new:N \l__leporello_auto_typeset_int
 
 \keys_define:nn { leporello } {
   global            .code:n       = {
@@ -138,11 +138,6 @@
   six ~ columns         .meta:n   = {
     columns = { 99mm , 99mm , 96mm , 96mm , 100mm , 100mm }
   }
-}
-
-\msg_new:nnn { leporello } { too-many-columns } {
-  #1 ~ columns ~ specified ~ for ~ typesetting \iow_newline:
-  but ~ only ~ #2 ~ columns ~ defined ~ for ~ layout.
 }
 
 \msg_new:nnn { leporello } { box-outside-column } {
@@ -1527,13 +1522,6 @@
 \cs_new_protected:Npn \leporello_typeset_columns:nn #1#2 {
   \int_incr:N \l_leporello_current_page_int
 
-  \int_compare:nNnT { \clist_count:n {#2} } > {
-    \l_leporello_column_count_int
-  } {
-    \msg_error:nneV { leporello } { too-many-columns }
-      { \clist_count:n {#2} } \l_leporello_column_count_int
-  }
-
   \group_begin:
     \hook_use:n { leporello / typeset / before }
     \keys_set:nn { leporello / typeset } {#1}
@@ -1766,25 +1754,25 @@
 
 \hook_gput_code:nnn { enddocument } { . } {
   \bool_if:NT \l_leporello_auto_typeset_bool {
-    \int_zero:N \l__leporello_auto_typeset_int
-    \clist_clear:N \l__leporello_auto_typeset_temp_clist
+    \int_zero:N \l__leporello_typeset_int
+    \clist_clear:N \l__leporello_typeset_temp_clist
     \clist_map_inline:Nn \g__leporello_auto_typeset_clist {
       \int_compare:nNnTF {
-        \l__leporello_auto_typeset_int
+        \l__leporello_typeset_int
       } < {
         \l_leporello_column_count_int
       } {
-        \clist_put_right:Nn \l__leporello_auto_typeset_temp_clist {#1}
+        \clist_put_right:Nn \l__leporello_typeset_temp_clist {#1}
       } {
-        \leporello_typeset_columns:nV { } \l__leporello_auto_typeset_temp_clist
-        \clist_clear:N \l__leporello_auto_typeset_temp_clist
-        \int_zero:N \l__leporello_auto_typeset_int
-        \clist_put_right:Nn \l__leporello_auto_typeset_temp_clist {#1}
+        \leporello_typeset_columns:nV { } \l__leporello_typeset_temp_clist
+        \clist_clear:N \l__leporello_typeset_temp_clist
+        \int_zero:N \l__leporello_typeset_int
+        \clist_put_right:Nn \l__leporello_typeset_temp_clist {#1}
       }
-      \int_incr:N \l__leporello_auto_typeset_int
+      \int_incr:N \l__leporello_typeset_int
     }
-    \clist_if_empty:NF \l__leporello_auto_typeset_temp_clist {
-      \leporello_typeset_columns:nV { } \l__leporello_auto_typeset_temp_clist
+    \clist_if_empty:NF \l__leporello_typeset_temp_clist {
+      \leporello_typeset_columns:nV { } \l__leporello_typeset_temp_clist
     }
   }
 }
@@ -1907,7 +1895,26 @@
 }
 
 \NewDocumentCommand { \leporellotypesetcolumns } { O{} m } {
-  \leporello_typeset_columns:nn {#1} {#2}
+  \int_zero:N \l__leporello_typeset_int
+  \clist_clear:N \l__leporello_typeset_temp_clist
+  \clist_map_inline:nn {#2} {
+    \int_compare:nNnTF {
+      \l__leporello_typeset_int
+    } < {
+      \l_leporello_column_count_int
+    } {
+      \clist_put_right:Nn \l__leporello_typeset_temp_clist {##1}
+    } {
+      \leporello_typeset_columns:nV {#1} \l__leporello_typeset_temp_clist
+      \clist_clear:N \l__leporello_typeset_temp_clist
+      \clist_put_right:Nn \l__leporello_typeset_temp_clist {##1}
+      \int_zero:N \l__leporello_typeset_int
+    }
+    \int_incr:N \l__leporello_typeset_int
+  }
+  \clist_if_empty:NF \l__leporello_typeset_temp_clist {
+    \leporello_typeset_columns:nV {#1} \l__leporello_typeset_temp_clist
+  }
 }
 
 % inspired by the flowfram package by Nicola Talbot
