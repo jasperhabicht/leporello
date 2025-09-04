@@ -2,19 +2,22 @@
 \usepackage{lipsum}
 %\usepackage{lua-visual-debug}
 
+\sloppy
+
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, height={50mm}, background color=cyan!10]
-\lipsum[1]
+\lipsum[1-6] xo xo \par
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
-\begin{leporellobox}[name={foo}, background color=cyan!10]
+\begin{leporellobox}[name={foo}, flow into={qux}, background color=cyan!10]
+abc abc \par
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{three}
-\begin{leporellobox}[flow into={bar}, height={50mm}, background color=magenta!10]
+\begin{leporellobox}[name={qux}, flow into={bar}, height={100mm}, background color=magenta!10]
 \lipsum[1]
 \end{leporellobox}
 \end{leporellocolumn}
@@ -26,6 +29,6 @@
 
 \begin{document}
 
-\leporellotypesetcolumns{four, two, one, . ,. , three}
+\leporellotypesetcolumns{one, two, three, four}
 
 \end{document}
