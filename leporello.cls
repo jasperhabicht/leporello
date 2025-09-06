@@ -808,12 +808,9 @@
 }
 
 \cs_new_protected:Npn \__leporello_box_break_check_width:nn #1#2 {
-  \dim_compare:nNnF {#1} = {
-    \clist_item:Nn \l_leporello_columns_clist {#2}
-  } {
-    \msg_warning:nnne { leporello } { break-different-width } {#1} {
-      \clist_item:Nn \l_leporello_columns_clist {#2}
-    }
+  \dim_compare:nNnF {#1} = {#2} {
+    \msg_warning:nnne { leporello } { break-different-width }
+      {#1} {#2}
   }
 }
 \cs_generate_variant:Nn \__leporello_box_break_check_width:nn { ee }
@@ -830,24 +827,6 @@
           g__leporello_box_
           \prop_item:cn { g__leporello_box_ #1 _prop } { name }
           _tl
-        }
-        \tl_use:c {
-          g__leporello_box_
-          \prop_item:cn { g__leporello_box_ #1 _prop } { name }
-          _contents_tl
-        }
-      }
-    }
-    \tl_if_exist:cT {
-      g__leporello_box_
-      \prop_item:cn { g__leporello_box_ #1 _prop } { name }
-      _contents_tl
-    } {
-      \tl_gput_left:cn { g__leporello_box_ #1 _contents_tl } {
-        \tl_use:c {
-          g__leporello_box_
-          \prop_item:cn { g__leporello_box_ #1 _prop } { name }
-          _contents_tl
         }
       }
     }
@@ -887,11 +866,31 @@
   }
 }
 
+\cs_generate_variant:Nn \clist_item:Nn { Ne }
+
 \cs_new_protected:Npn \__leporello_box_break_flow:nn #1#2 {
-  \prop_if_in:cnT { g__leporello_box_ #2 _prop } { flow ~ into } {
+  \prop_if_in:cnT { g__leporello_box_ #2 _prop } { name } {
+    \tl_if_exist:cT {
+      g__leporello_box_
+      \prop_item:cn { g__leporello_box_ #2 _prop } { name }
+      _transfer_tl
+    } {
+      \tl_gput_left:cn { g__leporello_box_ #2 _tl } {
+        \tl_use:c {
+          g__leporello_box_
+          \prop_item:cn { g__leporello_box_ #2 _prop } { name }
+          _transfer_tl
+        }
+      }
+    }
+  }
+  
+  \prop_if_in:cnTF { g__leporello_box_ #2 _prop } { flow ~ into } {
     \str_set:Ne \l__leporello_box_flow_into_str {
       \prop_item:cn { g__leporello_box_ #2 _prop } { flow ~ into }
     }
+
+    \prop_gput:cnn { g__leporello_box_ #2 _prop } { flow ~ start } {#1}
 
     \box_new:c {
       g__leporello_box_flow_ #2 _box
@@ -912,17 +911,6 @@
         _tl
       }
     }
-    \tl_if_exist:cF {
-      g__leporello_box_
-      \str_use:N \l__leporello_box_flow_into_str
-      _contents_tl
-    } {
-      \tl_new:c {
-        g__leporello_box_
-        \str_use:N \l__leporello_box_flow_into_str
-        _contents_tl
-      }
-    }
       
     \bool_lazy_and:nnTF {
       \prop_if_in_p:cn { g__leporello_box_ #2 _prop } { name }
@@ -936,7 +924,7 @@
       \dim_compare:nNnTF {
         \box_ht:c {
           g__leporello_box_flow_into_
-            \prop_item:cn { g__leporello_box_ #2 _prop } { name }
+          \prop_item:cn { g__leporello_box_ #2 _prop } { name }
           _box
         }
       } > {
@@ -962,26 +950,39 @@
           \prop_item:cn { g__leporello_box_ #2 _prop } { padding ~ bottom }
         }
       } {
+        \tl_if_exist:cF {
+          g__leporello_box_
+          \str_use:N \l__leporello_box_flow_into_str
+          _transfer_tl
+        } {
+          \tl_new:c {
+            g__leporello_box_
+            \str_use:N \l__leporello_box_flow_into_str
+            _transfer_tl
+          }
+        }
+        \tl_gput_right:ce {
+          g__leporello_box_
+          \str_use:N \l__leporello_box_flow_into_str
+          _transfer_tl
+        } {
+          \tl_use:c { g__leporello_box_ #2 _tl }
+        }
         \box_set_eq:cc {
           g__leporello_box_flow_into_
           \str_use:N \l__leporello_box_flow_into_str
           _box
         } {
           g__leporello_box_flow_into_
-            \prop_item:cn { g__leporello_box_ #2 _prop } { name }
+          \prop_item:cn { g__leporello_box_ #2 _prop } { name }
           _box
         }
-        \tl_gput_right:cn {
-          g__leporello_box_
-          \str_use:N \l__leporello_box_flow_into_str
-          _contents_tl
-        } {
-          \tl_use:c { g__leporello_box_ #2 _contents_tl }
-        }
       } {
+        \__leporello_box_break_insert:n {#2}
         \__leporello_box_break_flow_aux:nn {#1} {#2}
       }
     } {
+      \__leporello_box_break_insert:n {#2}
       \__leporello_box_break_flow_aux:nn {#1} {#2}
     }
 
@@ -1021,11 +1022,6 @@
     \tl_gput_left:ce {
       g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl
     } {
-      \exp_not:N \__leporello_box_break_check_width:nn {
-        \clist_item:Nn \l_leporello_columns_clist {#1}
-      } {
-        \exp_not:N \l_leporello_current_column_int
-      }
       \exp_not:N \box_use:c {
         g__leporello_box_flow_into_
         \str_use:N \l__leporello_box_flow_into_str
@@ -1037,9 +1033,13 @@
         \vbox_unpack_drop:c { g__leporello_box_flow_ #2 _box }
       }
     }
+  } {
+    \__leporello_box_break_insert:n {#2}
   }
 }
 \cs_generate_variant:Nn \__leporello_box_break_flow:nn { en }
+
+\cs_generate_variant:Nn \tl_analysis_log:n { e }
 
 \cs_new_protected:Npn \__leporello_box_update_poles:nnn #1#2#3 {
   \clist_if_in:enT {
@@ -1629,13 +1629,6 @@
     \prop_item:cn { g__leporello_box_ #1 _prop } { pre }
     #2
   }
-  \tl_if_exist:cF { g__leporello_box_ #1 _contents_tl } {
-    \tl_new:c { g__leporello_box_ #1 _contents_tl }
-  }
-  \tl_gput_right:cn { g__leporello_box_ #1 _contents_tl } {
-    \prop_item:cn { g__leporello_box_ #1 _prop } { pre }
-    #2
-  }
 }
 \cs_generate_variant:Nn \__leporello_box_store:nn { Vn }
 
@@ -1827,7 +1820,6 @@
     }
     \int_step_inline:nn { \g__leporello_box_int } {
       \prop_if_in:NnT \l__leporello_boxes_to_columns_prop {##1} {
-        \__leporello_box_break_insert:n {##1}
         \__leporello_box_break_flow:en {
           \prop_item:Nn \l__leporello_boxes_to_columns_prop {##1}
         } {##1}
