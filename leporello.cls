@@ -345,6 +345,7 @@
 \bool_new:N \l_leporello_typeset_reverse_layout_bool
 \bool_new:N \l_leporello_typeset_reverse_order_bool
 \bool_new:N \l_leporello_typeset_reverse_pagination_bool
+\bool_new:N \l_leporello_typeset_alternate_layout_bool
 \bool_new:N \l_leporello_typeset_continuous_pagination_bool
 
 \keys_define:nn { leporello / typeset } {
@@ -358,6 +359,10 @@
                      .code:n      = {
     \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
   } ,
+  alternate ~ layout
+                    .bool_set:N   = \l_leporello_typeset_alternate_layout_bool ,
+  alternate ~ layout
+                    .initial:n    = { true } ,
   continuous ~ pagination
                     .bool_set:N   = \l_leporello_typeset_continuous_pagination_bool ,
   continuous ~ pagination
@@ -888,7 +893,7 @@
       }
     }
   }
-  
+
   \prop_if_in:cnTF { g__leporello_box_ #2 _prop } { flow ~ into } {
     \str_set:Ne \l__leporello_box_flow_into_str {
       \prop_item:cn { g__leporello_box_ #2 _prop } { flow ~ into }
@@ -913,7 +918,7 @@
         _tl
       }
     }
-      
+
     \bool_lazy_and:nnTF {
       \prop_if_in_p:cn { g__leporello_box_ #2 _prop } { name }
     } {
@@ -994,13 +999,21 @@
         _box
       }
     }
-    \tl_gput_left:cn {
-      g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl
-    } {
-      \__leporello_box_break_check_width:nn {
-        \prop_item:cn { g__leporello_box_ #2 _prop } { inner ~ width }
+    \dim_compare:nNnT {
+      \box_ht:c {
+        g__leporello_box_flow_into_
+        \str_use:N \l__leporello_box_flow_into_str
+        _box
+      }
+    } > { 0pt } {
+      \tl_gput_left:cn {
+        g__leporello_box_ \str_use:N \l__leporello_box_flow_into_str _tl
       } {
-        \dim_use:N \tex_hsize:D
+        \__leporello_box_break_check_width:ee {
+          \prop_item:cn { g__leporello_box_ #2 _prop } { inner ~ width }
+        } {
+          \dim_use:N \tex_hsize:D
+        }
       }
     }
     \tl_gput_right:cn { g__leporello_box_ #2 _tl } {
@@ -1636,7 +1649,17 @@
 
 \cs_new_protected:Npn \__leporello_typeset_columns:n #1 {
   \int_incr:N \l_leporello_current_page_int
-  
+
+  \bool_if:NT \l_leporello_typeset_alternate_layout_bool {
+    \int_if_even:nT { \l_leporello_current_page_int } {
+      \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
+    }
+  }
+
+  \bool_if:NT \l_leporello_typeset_reverse_layout_bool {
+    \clist_reverse:N \l_leporello_columns_clist
+  }
+
   \leporello_draw_absolute:nn { 0mm , 0mm } {
     \clist_map_inline:nn {#1} {
       \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
@@ -1783,10 +1806,6 @@
     \hook_use:n { leporello / typeset / before }
     \keys_set:nn { leporello / typeset } {#1}
 
-    \bool_if:NT \l_leporello_typeset_reverse_layout_bool {
-      \clist_reverse:N \l_leporello_columns_clist
-    }
-
     \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
       \int_set:Nn \l_leporello_current_column_int {
         \l_leporello_column_count_int
@@ -1833,7 +1852,7 @@
       }
       \hook_use:n { leporello / break-flow / after }
     \group_end:
-    
+
     \int_zero:N \l__leporello_typeset_int
     \clist_clear:N \l__leporello_typeset_temp_clist
     \clist_map_inline:nn {#2} {
