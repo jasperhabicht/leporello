@@ -950,7 +950,7 @@
         } {
           \tl_use:c { g__leporello_box_ #2 _tl }
         }
-        \box_set_eq:cc {
+        \box_gset_eq:cc {
           g__leporello_box_flow_into_
           \str_use:N \l__leporello_box_flow_into_str
           _box
