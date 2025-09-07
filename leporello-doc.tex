@@ -540,6 +540,11 @@ typeset/|reverse pagination|
 If set, the pagination of the columns is reversed. This key does not expect a value.
 
 \begin{macrodef}
+typeset/|alternate layout|
+\end{macrodef}
+If set, the widths of the columns are reversed in every second page. This key is set to \macro{true} per default. Use \macro{alternate layout=false} to disable this function. 
+
+\begin{macrodef}
 typeset/|continuous pagination|
 \end{macrodef}
 If set, columns are numbered continuously from left to right. Otherwise, the pagination starts on the last column of every odd shipout page, continues from left to right over the columns on the following shipout page and eventually from left ro right over the remaining columns on the first page. For example, in a document with three columns per shipout page the pagination would be 5, 6, 1 and 2, 3, 4 and then on the next two shipout pages 11, 12, 7 and 8, 9, 10. This key does not expect a value.
@@ -553,7 +558,7 @@ Typeset material can flow from one box to another box. To this end, the key \mac
 \end{macrodef}
 The flow mechanism works across multiple boxes. But due to the way the typesetting mechanism of TeX works, it needs some manual adjustment if the typeset material flows across boxes of different width. In this case, the command \macro{\leporelloboxbreak} or \macro{\pagebreak} should be inserted at the point where the break should take place. The command \macro{\leporelloboxbreak} is especially suited for justified typesetting as it will keep the last line before the break justified in contrast to the \macro{\pagebreak} command.
 
-Typeset material can only flow into boxes in the following column or page. If typeset material should flow backwards on the same page, this can be achieved using the key \macro{reverse order} on the relevant page.
+Typeset material can only flow into boxes that are defined later in the code. If typeset material should flow backwards on the same page, this can be achieved using the key \macro{reverse order} on the relevant page.
 
 \subsection{Right-to-left and vertical typesetting}
 
