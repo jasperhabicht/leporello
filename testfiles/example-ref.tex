@@ -1,35 +1,35 @@
 \documentclass[prepress, show frames, show ids]{leporello}
 \usepackage{lipsum}
-%\usepackage{lua-visual-debug}
-
-\sloppy
+\usepackage{lua-visual-debug}
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, height={100mm}, background color=cyan!10]
-\lipsum[1-7] xo xo \par
+\huge\thepage{} Reference to page \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
 \begin{leporellobox}[name={foo}, flow into={qux}, background color=cyan!10]
-abc abc \par
+\huge\thepage{} x \label{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{three}
 \begin{leporellobox}[name={qux}, flow into={bar}, height={100mm}, background color=magenta!10]
-\lipsum[1]
+\huge\thepage{} Reference to page \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{four}
 \begin{leporellobox}[name={bar}, background color=magenta!10]
-foo on page 
+\huge\thepage{} Reference to page \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{document}
 
-\leporellotypesetcolumns{one, two, three, four}
+\leporellotypesetcolumns[]{one, two, three, four}
 
 \end{document}
+
+\label{foo}\pageref{foo}
