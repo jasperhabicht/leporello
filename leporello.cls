@@ -226,6 +226,7 @@
 }
 
 \int_new:N \l_leporello_current_page_int
+\int_new:N \l_leporello_current_layout_page_int
 \int_new:N \l_leporello_current_column_int
 \str_new:N \l_leporello_current_column_str
 \int_new:N \l_leporello_current_box_int
@@ -560,10 +561,10 @@
   }
 }
 
-\cs_set_protected:Npn \leporello_output:n #1 {
+\cs_new_protected:Npn \leporello_output:n #1 {
   \tex_output:D = {#1}
 }
-\cs_set_protected:Npn \leporello_shipout:n #1 {
+\cs_new_protected:Npn \leporello_shipout:n #1 {
   \shipout \vbox:n {#1}
 }
 \cs_set_eq:NN \leporello_text_superscript:n \textsuperscript
@@ -861,7 +862,7 @@
 \cs_generate_variant:Nn \__leporello_box_break_check_width:nn { ee }
 
 \cs_new_protected:Npn \__leporello_box_page_set:nn #1#2 {
-  \leporello_page_gset:n {
+  \int_set:Nn \l_leporello_current_layout_page_int {
     \int_eval:n {
       \bool_if:NTF \l_leporello_typeset_continuous_pagination_bool {
         \bool_if:NTF \l_leporello_typeset_reverse_pagination_bool {
@@ -898,6 +899,9 @@
         }
       }
     }
+  }
+  \leporello_page_gset:n {
+    \int_eval:n { \l_leporello_current_layout_page_int }
   }
 }
 
@@ -1844,12 +1848,6 @@
           \prop_put:NnV \l__leporello_typeset_boxes_to_columns_prop
             {####1}
             \l__leporello_typeset_column_int
-
-          \iow_log:e {
-            box ~ ##1 : ~ 
-            page ~ \int_use:N \l__leporello_typeset_page_int , ~
-            column ~ \int_use:N \l__leporello_typeset_column_int , ~
-          }
         }
       }
     }
@@ -2139,6 +2137,17 @@
 
 \NewDocumentCommand { \leporelloimage } { O{} m } {
   \leporello_typeset_image:nn {#1} {#2}
+}
+
+% ===
+
+\hook_gput_code:nnn { label } { . } {
+  \cs_set:Npn \protected@write #1#2#3 {
+    \iow_now:Ne #1 {#3}
+  }
+  \tl_set:Nn \thepage {
+    \int_use:N \l_leporello_current_layout_page_int
+  }
 }
 
 % ===

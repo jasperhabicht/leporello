@@ -2,23 +2,35 @@
 \usepackage{lipsum}
 
 \ExplSyntaxOn
-\dim_new:N\l__leporello_output_leftskip_dim
-\dim_new:N\l__leporello_output_topskip_dim
+\dim_new:N \l__leporello_output_leftskip_dim
+\dim_new:N \l__leporello_output_topskip_dim
+\dim_new:N \l_leporello_paper_width_dim
+\dim_set:Nn \l_leporello_paper_width_dim { 100mm }
+\dim_new:N \l_leporello_paper_height_dim
+\dim_set:Nn \l_leporello_paper_height_dim { 200mm }
 
-\cs_set_protected:Npn \leporello_output:n #1 {
+\cs_new_protected:Npn \leporello_output:n #1 {
   \tex_output:D = {#1}
 }
-\cs_set_protected:Npn \leporello_shipout:n #1 {
+\cs_new_protected:Npn \leporello_shipout:n #1 {
   \__shipout_execute: \vbox:n {#1}
 }
 
-\leporello_output:n {
-  \leporello_shipout:n {
-    \skip_vertical:N \l__leporello_output_topskip_dim
-    \hbox_to_wd:nn { \l_leporello_paper_width_dim } {
-      \skip_horizontal:N \l__leporello_output_leftskip_dim
-      \vbox:n {
-        \tex_unvbox:D 255
+\cs_new:Npn \leporello_reset_output_routine: {
+  \dim_gset:Nn \tex_hsize:D {
+    \l_leporello_paper_width_dim
+  }
+  \dim_gset:Nn \tex_vsize:D {
+    \l_leporello_paper_height_dim
+  }
+  \leporello_output:n {
+    \leporello_shipout:n {
+      \skip_vertical:N \l__leporello_output_topskip_dim
+      \hbox_to_wd:nn { \l_leporello_paper_width_dim } {
+        \skip_horizontal:N \l__leporello_output_leftskip_dim
+        \vbox:n {
+          \tex_unvbox:D 255
+        }
       }
     }
   }
@@ -30,34 +42,68 @@
 
 \ExplSyntaxOn
 
-\tl_set:Nn \l_tmpa_tl { \lipsum[1-3] }
+\int_step_inline:nn { 5 } {
+  \prop_new:c { g__leporello_box_ #1 _prop }
+  \prop_gput:cnn { g__leporello_box_ #1 _prop } { inner ~ width } { 70mm }
+  \prop_gput:cnn { g__leporello_box_ #1 _prop } { inner ~ height } { 70mm }
+}
+\prop_gput:cnn { g__leporello_box_1_prop } { inner ~ width } { 80mm }
+\prop_gput:cnn { g__leporello_box_3_prop } { inner ~ width } { 60mm }
 
-\dim_gset:Nn \tex_hsize:D { 80mm }
-\dim_gset:Nn \tex_vsize:D { 80mm }
-\tex_output:D {
-  \dim_gset:Nn \tex_hsize:D { 70mm }
-  \dim_gset:Nn \tex_vsize:D { 70mm }
-  \int_gincr:N \g_tmpa_int
-  \box_new:c { g_tmpa_ \int_use:N \g_tmpa_int _box }
-  \vbox_gset_top:cn { g_tmpa_ \int_use:N \g_tmpa_int _box } { 
-    \tex_unvbox:D 255
+\int_new:N \g__leporello_output_flow_int
+
+\cs_new_protected:Npn \leporello_output_flow:nn #1#2 {
+  \int_gincr:N \g__leporello_output_flow_int
+  \dim_gset:Nn \tex_hsize:D {
+    \prop_item:cn {
+      g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
+    } { inner ~ width }
   }
-}
+  \dim_gset:Nn \tex_vsize:D {
+    \prop_item:cn {
+      g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
+    } { inner ~ height }
+  }
+  \leporello_output:n {
+    \int_gincr:N \g__leporello_output_flow_int
+    \dim_gset:Nn \tex_hsize:D {
+      \prop_item:cn {
+        g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
+      } { inner ~ width }
+    }
+    \dim_gset:Nn \tex_vsize:D {
+      \prop_item:cn {
+        g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
+      } { inner ~ height }
+    }
+    \box_new:c {
+      g__leporello_output_flow_ \int_eval:n { \g__leporello_output_flow_int - 1 } _box
+    }
+    \vbox_gset_top:cn {
+      g__leporello_output_flow_ \int_eval:n { \g__leporello_output_flow_int - 1 } _box
+    } { 
+      \tex_unvbox:D 255
+    }
+  }
   
-\tl_use:N \l_tmpa_tl
+  #2
 
-\tex_par:D
-\tex_penalty:D -20000
+  \tex_par:D
+  \clearpage
+  %\tex_penalty:D -10000
 
-\tex_output:D {
-  \tex_shipout:D \tex_box:D 255
+  \leporello_reset_output_routine:  
 }
-\dim_gset:Nn \tex_hsize:D { 160mm }
-\dim_gset:Nn \tex_vsize:D { 180mm }        
 
-\int_step_inline:nn { \g_tmpa_int } {
-  \box_use:c { g_tmpa_ #1 _box } ~ 
-}
+\tl_analysis_log:N \g__leporello_output_flow_int
+
+\leporello_output_flow:nn { } { xox ~ \lipsum[1] \par \lipsum[1] \par \lipsum[1] ~ xox }
+
+%\int_step_inline:nn { \g__leporello_output_flow_int - 1 } {
+%  \box_use:c { g__leporello_output_flow_ #1 _box } ~ 
+%}
+
+\lipsum[1]
 
 \ExplSyntaxOff
 \end{document}
