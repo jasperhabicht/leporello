@@ -823,9 +823,10 @@ This variable holds the number of columns in the layout. It is calculated from t
 |\l_leporello_typeset_reverse_layout_bool|
 |\l_leporello_typeset_reverse_order_bool|
 |\l_leporello_typeset_reverse_pagination_bool|
+|\l_leporello_typeset_alternate_layout_bool|
 |\l_leporello_typeset_continuous_pagination_bool|
 \end{macrodef}
-{\raggedright These variables hold the relevant values of the \macro{typeset/reverse layout}, \macro{typeset/reverse order}, \macro{typeset/reverse pagination} and \macro{typeset/continuous pagination} keys. \par}
+{\raggedright These variables hold the relevant values of the \macro{typeset/reverse layout}, \macro{typeset/reverse order}, \macro{typeset/reverse pagination}, \macro{typeset/alternate layout} and \macro{typeset/continuous pagination} keys. \par}
 
 \begin{macrodef}
 |\l_leporello_layout_vertical_ltr_bool|
@@ -834,11 +835,12 @@ This variable holds the number of columns in the layout. It is calculated from t
 These variables are set to true if the current layout is set to vertical and left-to-right or to vertical and right-to-left.
 
 \begin{macrodef}
+|\l_leporello_current_sheet_int|
 |\l_leporello_current_page_int|
 |\l_leporello_current_column_int|
 |\l_leporello_current_box_int|
 \end{macrodef}
-These variables hold the ID of the current page, the current column and the current box as integer respectively.
+These variables hold the ID of the current sheet page in the PDF file), the current page (column in the document), the current column (column on the sheet) and the current box as integer respectively.
 
 \begin{macrodef}
 |\l_leporello_current_column_str|
