@@ -1,12 +1,12 @@
 \documentclass[prepress, show frames, show ids]{leporello}
 \usepackage{lipsum}
-\usepackage{lua-visual-debug}
+%\usepackage{lua-visual-debug}
 
 \sloppy
 
 \begin{leporellocolumn}{one}
 \begin{leporellobox}[flow into={foo}, height={100mm}, background color=cyan!10]
-\lipsum[1-7] xo xo \par
+\lipsum[1-2] xo xo \par
 \end{leporellobox}
 \end{leporellocolumn}
 
@@ -18,7 +18,7 @@ abc abc \par
 
 \begin{leporellocolumn}{three}
 \begin{leporellobox}[name={qux}, flow into={bar}, height={100mm}, background color=magenta!10]
-%\lipsum[1]
+\lipsum[1]
 \end{leporellobox}
 \end{leporellocolumn}
 

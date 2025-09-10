@@ -5,19 +5,19 @@
 \errorcontextlines100
 
 \begin{leporellocolumn}{one}
-\begin{leporellobox}[flow into={foo}, height={100mm}, background color=cyan!10]
+\begin{leporellobox}[height={100mm}, background color=cyan!10]
 \huge\thepage{} Reference to page \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{two}
 \begin{leporellobox}[name={foo}, flow into={qux}, background color=cyan!10]
-\huge\thepage{} x \label{foo}
+\huge\thepage{} \lipsum[1] \par x \label{foo} \thepage{} ..
 \end{leporellobox}
 \end{leporellocolumn}
 
 \begin{leporellocolumn}{three}
-\begin{leporellobox}[name={qux}, flow into={bar}, height={100mm}, background color=magenta!10]
+\begin{leporellobox}[name={qux}, height={100mm}, background color=magenta!10]
 \huge\thepage{} Reference to page \pageref{foo}
 \end{leporellobox}
 \end{leporellocolumn}

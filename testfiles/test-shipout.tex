@@ -1,37 +1,96 @@
-% run with LuaLaTeX to show the frames
 \documentclass{article}
 \usepackage{lipsum}
 \usepackage{lua-visual-debug}
 
+\makeatletter
 \ExplSyntaxOn
 
+% set all LaTeX dimensions to zero
+\clist_map_inline:nn {
+  paperwidth ,
+  paperheight ,
+  textwidth ,
+  textheight ,
+  topmargin ,
+  oddsidemargin ,
+  evensidemargin ,
+  hoffset ,
+  voffset ,
+  headheight ,
+  headsep ,
+  footskip ,
+  marginparwidth ,
+  marginparsep ,
+  marginparpush
+} {
+  \dim_set:cn {#1} { 0pt }
+}
 
-\dim_new:N \g_leporello_remaining_space_dim
-\cs_new_protected:Npn \leporello_update_remaining_space: {
-  \dim_gset_eq:NN \g_leporello_remaining_space_dim \tex_vsize:D
-  \dim_compare:nNnF { \tex_pagegoal:D } = { \c_max_dim } {
-    \dim_set:Nn \g_leporello_remaining_space_dim {
-      \tex_pagegoal:D - \tex_pagetotal:D
+\pagestyle { empty }
+
+% === 
+
+\cs_new_protected:Npn \my_set_box_size:nn #1#2 {
+  \dim_gset:Nn \hsize {#1}
+  \dim_gset:Nn \vsize {#2}
+  \dim_gset:Nn \textwidth {#1}
+  \dim_gset:Nn \textheight {#2}
+  \dim_gset:Nn \@colht {#2}
+}
+
+\int_new:N \g_my_flow_box_int
+
+\cs_new_protected:Npn \my_box_break_flow:n #1 {
+  \hook_gput_code:nnn { shipout / before } { break-flow } {
+    % store shipout box and discard it
+    \box_new:c {
+      g_my_flow_ \int_use:N \g_my_flow_box_int _box
     }
-  }
-  \iow_log:e {
-    \dim_to_decimal_in_mm:n { \dim_use:N \g_leporello_remaining_space_dim }
-  }
-}
+    \box_gset_eq:cN {
+      g_my_flow_ \int_use:N \g_my_flow_box_int _box
+    } \l_shipout_box
+    %\shipout_discard:
 
-\NewDocumentCommand{\myremainingspace}{}{
-  \leporello_update_remaining_space:
-}
+    \int_gincr:N \g_my_flow_box_int
+  }
 
+  % set dimensions for small boxes
+  \int_set:Nn \g_my_flow_box_int { 1 }
+  \my_set_box_size:nn { 70mm } { 70mm }
+  #1
+
+  % remove hook code after final page break
+  \clearpage
+  \hook_gremove_code:nn { shipout / before } { break-flow }
+}
 
 \ExplSyntaxOff
+\makeatother
 
 \begin{document}
-\myremainingspace
 
+\ExplSyntaxOn
 
-\rule { 2cm } { 2cm } 
-\par \myremainingspace
+\textbf{\thepage}
 
+% create the boxes
+\my_box_break_flow:n { \textbf{\thepage} \lipsum[1] \par \textbf{\thepage} \lipsum[2] \textbf{\thepage} }
+
+% reset text body dimensions
+\my_set_box_size:nn { 120mm } { 200mm }
+
+\lipsum[2]
+\par
+
+\box_use:c { g_my_flow_ 1 _box }
+\box_use:c { g_my_flow_ 2 _box }
+%\box_use:c { g_my_flow_ 3 _box }
+
+\par
+\lipsum[1] 
+
+\textbf{\thepage} 
+
+\ExplSyntaxOff
 
 \end{document}

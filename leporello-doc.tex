@@ -270,7 +270,7 @@
 \changes{v0.9.5}{2025/08/25}{Improved alignment mechanism.}
 \changes{v1.0.0}{2025/08/27}{Improved key management and flow mechanism. Added note mechanism.}
 \changes{v1.0.1}{2025/08/30}{Fix of a bug that prevented the dimensions set with the keys \titlemacro{store width} and \titlemacro{store height} from having the correct value when used as value to the \titlemacro{offset} key. Fix of a bug in the stretch mechanism. Fix of a bug in right-to-left typesetting.}
-\changes{v1.0.2}{2025/09/10}{Documented L3 commands.}
+\changes{v1.0.2}{2025/09/10}{Documented L3 commands. Fundamental revision of the flow mechanism using the shipout mechanism of LaTeX.}
 
 \begin{document}
 \vspace*{-2.5em}
@@ -551,7 +551,7 @@ If set, columns are numbered continuously from left to right. Otherwise, the pag
 
 \section{Flow mechanism}\label{sec:flow}
 
-Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key.
+Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
 
 \begin{macrodef}
 |\leporelloboxbreak|
@@ -836,11 +836,15 @@ These variables are set to true if the current layout is set to vertical and lef
 
 \begin{macrodef}
 |\l_leporello_current_sheet_int|
-|\l_leporello_current_page_int|
 |\l_leporello_current_column_int|
 |\l_leporello_current_box_int|
 \end{macrodef}
-These variables hold the ID of the current sheet page in the PDF file), the current page (column in the document), the current column (column on the sheet) and the current box as integer respectively.
+These variables hold the ID of the current sheet (page in the PDF file), the current column (column on the sheet) and the current box as integer respectively.
+
+\begin{macrodef}
+|\g_leporello_current_page_int|
+\end{macrodef}
+This variable holds the current page. A page is considered a column in the document. Pagination is not necessarily continuous. Note that the current page number is always set globally.
 
 \begin{macrodef}
 |\l_leporello_current_column_str|
