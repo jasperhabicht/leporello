@@ -970,17 +970,23 @@
   \hook_gput_code:nnn { shipout / before } { leporello / break-flow } {
     \clist_gput_right:NV \g__leporello_shipout_processed_boxes_clist
       \g__leporello_shipout_current_box_int
-      
-    \box_new:c {
+
+    \box_if_exist:cF {
       g__leporello_box_
       \int_use:N \g__leporello_shipout_current_box_int
       _flow_box
+    } {
+      \box_new:c {
+        g__leporello_box_
+        \int_use:N \g__leporello_shipout_current_box_int
+        _flow_box
+      }
+      \box_gset_eq:cN {
+        g__leporello_box_
+        \int_use:N \g__leporello_shipout_current_box_int
+        _flow_box
+      } \l_shipout_box
     }
-    \box_gset_eq:cN {
-      g__leporello_box_
-      \int_use:N \g__leporello_shipout_current_box_int
-      _flow_box
-    } \l_shipout_box
     \shipout_discard:
 
     \prop_if_in:cnT {
@@ -1006,6 +1012,7 @@
 }
 
 \cs_new_protected:Npn \__leporello_box_break_flow:nnn #1#2#3 {
+  \if_false:
   \prop_if_in:cnT { g__leporello_box_ #3 _prop } { name } {
     \tl_if_exist:cT {
       g__leporello_box_
@@ -1021,6 +1028,7 @@
       }
     }
   }
+  \fi:
 
   \prop_if_in:cnT { g__leporello_box_ #3 _prop } { flow ~ into } {
     \group_begin:
@@ -1040,31 +1048,27 @@
       \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
 
       \clist_map_inline:Nn \g__leporello_shipout_processed_boxes_clist {
-        \tl_if_empty:nT {
-          g__leporello_box_ ##1 _tl
-        } {
-          \tl_if_exist:cF {
-            g__leporello_box_
-            \prop_item:cn { g__leporello_box_ ##1  _prop } { name }
-            _transfer_tl
+        \prop_if_in:cnT { g__leporello_box_ ##1 _prop } { name } {
+          \tl_if_empty:nF {
+            g__leporello_box_ ##1 _tl
           } {
-            \tl_new:c {
-              g__leporello_box_
-              \prop_item:cn { g__leporello_box_ ##1  _prop } { name }
-              _transfer_tl
+            \tl_if_exist:cF {
+              g__leporello_box_ ##1 _transfer_tl
+            } {
+              \tl_new:c {
+                g__leporello_box_ ##1 _transfer_tl
+              }
+            }
+            \tl_gset_eq:cc {
+              g__leporello_box_ ##1 _transfer_tl
+            } {
+              g__leporello_box_ ##1 _tl
             }
           }
-          \tl_gset_eq:cc {
-            g__leporello_box_
-            \prop_item:cn { g__leporello_box_ ##1  _prop } { name }
-            _transfer_tl
-          } { g__leporello_box_ ##1 _tl }
         }
-        
-        \tl_gclear:c {
-          g__leporello_box_ ##1 _tl
-        }
-        \tl_gput_right:ce {
+
+        % Append box with flowing text
+        \tl_gset:ce {
           g__leporello_box_ ##1 _tl
         } {
           \vbox_top:n {
@@ -1079,6 +1083,31 @@
           }
         }
 
+        \prop_if_in:cnT { g__leporello_box_ ##1 _prop } { name } {
+          \iow_log:e {
+            transfer ~ ##1: ~ 
+            \tl_use:c { g__leporello_box_ ##1 _transfer_tl }
+          }
+        
+          %\vbox_set_top:Nn \l_tmpa_box {
+          %  \tl_use:c { g__leporello_box_ ##1 _transfer_tl }
+          %}
+          %\dim_compare:nNnTF {
+          %  \prop_item:cn { g__leporello_box_ ##1 _prop } { remaining ~ space }
+          %} > {
+          %  \box_ht:N \l_tmpa_box
+          %} {
+            \tl_gput_right:cn {
+              g__leporello_box_ ##1 _tl
+            } {
+              %\tl_use:c { g__leporello_box_ ##1 _transfer_tl }
+            }
+          %} {
+            
+          %}
+        }
+
+        \if_false:
         \tl_if_exist:cF {
           g__leporello_box_
           \prop_item:cn { g__leporello_box_ ##1 _prop } { name }
@@ -1094,6 +1123,8 @@
             }
           }
         }
+        \fi:
+        
       } 
     \group_end:
   }
