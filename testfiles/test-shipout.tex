@@ -1,9 +1,12 @@
+% run with LuaLaTeX to show the frames
 \documentclass{article}
 \usepackage{lipsum}
+\usepackage{lua-visual-debug}
 
-\errorcontextlines100
-
+\makeatletter
 \ExplSyntaxOn
+
+% set all LaTeX dimensions to zero
 \clist_map_inline:nn {
   paperwidth ,
   paperheight ,
@@ -21,199 +24,70 @@
   marginparsep ,
   marginparpush
 } {
-  \cs_new_protected:cpn {
-    leporello_ltlayout_ #1 _set:n
-  } ##1 {
-    \dim_set:cn {#1} {##1}
-  }
+  \dim_set:cn {#1} { 0pt }
 }
 
-\cs_new_protected:Npn \leporello_output:n #1 {
-  \tex_output:D = {#1}
-}
-\cs_new_protected:Npn \leporello_shipout:n #1 {
-  \shipout \vbox:n {#1}
-}
+\pagestyle { empty }
 
-\clist_map_inline:nn {
-  hoffset ,
-  voffset ,
-  headheight ,
-  headsep ,
-  footskip ,
-  marginparwidth ,
-  marginparsep ,
-  marginparpush
-} {
-  \use:c { leporello_ltlayout_ #1 _set:n } { 0pt }
-}
-\clist_map_inline:nn {
-  topmargin ,
-  oddsidemargin ,
-  evensidemargin
-} {
-  \use:c { leporello_ltlayout_ #1 _set:n } { -1in }
+% === 
+
+\cs_new_protected:Npn \my_set_box_size:nn #1#2 {
+  \dim_gset:Nn \hsize {#1}
+  \dim_gset:Nn \vsize {#2}
+  \dim_gset:Nn \textwidth {#1}
+  \dim_gset:Nn \textheight {#2}
+  \dim_gset:Nn \@colht {#2}
 }
 
-\dim_new:N \l__leporello_output_topskip_dim
-\dim_new:N \l__leporello_output_leftskip_dim
-\dim_new:N \l_leporello_paper_width_dim
+\int_new:N \g_my_flow_box_int
 
-\dim_set:Nn \l__leporello_output_topskip_dim { 0pt }
-\dim_set:Nn \l__leporello_output_leftskip_dim { 0pt }
-\dim_set:Nn \l_leporello_paper_width_dim { 210mm }
-
-\leporello_output:n {
-  \stepcounter{page}
-  \leporello_shipout:n {
-    \skip_vertical:N \l__leporello_output_topskip_dim
-    \hbox_to_wd:nn { \l_leporello_paper_width_dim } {
-      \skip_horizontal:N \l__leporello_output_leftskip_dim
-      \vbox:n {
-        \tex_unvbox:D 255
-      }
+\cs_new_protected:Npn \my_box_break_flow:n #1 {
+  \hook_gput_code:nnn { shipout / before } { break-flow } {
+    % store shipout box and discard it
+    \box_new:c {
+      g_my_flow_ \int_use:N \g_my_flow_box_int _box
     }
+    \box_gset_eq:cN {
+      g_my_flow_ \int_use:N \g_my_flow_box_int _box
+    } \l_shipout_box
+    \shipout_discard:
+
+    \int_gincr:N \g_my_flow_box_int
   }
+
+  % set dimensions for small boxes
+  \int_set:Nn \g_my_flow_box_int { 1 }
+  \my_set_box_size:nn { 70mm } { 70mm }
+  #1
+
+  % remove hook code after final page break
+  \clearpage
+  \hook_gremove_code:nn { shipout / before } { break-flow }
 }
 
-\dim_new:N \g__leporello_store_hsize_dim
-\dim_new:N \g__leporello_store_vsize_dim
-
-\cs_new_protected:Npn \leporello_gset_box_dimensions:nn #1#2 {
-  \dim_gset:Nn \g__leporello_store_hsize_dim { \tex_hsize:D }
-  \dim_gset:Nn \g__leporello_store_vsize_dim { \tex_vsize:D }
-  \dim_gset:Nn \tex_hsize:D {#1}
-  \dim_gset:Nn \tex_vsize:D {#2}
-}
-
-\cs_new_protected:Npn \leporello_greset_box_dimensions: {
-  \dim_gset:Nn \tex_hsize:D { \g__leporello_store_hsize_dim }
-  \dim_gset:Nn \tex_vsize:D { \g__leporello_store_vsize_dim }
-}
 \ExplSyntaxOff
+\makeatother
 
 \begin{document}
 
 \ExplSyntaxOn
 
-\int_new:N \g__leporello_flow_box_int
+% create the boxes
+\my_box_break_flow:n { \lipsum[1-2] }
 
-\cs_new_protected:Npn \leporello_generate_flow_boxes:nn #1#2 {
-  \int_gzero:N \g__leporello_flow_box_int
-  \leporello_gset_box_dimensions:nn { 50mm } { 50mm }
-  \hook_gput_code:nnn { shipout / before } { leporello / break-flow } {
-    \int_gincr:N \g__leporello_flow_box_int
-    \box_new:c {
-      g__leporello_flow_ #1 _ \int_use:N \g__leporello_flow_box_int _box
-    }
-    \box_gset_eq:cN {
-      g__leporello_flow_ #1 _ \int_use:N \g__leporello_flow_box_int _box
-    } \l_shipout_box
-    \shipout_discard:
-    \leporello_gset_box_dimensions:nn { 70mm } { 70mm }
-  }
-  #2
-  \tex_par:D
-  \tex_penalty:D -20000
-  \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
-  \leporello_greset_box_dimensions:
-  \setcounter{page}{1}
-}
+% reset text body dimensions
+\my_set_box_size:nn { 120mm } { 200mm }
 
-\leporello_generate_flow_boxes:nn {1} {
-  \lipsum[2] \par \lipsum[2]
-}
-
-\leporello_gset_box_dimensions:nn { 120mm } { 200mm }
-
-
-\lipsum[1] \thepage
-
+\lipsum[2]
 \par
 
-\ExplSyntaxOn
-\box_use:c { g__leporello_flow_ 1 _ 2 _box }
-\ExplSyntaxOff
+\box_use:c { g_my_flow_ 1 _box }
+\box_use:c { g_my_flow_ 2 _box }
+\box_use:c { g_my_flow_ 3 _box }
 
-\lipsum[2] \thepage
-
-\newpage
-
-hello \thepage
+\par
+\lipsum[2] 
 
 \ExplSyntaxOff
-
 
 \end{document}
-
-
-
-
-
-
-  
-\ExplSyntaxOn
-
-\int_step_inline:nn { 5 } {
-  \prop_new:c { g__leporello_box_ #1 _prop }
-  \prop_gput:cnn { g__leporello_box_ #1 _prop } { inner ~ width } { 70mm }
-  \prop_gput:cnn { g__leporello_box_ #1 _prop } { inner ~ height } { 70mm }
-}
-\prop_gput:cnn { g__leporello_box_1_prop } { inner ~ width } { 80mm }
-\prop_gput:cnn { g__leporello_box_3_prop } { inner ~ width } { 60mm }
-
-\int_new:N \g__leporello_output_flow_int
-
-\cs_new_protected:Npn \leporello_output_flow:nn #1#2 {
-  
-  \leporello_output:n {
-    \int_gincr:N \g__leporello_output_flow_int
-    \dim_gset:Nn \tex_hsize:D {
-      \prop_item:cn {
-        g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
-      } { inner ~ width }
-    }
-    \dim_gset:Nn \tex_vsize:D {
-      \prop_item:cn {
-        g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
-      } { inner ~ height }
-    }
-    \box_new:c {
-      g__leporello_output_flow_ \int_eval:n { \g__leporello_output_flow_int - 1 } _box
-    }
-    \vbox_gset_top:cn {
-      g__leporello_output_flow_ \int_eval:n { \g__leporello_output_flow_int - 1 } _box
-    } { 
-      \tex_unvbox:D 255
-    }
-  }
-  \int_gincr:N \g__leporello_output_flow_int
-  \dim_gset:Nn \tex_hsize:D {
-    \prop_item:cn {
-      g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
-    } { inner ~ width }
-  }
-  \dim_gset:Nn \tex_vsize:D {
-    \prop_item:cn {
-      g__leporello_box_ \int_use:N \g__leporello_output_flow_int _prop
-    } { inner ~ height }
-  }
-  
-  
-  #2
-}
-
-\tl_analysis_log:N \g__leporello_output_flow_int
-
-\leporello_output_flow:nn { } { xox ~ \lipsum[1] \par \lipsum[1] \par \lipsum[1] ~ xox }
-
-
-\int_step_inline:nn { \g__leporello_output_flow_int - 1 } {
-  \box_use:c { g__leporello_output_flow_ #1 _box } ~ 
-}
-
-
-
-\lipsum[1]
-
-\ExplSyntaxOff
