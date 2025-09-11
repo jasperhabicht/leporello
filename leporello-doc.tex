@@ -553,6 +553,8 @@ If set, columns are numbered continuously from left to right. Otherwise, the pag
 
 Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
 
+Prior to shipping out a (PDF) page, all material in boxes that have the \macro{flow into} key set is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
+
 \begin{macrodef}
 |\leporelloboxbreak|
 \end{macrodef}

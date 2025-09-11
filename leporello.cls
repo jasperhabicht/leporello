@@ -440,6 +440,30 @@
 \bool_new:N \l_leporello_layout_vertical_ltr_bool
 \bool_new:N \l_leporello_layout_vertical_rtl_bool
 
+\cs_new_protected:Npn \__leporello_layout_set:n #1 {
+  \tex_pagedir:D TLT
+  \tex_bodydir:D TLT
+  \tex_pardir:D TLT
+  \tex_textdir:D TLT
+  \scan_stop:
+  \hook_gput_code:nnn { leporello / break-flow / before } {
+    leporello / layout
+  } {
+    \tex_bodydir:D #1
+    \tex_pardir:D #1
+    \tex_textdir:D #1
+    \scan_stop:
+  }
+  \hook_gput_code:nnn { leporello / box / begin } {
+    leporello / layout
+  } {
+    \tex_bodydir:D #1
+    \tex_pardir:D #1
+    \tex_textdir:D #1
+    \scan_stop:
+  }
+}
+
 \sys_if_engine_luatex:T {
   \hook_gput_code:nnn { leporello / typeset / before } {
     leporello / layout
@@ -451,52 +475,12 @@
         \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
         \bool_set_inverse:N \l_leporello_typeset_reverse_order_bool
         \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
-        \tex_pagedir:D TLT
-        \tex_bodydir:D TLT
-        \tex_pardir:D TLT
-        \tex_textdir:D TLT
-        \scan_stop:
-        \hook_gput_code:nnn { leporello / break-flow / before } {
-          leporello / layout
-        } {
-          \tex_bodydir:D TRT
-          \tex_pardir:D TRT
-          \tex_textdir:D TRT
-          \scan_stop:
-        }
-        \hook_gput_code:nnn { leporello / box / begin } {
-          leporello / layout
-        } {
-          \tex_bodydir:D TRT
-          \tex_pardir:D TRT
-          \tex_textdir:D TRT
-          \scan_stop:
-        }
+        \__leporello_layout_set:n { TRT }
       }
       { 2 } {
         \bool_set_true:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
-        \tex_pagedir:D TLT
-        \tex_bodydir:D TLT
-        \tex_pardir:D TLT
-        \tex_textdir:D TLT
-        \scan_stop:
-        \hook_gput_code:nnn { leporello / break-flow / before } {
-          leporello / layout
-        } {
-          \tex_bodydir:D LTL
-          \tex_pardir:D LTL
-          \tex_textdir:D LTL
-          \scan_stop:
-        }
-        \hook_gput_code:nnn { leporello / box / begin } {
-          leporello / layout
-        } {
-          \tex_bodydir:D LTL
-          \tex_pardir:D LTL
-          \tex_textdir:D LTL
-          \scan_stop:
-        }
+        \__leporello_layout_set:n { LTL }
       }
       { 3 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
@@ -504,27 +488,7 @@
         \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
         \bool_set_inverse:N \l_leporello_typeset_reverse_order_bool
         \bool_set_inverse:N \l_leporello_typeset_reverse_pagination_bool
-        \tex_pagedir:D TLT
-        \tex_bodydir:D TLT
-        \tex_pardir:D TLT
-        \tex_textdir:D TLT
-        \scan_stop:
-        \hook_gput_code:nnn { leporello / break-flow / before } {
-          leporello / layout
-        } {
-          \tex_bodydir:D RTT
-          \tex_pardir:D RTT
-          \tex_textdir:D RTT
-          \scan_stop:
-        }
-        \hook_gput_code:nnn { leporello / box / begin } {
-          leporello / layout
-        } {
-          \tex_bodydir:D RTT
-          \tex_pardir:D RTT
-          \tex_textdir:D RTT
-          \scan_stop:
-        }
+        \__leporello_layout_set:n { RTT }
       }
     } {
       \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
