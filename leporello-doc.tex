@@ -44,6 +44,13 @@
 }
 \makeatother
 
+\newlength\oparindent
+\NewDocumentCommand{\raggedrightindent}{}{%
+  \setlength\oparindent{\parindent}%
+  \raggedright%
+  \setlength\parindent{\oparindent}%
+}
+
 \tcbuselibrary{skins,listings}
 \lstdefinestyle{leporellodocmacro}{
   basicstyle=\small\ttfamily,
@@ -553,7 +560,7 @@ If set, columns are numbered continuously from left to right. Otherwise, the pag
 
 Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
 
-Prior to shipping out a (PDF) page, all material in boxes that have the \macro{flow into} key set is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
+Prior to shipping out a (PDF) page, all material in boxes that have the \macro{flow into} key set (and where another box with the relevant \macro{name} exists) is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
 
 \begin{macrodef}
 |\leporelloboxbreak|
@@ -692,25 +699,31 @@ Expects a name of the list environment such as \macro{enumerate} or \macro{itemi
 
 The package offers three pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
-The package uses the hook \macro{begindocument/before} to insert layout-related settings among other things via the \macro{geometry} package as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks.
+The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{auto typesetting} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
 
-The package uses the hooks \macro{leporello/typeset/before} and \macro{leporello/box/begin} to unset and reset right-to-left and vertical typesetting mode.
+The flow mechanism makes use of the hook \macro{shipout/before} to insert code to break typeset material into boxes and \macro{build/page/after} to update the current page number. The inserted code is removed after the flow mechanism has finished. 
+
+{\raggedrightindent The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode.\par}
+
+{\raggedrightindent Finally, command and environment hooks are used to issue warnings if the commands \macro{\footnote}, \macro{\footnotemark} and \macro{\footnotetext} as well as the environments \macro{figure} or \macro{table} are used as this document class does not support these.\par}
 
 \begin{longtable}{
   @{}
-  p{13.5em}
-  p{\dimexpr\linewidth-2\tabcolsep-13.5em}
+  p{15em}
+  p{\dimexpr\linewidth-2\tabcolsep-15em}
   @{}
 }
   \toprule
-  \textbf{Hook}                    & \textbf{Position} \\*
+  \textbf{Hook}                       & \textbf{Position} \\*
   \midrule
-  \macro{leporello/column/begin}   & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that sets \macro{\l_leporello_current_column_str} to the name of the current column \\
-  \macro{leporello/column/end}     & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
-  \macro{leporello/box/begin}      & before the code block stored via the \macro{leporellobox} environment is typeset to the relevant box which is preceded by a line of code that sets \macro{\l_leporello_current_box_int} to the ID of the current column and immediately followed by the code defined via the \macro{pre} key \\
-  \macro{leporello/box/end}        & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
-  \macro{leporello/typeset/before} & immediately after the start of the group that contains the typeset column \\
-  \macro{leporello/typeset/after}  & immediately before the end of the group that contains the typeset column \\
+  \macro{leporello/column/begin}      & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that saves the name of the current column into \macro{\l_leporello_current_column_str} \\
+  \macro{leporello/column/end}        & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
+  \macro{leporello/box/begin}         & before the code block stored via the \macro{leporellobox} environment is typeset into the relevant box which is preceded by a line of code that saves the ID of the current column into \macro{\l_leporello_current_box_int} and immediately followed by the code defined via the \macro{pre} key \\
+  \macro{leporello/box/end}           & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
+  \macro{leporello/typeset/before}    & immediately after the start of the group that contains the typeset column \\
+  \macro{leporello/typeset/after}     & immediately before the end of the group that contains the typeset column \\
+  \macro{leporello/break-flow/before} & before the flow mechanism is initiated that breaks material into boxes \\
+  \macro{leporello/break-flow/after}  & after the flow mechanism has finished \\
   \bottomrule
 \end{longtable}
 
