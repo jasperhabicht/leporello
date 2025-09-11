@@ -561,7 +561,7 @@
   \cs_set_eq:NN \draw_set_linewidth:n \draw_linewidth:n
 }
 
-% print vertical cropmarks 
+% print vertical crop marks
 \cs_new_protected:Npn \__leporello_cropmarks: {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -585,7 +585,7 @@
   \draw_end:
 }
 
-% print horizontal cropmarks 
+% print horizontal crop marks
 \cs_new_protected:Npn \__leporello_cropmarks:n #1 {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -609,7 +609,7 @@
   \draw_end:
 }
 
-% print box id marks 
+% print box id marks
 \cs_new_protected:Npn \__leporello_id_mark:n #1 {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -623,7 +623,7 @@
   \draw_end:
 }
 
-% wrapper around \includegraphics to apply keys 
+% wrapper around \includegraphics to apply keys
 \cs_new:Npn \leporello_typeset_image:nn #1#2 {
   \group_begin:
     \keys_set:nn { leporello / image } {#1}
@@ -821,17 +821,17 @@
   \group_end:
 }
 
-% set page number for column on sheet 
+% set page number for column on sheet
 \cs_new_protected:Npn \__leporello_box_page_gset:nn #1#2 {
   \int_gset:Nn \g_leporello_current_page_int {
     \int_eval:n {
       \bool_if:NTF \l_leporello_typeset_continuous_pagination_bool {
         \bool_if:NTF \l_leporello_typeset_reverse_pagination_bool {
-          ( #1 ) * 
+          ( #1 ) *
           \l_leporello_column_count_int -
           #2 + 1
         } {
-          ( #1 - 1 ) * 
+          ( #1 - 1 ) *
           \l_leporello_column_count_int +
           #2
         }
@@ -984,7 +984,7 @@
         \g__leporello_shipout_current_box_int
     }
   }
-  
+
   \__leporello_break_gset_dimensions:n {#3}
   \leporello_ltlayout_@colht_gset:n {
     \prop_item:cn { g__leporello_box_ #3 _prop } { inner ~ height }
@@ -1026,14 +1026,14 @@
           } { flow ~ into }
         }
       }
-      
+
       \__leporello_break_gset_dimensions:V
         \g__leporello_shipout_next_box_int
-      
+
       \__leporello_break_check_sizes:VV
         \g__leporello_shipout_current_box_int
         \g__leporello_shipout_next_box_int
-      
+
       \int_gset_eq:NN \g__leporello_shipout_current_box_int
         \g__leporello_shipout_next_box_int
     }
@@ -1075,7 +1075,7 @@
             }
           }
         }
-      } 
+      }
     \group_end:
   }
 }
@@ -1713,7 +1713,7 @@
 % typeset columns to a sheet
 \cs_new_protected:Npn \__leporello_typeset_columns:n #1 {
   \int_gincr:N \g_leporello_current_sheet_int
-  
+
   \bool_if:NT \l_leporello_typeset_alternate_layout_bool {
     \int_if_even:nT { \g_leporello_current_sheet_int } {
       \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
@@ -1966,7 +1966,7 @@
         \l_leporello_info_area_dim - 1in
       }
     }
-    
+
     \leporello_ltlayout_paperwidth_set:n { \l_leporello_paper_width_dim }
     \leporello_ltlayout_paperheight_set:n { \l_leporello_paper_height_dim }
 

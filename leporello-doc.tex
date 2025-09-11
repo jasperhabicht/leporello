@@ -549,7 +549,7 @@ If set, the pagination of the columns is reversed. This key does not expect a va
 \begin{macrodef}
 typeset/|alternate layout|
 \end{macrodef}
-If set, the widths of the columns are reversed in every second page. This key is set to \macro{true} per default. Use \macro{typeset/alternate layout=false} to disable this function. 
+If set, the widths of the columns are reversed in every second page. This key is set to \macro{true} per default. Use \macro{typeset/alternate layout=false} to disable this function.
 
 \begin{macrodef}
 typeset/|continuous pagination|
@@ -560,7 +560,7 @@ If set, columns are numbered continuously from left to right. Otherwise, the pag
 
 Typeset material can flow from one box to another box. To this end, the key \macro{box/flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{box/name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
 
-Prior to shipping out a (PDF) page, all material in boxes that have the \macro{box/flow into} key set (and where another box with the relevant name exists) is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
+Prior to shipping out a (PDF) page, all material in boxes that have the \macro{box/flow into} key set (and where another box with the relevant name exists) is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out.
 
 \begin{macrodef}
 |\leporelloboxbreak|
@@ -699,9 +699,9 @@ Expects a name of the list environment such as \macro{enumerate} or \macro{itemi
 
 The package offers three pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
-The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{global/auto typeset} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
+The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw crop marks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{global/auto typeset} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
 
-The flow mechanism makes use of the hook \macro{shipout/before} to insert code to break typeset material into boxes and \macro{build/page/after} to update the current page number. The inserted code is removed after the flow mechanism has finished. 
+The flow mechanism makes use of the hook \macro{shipout/before} to insert code to break typeset material into boxes and \macro{build/page/after} to update the current page number. The inserted code is removed after the flow mechanism has finished.
 
 {\raggedrightindent The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode. \par}
 
@@ -790,7 +790,7 @@ baz
 \end{document}
 \end{codeexample}
 
-The example shows the use of the \macro{global/prepress} key that adds cropmarks to the layout. It also shows how the \macro{global/show frames} key adds frames around the columns. Finally, the \macro{global/show id} key adds the box IDs to the boxes.
+The example shows the use of the \macro{global/prepress} key that adds crop marks to the layout. It also shows how the \macro{global/show frames} key adds frames around the columns. Finally, the \macro{global/show id} key adds the box IDs to the boxes.
 
 The default layout has three pages which are shown here. Three columns named \macro{example-a}, \macro{example-b} and \macro{example-c} are defined and contain one box each. A custom style is defined to combine the two keys needed to bottom-align the third box. A fixed height is set to for the first box and the second box has and offset and its height stretched to the bottom of the column. Bleed is added to the relevant edges of the three columns.
 
