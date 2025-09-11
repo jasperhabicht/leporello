@@ -454,12 +454,14 @@
         \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
+        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / break-flow / before } {
           leporello / layout
         } {
           \tex_bodydir:D TRT
           \tex_pardir:D TRT
+          \tex_textdir:D TRT
           \scan_stop:
         }
         \hook_gput_code:nnn { leporello / box / begin } {
@@ -467,6 +469,7 @@
         } {
           \tex_bodydir:D TRT
           \tex_pardir:D TRT
+          \tex_textdir:D TRT
           \scan_stop:
         }
       }
@@ -476,12 +479,14 @@
         \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
+        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / break-flow / before } {
           leporello / layout
         } {
           \tex_bodydir:D LTL
           \tex_pardir:D LTL
+          \tex_textdir:D LTL
           \scan_stop:
         }
         \hook_gput_code:nnn { leporello / box / begin } {
@@ -489,6 +494,7 @@
         } {
           \tex_bodydir:D LTL
           \tex_pardir:D LTL
+          \tex_textdir:D LTL
           \scan_stop:
         }
       }
@@ -501,12 +507,14 @@
         \tex_pagedir:D TLT
         \tex_bodydir:D TLT
         \tex_pardir:D TLT
+        \tex_textdir:D TLT
         \scan_stop:
         \hook_gput_code:nnn { leporello / break-flow / before } {
           leporello / layout
         } {
           \tex_bodydir:D RTT
           \tex_pardir:D RTT
+          \tex_textdir:D RTT
           \scan_stop:
         }
         \hook_gput_code:nnn { leporello / box / begin } {
@@ -514,6 +522,7 @@
         } {
           \tex_bodydir:D RTT
           \tex_pardir:D RTT
+          \tex_textdir:D RTT
           \scan_stop:
         }
       }
@@ -522,6 +531,7 @@
       \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
       \tex_pagedir:D TLT
       \tex_pardir:D TLT
+      \tex_textdir:D TLT
       \group_begin:
         \msg_redirect_name:nnn { hooks } { cannot-remove } { none }
         \hook_gremove_code:nn { leporello / break-flow / before } { leporello / layout }
