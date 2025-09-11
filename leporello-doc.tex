@@ -350,7 +350,7 @@ A few column layouts are predefined. These do not expect a value. The layouts wi
 \begin{macrodef}
 global/|layout height|={<dimension>}
 \end{macrodef}
-Expects a dimension that sets the height of the final layout. If \macro{layout height} is not specified, the class assumes the default value of \macro{210mm} (the height of A4 landscape).
+Expects a dimension that sets the height of the final layout. If \macro{global/layout height} is not specified, the class assumes the default value of \macro{210mm} (the height of A4 landscape).
 
 \begin{macrodef}
 global/|auto typeset|
@@ -375,12 +375,12 @@ If set, the paper size is increased at all four edges by the width of the info a
 \begin{macrodef}
 global/|info area|={<dimension>}
 \end{macrodef}
-Expects a dimension for the width of the info area that is shown if \macro{prepress} is set. If \macro{info area} is not specified, the class assumes the default value of \macro{10mm}.
+Expects a dimension for the width of the info area that is shown if \macro{global/prepress} is set. If \macro{global/info area} is not specified, the class assumes the default value of \macro{10mm}.
 
 \begin{macrodef}
 global/|bleed|={<dimension>}
 \end{macrodef}
-Expects a dimension for the width of the bleed that is added to boxes with background and other material reaching to the edges of the document layout. If \macro{bleed} is not specified, the class assumes the default value of \macro{3mm}.
+Expects a dimension for the width of the bleed that is added to boxes with background and other material reaching to the edges of the document layout. If \macro{global/bleed} is not specified, the class assumes the default value of \macro{3mm}.
 
 \begin{macrodef}
 |\leporellobleed|
@@ -448,12 +448,12 @@ Expects a comma-separated list of two items (a tuple) which denotes the horizont
 \begin{macrodef}
 box/|align self|={<tuple of poles>}
 \end{macrodef}
-Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to parent box (per default this is the current column box). If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{align parent}.
+Expects a comma-separated list of two items (a tuple) which denotes the horizontal and vertical pole of which the intersection defines the coordinate of the current box that serves as anchor to align the current box to parent box (per default this is the current column box). If not specified, the default value \macro{l, t} is assumed, denoting the top left corner. Available poles are the same as for \macro{box/align parent}.
 
 \begin{macrodef}
 box/|offset|={<tuple of dimensions>}
 \end{macrodef}
-Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{align parent} and \macro{align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed. Internally, the value is parsed as a floating point variable.
+Expects a comma-separated list of two dimensions (a tuple) which defines the offset of the anchor set via \macro{box/align parent} and \macro{box/align self}. The first dimension is the offset to the right, the second dimension the offset downwards. If not specified, the default value \macro{0mm, 0mm} is assumed. Internally, the value is parsed as a floating point variable.
 
 \begin{macrodef}
 box/|width|={<dimension>}
@@ -480,11 +480,11 @@ box/|padding bottom|={<dimension>}
 box/|padding|={<key-value list>}
 box/|no padding|
 \end{macrodef}
-\macro{padding left}, \macro{padding right}, \macro{padding top} and \macro{padding bottom} each expect a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
+\macro{box/padding left}, \macro{box/padding right}, \macro{box/padding top} and \macro{box/padding bottom} each expect a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
 
-All four padding settings can also be stated using the \macro{padding} key and the subkeys \macro{left}, \macro{right}, \macro{top}, \macro{bottom}. Using this syntax, the default value of the padding setting would be expressed as \macro{padding={left=7.5mm, right=7.5mm, top=7.5mm, bottom=7.5mm}}.
+All four padding settings can also be stated using the \macro{box/padding} key and the subkeys \macro{left}, \macro{right}, \macro{top}, \macro{bottom}. Using this syntax, the default value of the padding setting would be expressed as \macro{box/padding={left=7.5mm, right=7.5mm, top=7.5mm, bottom=7.5mm}}.
 
-The key \macro{no padding} sets all paddings to zero. This key does not expect a value.
+The key \macro{box/no padding} sets all paddings to zero. This key does not expect a value.
 
 \begin{macrodef}
 box/|pre|={<code>}
@@ -527,7 +527,7 @@ Expects a string denoting the name of the box into which typeset material will f
 \begin{macrodef}
 |\leporellotypesetcolumns|[<options>]{<list of strings>}
 \end{macrodef}
-Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
+Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{global/columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
 
 The command takes one optional argument. Options should be used without the \macro{typeset/} prefix when used as option to the \macro{\leporellotypesetcolumns} command. The command accepts the following options:
 
@@ -549,7 +549,7 @@ If set, the pagination of the columns is reversed. This key does not expect a va
 \begin{macrodef}
 typeset/|alternate layout|
 \end{macrodef}
-If set, the widths of the columns are reversed in every second page. This key is set to \macro{true} per default. Use \macro{alternate layout=false} to disable this function. 
+If set, the widths of the columns are reversed in every second page. This key is set to \macro{true} per default. Use \macro{typeset/alternate layout=false} to disable this function. 
 
 \begin{macrodef}
 typeset/|continuous pagination|
@@ -558,9 +558,9 @@ If set, columns are numbered continuously from left to right. Otherwise, the pag
 
 \section{Flow mechanism}\label{sec:flow}
 
-Typeset material can flow from one box to another box. To this end, the key \macro{flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
+Typeset material can flow from one box to another box. To this end, the key \macro{box/flow into} can be set to the relevant box and assigned the name of the box to flow into as value. The name of the relevant box can be set via the \macro{box/name} key. If two or more boxes are connected this way, contents of the boxes are always concatenated.
 
-Prior to shipping out a (PDF) page, all material in boxes that have the \macro{flow into} key set (and where another box with the relevant \macro{name} exists) is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
+Prior to shipping out a (PDF) page, all material in boxes that have the \macro{box/flow into} key set (and where another box with the relevant name exists) is collected and shipped out to pages of the size of the boxes the relevant material should flow into. The resulting boxes are saved internally and the shipout of these boxes is discarded. The saved boxes are then placed into the relevant boxes on the (PDF) page which is eventually shipped out. 
 
 \begin{macrodef}
 |\leporelloboxbreak|
@@ -590,7 +590,7 @@ Vertical typesetting will typically affect the measurements of the boxes. The pa
 
 \subsection{Inserting images}
 
-One way to insert images is via the \macro{\includegraphics} command provided by the \macro{graphicx} package. Using the \macro{background code} key, images can be added to the background of a box.
+One way to insert images is via the \macro{\includegraphics} command provided by the \macro{graphicx} package. Using the \macro{box/background code} key, images can be added to the background of a box.
 
 \begin{macrodef}
 |\leporelloimage|[<options>]{<file name>}
@@ -612,7 +612,7 @@ Expects a floating point number depicting the scaling factor of the image. This 
 image/|width|={<dimension>}
 image/|height|={<dimension>}
 \end{macrodef}
-Expect a dimension to explicitly set the width and the height of the image. Setting \macro{width} will override a \macro{scale} value. Setting \macro{height} will override a \macro{width} or \macro{scale} value. The aspect ratio of the original image will always be kept.
+Expect a dimension to explicitly set the width and the height of the image. Setting \macro{image/width} will override a \macro{image/scale} value. Setting \macro{image/height} will override a \macro{image/width} or \macro{image/scale} value. The aspect ratio of the original image will always be kept.
 
 \begin{macrodef}
 image/|offset|={<tuple of dimensions>}
@@ -627,7 +627,7 @@ Expects a comma-separated list consisting of up to four items with the values \m
 \begin{macrodef}
 image/|fill bleed|
 \end{macrodef}
-If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{offset}. This key does not expect a value.
+If set, the image will spread into the bleed. This will result in a shift of the image by the size of the bleed which may need to be accounted for using \macro{image/offset}. This key does not expect a value.
 
 \subsection{Defining colors}
 
@@ -699,13 +699,13 @@ Expects a name of the list environment such as \macro{enumerate} or \macro{itemi
 
 The package offers three pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
-The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{auto typesetting} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
+The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw cropmarks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{global/auto typeset} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
 
 The flow mechanism makes use of the hook \macro{shipout/before} to insert code to break typeset material into boxes and \macro{build/page/after} to update the current page number. The inserted code is removed after the flow mechanism has finished. 
 
-{\raggedrightindent The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode.\par}
+{\raggedrightindent The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode. \par}
 
-{\raggedrightindent Finally, command and environment hooks are used to issue warnings if the commands \macro{\footnote}, \macro{\footnotemark} and \macro{\footnotetext} as well as the environments \macro{figure} or \macro{table} are used as this document class does not support these.\par}
+{\raggedrightindent Finally, command and environment hooks are used to issue warnings if the commands \macro{\footnote}, \macro{\footnotemark} and \macro{\footnotetext} as well as the environments \macro{figure} or \macro{table} are used as this document class does not support these. \par}
 
 \begin{longtable}{
   @{}
@@ -718,7 +718,7 @@ The flow mechanism makes use of the hook \macro{shipout/before} to insert code t
   \midrule
   \macro{leporello/column/begin}      & before the code block stored via the \macro{leporellocolumn} environment is typeset to the column box, preceded by a line of code that saves the name of the current column into \macro{\l_leporello_current_column_str} \\
   \macro{leporello/column/end}        & after the code block stored via the \macro{leporellocolumn} environment is typeset to the column box \\
-  \macro{leporello/box/begin}         & before the code block stored via the \macro{leporellobox} environment is typeset into the relevant box which is preceded by a line of code that saves the ID of the current column into \macro{\l_leporello_current_box_int} and immediately followed by the code defined via the \macro{pre} key \\
+  \macro{leporello/box/begin}         & before the code block stored via the \macro{leporellobox} environment is typeset into the relevant box which is preceded by a line of code that saves the ID of the current column into \macro{\l_leporello_current_box_int} and immediately followed by the code defined via the \macro{box/pre} key \\
   \macro{leporello/box/end}           & after the code block stored via the \macro{leporellobox} environment is typeset to the relevant box \\
   \macro{leporello/typeset/before}    & immediately after the start of the group that contains the typeset column \\
   \macro{leporello/typeset/after}     & immediately before the end of the group that contains the typeset column \\
@@ -790,7 +790,7 @@ baz
 \end{document}
 \end{codeexample}
 
-The example shows the use of the \macro{prepress} key that adds cropmarks to the layout. It also shows how the \macro{show frames} key adds frames around the columns. Finally, the \macro{show box} key adds the box IDs to the boxes.
+The example shows the use of the \macro{global/prepress} key that adds cropmarks to the layout. It also shows how the \macro{global/show frames} key adds frames around the columns. Finally, the \macro{global/show id} key adds the box IDs to the boxes.
 
 The default layout has three pages which are shown here. Three columns named \macro{example-a}, \macro{example-b} and \macro{example-c} are defined and contain one box each. A custom style is defined to combine the two keys needed to bottom-align the third box. A fixed height is set to for the first box and the second box has and offset and its height stretched to the bottom of the column. Bleed is added to the relevant edges of the three columns.
 
@@ -850,16 +850,20 @@ This variable holds the number of columns in the layout. It is calculated from t
 These variables are set to true if the current layout is set to vertical and left-to-right or to vertical and right-to-left.
 
 \begin{macrodef}
-|\l_leporello_current_sheet_int|
+|\g_leporello_current_sheet_int|
+|\g_leporello_current_page_int|
+\end{macrodef}
+These variables hold the IDs of the current sheet (page in the PDF file) and the current page. A page is considered a column in the document. Pagination is not necessarily continuous. These values are always set globally.
+
+\begin{macrodef}
 |\l_leporello_current_column_int|
 |\l_leporello_current_box_int|
 \end{macrodef}
-These variables hold the ID of the current sheet (page in the PDF file), the current column (column on the sheet) and the current box as integer respectively.
+These variables hold the IDs of the current column (column on the sheet) and the current box as integer respectively.
 
 \begin{macrodef}
 |\g_leporello_current_page_int|
 \end{macrodef}
-This variable holds the current page. A page is considered a column in the document. Pagination is not necessarily continuous. Note that the current page number is always set globally.
 
 \begin{macrodef}
 |\l_leporello_current_column_str|
@@ -913,7 +917,7 @@ These commands extract the first or the second item of a floating point tuple.
 \begin{macrodef}
 |\leporello_note_mark:n| {<integer>}
 \end{macrodef}
-This command expects as argument the value of the current note counter as integer and typesets a corresponding mark. It can be changed via the key \macro{notes/mark cmd}. The default defintion is as follows:
+This command expects as argument the value of the current note counter as integer and typesets a corresponding mark. It can be changed via the key \macro{notes/mark cmd}. The default definition is as follows:
 
 \begin{codeexample}
 \cs_new:Npn \leporello_note_mark:n #1 {

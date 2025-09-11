@@ -31,7 +31,7 @@
 \cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
 \cs_generate_variant:Nn \color_select:n { e }
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
-\cs_generate_variant:Nn \msg_warning:nnnnn { nnenn }
+\cs_generate_variant:Nn \msg_warning:nnnnn { nnVee }
 \cs_generate_variant:Nn \prop_gput:Nnn { cnV , cne }
 \cs_generate_variant:Nn \tl_const:Nn { co }
 \cs_generate_variant:Nn \vbox_set_top:Nn { Ne }
@@ -39,6 +39,7 @@
 \prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
 \prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { T , F }
 
+% helper function to extract first and second part of a fp tuple
 \cs_new:Npn \__leporello_fp_tuple_use_i:w ( #1 , #2 ) {#1}
 \cs_new:Npn \leporello_fp_tuple_use_i:n #1 {
   \fp_to_dim:n {
@@ -73,6 +74,8 @@
 \int_new:N \g__leporello_shipout_current_box_int
 \int_new:N \g__leporello_shipout_next_box_int
 \clist_new:N \g__leporello_shipout_processed_boxes_clist
+
+\str_new:N \l__leporello_break_check_size_str
 
 \int_new:N \l__leporello_typeset_page_int
 \int_new:N \l__leporello_typeset_column_int
@@ -226,7 +229,7 @@
   }
 }
 
-\int_new:N \l_leporello_current_sheet_int
+\int_new:N \g_leporello_current_sheet_int
 \int_new:N \g_leporello_current_page_int
 \int_new:N \l_leporello_current_column_int
 \str_new:N \l_leporello_current_column_str
@@ -257,19 +260,6 @@
 \tl_new:N \l__leporello_box_store_width_tl
 \tl_new:N \l__leporello_box_store_height_tl
 \str_new:N \l__leporello_box_flow_into_str
-
-\dim_new:N \l__leporello_typeset_box_width_dim
-\dim_new:N \l__leporello_typeset_box_height_dim
-\dim_new:N \l__leporello_typeset_box_bleed_x_dim
-\dim_new:N \l__leporello_typeset_box_bleed_y_dim
-\dim_new:N \l__leporello_typeset_box_stretch_x_dim
-\dim_new:N \l__leporello_typeset_box_stretch_y_dim
-\int_new:N \l__leporello_typeset_coffin_attach_align_int
-\box_new:N \l__leporello_typeset_column_box
-\coffin_new:N \l__leporello_typeset_mark_coffin
-\coffin_new:N \l__leporello_typeset_mark_temp_coffin
-\prop_new:N \l__leporello_typeset_boxes_to_sheets_prop
-\prop_new:N \l__leporello_typeset_boxes_to_columns_prop
 
 \keys_define:nn { leporello / box } {
   name               .code:n      = {
@@ -348,6 +338,19 @@
   store ~ width      .tl_set:N    = \l__leporello_box_store_width_tl ,
   store ~ height     .tl_set:N    = \l__leporello_box_store_height_tl
 }
+
+\dim_new:N \l__leporello_typeset_box_width_dim
+\dim_new:N \l__leporello_typeset_box_height_dim
+\dim_new:N \l__leporello_typeset_box_bleed_x_dim
+\dim_new:N \l__leporello_typeset_box_bleed_y_dim
+\dim_new:N \l__leporello_typeset_box_stretch_x_dim
+\dim_new:N \l__leporello_typeset_box_stretch_y_dim
+\int_new:N \l__leporello_typeset_coffin_attach_align_int
+\box_new:N \l__leporello_typeset_column_box
+\coffin_new:N \l__leporello_typeset_mark_coffin
+\coffin_new:N \l__leporello_typeset_mark_temp_coffin
+\prop_new:N \l__leporello_typeset_boxes_to_sheets_prop
+\prop_new:N \l__leporello_typeset_boxes_to_columns_prop
 
 \bool_new:N \l_leporello_typeset_reverse_layout_bool
 \bool_new:N \l_leporello_typeset_reverse_order_bool
@@ -554,21 +557,11 @@
 
 % ===
 
-\cs_new_protected:Npn \leporello_draw_absolute:nn #1#2 {
-  \draw_begin:
-    \bool_set_false:N \l_draw_bb_update_bool
-    \draw_transform_shift:n {#1}
-    #2
-  \draw_end:
-  \tex_par:D
-  \skip_vertical:n { 0pt plus 1fill }
-  \tex_penalty:D -10000
-}
-
 \cs_if_exist:NF \draw_set_linewidth:n {
   \cs_set_eq:NN \draw_set_linewidth:n \draw_linewidth:n
 }
 
+% print vertical cropmarks 
 \cs_new_protected:Npn \__leporello_cropmarks: {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -592,6 +585,7 @@
   \draw_end:
 }
 
+% print horizontal cropmarks 
 \cs_new_protected:Npn \__leporello_cropmarks:n #1 {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -615,6 +609,7 @@
   \draw_end:
 }
 
+% print box id marks 
 \cs_new_protected:Npn \__leporello_id_mark:n #1 {
   \draw_begin:
     \bool_set_false:N \l_draw_bb_update_bool
@@ -628,6 +623,7 @@
   \draw_end:
 }
 
+% wrapper around \includegraphics to apply keys 
 \cs_new:Npn \leporello_typeset_image:nn #1#2 {
   \group_begin:
     \keys_set:nn { leporello / image } {#1}
@@ -825,19 +821,7 @@
   \group_end:
 }
 
-\cs_new_protected:Npn \__leporello_box_break_check_width:nn #1#2 {
-  \dim_compare:nNnF {#1} = {#2} {
-    \msg_warning:nnenn { leporello } { break-different-size } {
-      \bool_lazy_or:nnTF {
-        \l_leporello_layout_vertical_ltr_bool
-      } {
-        \l_leporello_layout_vertical_rtl_bool
-      } { height } { width }
-    } {#1} {#2}
-  }
-}
-\cs_generate_variant:Nn \__leporello_box_break_check_width:nn { ee }
-
+% set page number for column on sheet 
 \cs_new_protected:Npn \__leporello_box_page_gset:nn #1#2 {
   \int_gset:Nn \g_leporello_current_page_int {
     \int_eval:n {
@@ -881,10 +865,12 @@
     \int_eval:n { \g_leporello_current_page_int }
   }
 }
+\cs_generate_variant:Nn \__leporello_box_page_gset:nn { VV }
 
 % ===
 
-\cs_new_protected:Npn \__leporello_gset_box_dimensions:n #1 {
+% set page dimensions to inner width and inner height of relevant box
+\cs_new_protected:Npn \__leporello_break_gset_dimensions:n #1 {
   \dim_gset:Nn \tex_hsize:D {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
   }
@@ -898,9 +884,10 @@
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ height }
   }
 }
-\cs_generate_variant:Nn \__leporello_gset_box_dimensions:n { V }
+\cs_generate_variant:Nn \__leporello_break_gset_dimensions:n { V }
 
-\cs_new_protected:Npn \__leporello_gstore_remaining_space: {
+% calculate remaining space after contents of last flow box
+\cs_new_protected:Npn \__leporello_break_gstore_remaining_space: {
   \dim_compare:nNnF { \tex_pagegoal:D } = { \c_max_dim } {
     \prop_gput:cne {
       g__leporello_box_
@@ -914,7 +901,8 @@
   }
 }
 
-\cs_new_protected:Npn \__leporello_box_break_collect:n #1 {
+% collect contents of connected flow boxes
+\cs_new_protected:Npn \__leporello_break_collect:n #1 {
   \prop_if_in:cnT { g__leporello_box_ #1 _prop } { flow ~ into } {
     \tl_if_empty:cF {
       g__leporello_box_
@@ -923,7 +911,7 @@
       }
       _tl
     } {
-      \__leporello_box_break_collect:n {
+      \__leporello_break_collect:n {
         \prop_item:Ne \g__leporello_box_names_prop {
           \prop_item:cn { g__leporello_box_ #1 _prop } { flow ~ into }
         }
@@ -950,7 +938,43 @@
   }
 }
 
-\cs_new_protected:Npn \__leporello_box_break_flow_aux:nnn #1#2#3 {
+% check width or height difference in flow boxes
+\cs_new_protected:Npn \__leporello_break_check_sizes:nn #1#2 {
+  \bool_lazy_or:nnTF {
+    \l_leporello_layout_vertical_ltr_bool
+  } {
+    \l_leporello_layout_vertical_rtl_bool
+  } {
+    \str_set:Nn \l__leporello_break_check_size_str { height }
+  } {
+    \str_set:Nn \l__leporello_break_check_size_str { width }
+  }
+  \dim_compare:nNnF {
+    \prop_item:ce { g__leporello_box_ #1 _prop } {
+      inner ~ \str_use:N \l__leporello_break_check_size_str
+    }
+  } = {
+    \prop_item:ce { g__leporello_box_ #2 _prop } {
+      inner ~ \str_use:N \l__leporello_break_check_size_str
+    }
+  } {
+    \msg_warning:nnVee { leporello } { break-different-size }
+      \l__leporello_break_check_size_str
+      {
+        \prop_item:ce { g__leporello_box_ #1 _prop } {
+          inner ~ \str_use:N \l__leporello_break_check_size_str
+        }
+      } {
+        \prop_item:ce { g__leporello_box_ #2 _prop } {
+          inner ~ \str_use:N \l__leporello_break_check_size_str
+        }
+      }
+  }
+}
+\cs_generate_variant:Nn \__leporello_break_check_sizes:nn { VV }
+
+% break typeset material into boxes
+\cs_new_protected:Npn \__leporello_break_flow_aux:nnn #1#2#3 {
   \hook_gput_code:nnn { build / page / after } { leporello / break-flow } {
     \__leporello_box_page_gset:nn {
       \prop_item:NV \l__leporello_typeset_boxes_to_sheets_prop
@@ -961,7 +985,7 @@
     }
   }
   
-  \__leporello_gset_box_dimensions:n {#3}
+  \__leporello_break_gset_dimensions:n {#3}
   \leporello_ltlayout_@colht_gset:n {
     \prop_item:cn { g__leporello_box_ #3 _prop } { inner ~ height }
   }
@@ -969,8 +993,6 @@
   \hook_gput_code:nnn { shipout / before } { leporello / break-flow } {
     \clist_gput_right:NV \g__leporello_shipout_processed_boxes_clist
       \g__leporello_shipout_current_box_int
-
-    \iow_log:e { #3 : ~ \thepage }
 
     \box_if_exist:cF {
       g__leporello_box_
@@ -1004,16 +1026,22 @@
           } { flow ~ into }
         }
       }
-      \__leporello_gset_box_dimensions:V
+      
+      \__leporello_break_gset_dimensions:V
         \g__leporello_shipout_next_box_int
+      
+      \__leporello_break_check_sizes:VV
+        \g__leporello_shipout_current_box_int
+        \g__leporello_shipout_next_box_int
+      
       \int_gset_eq:NN \g__leporello_shipout_current_box_int
         \g__leporello_shipout_next_box_int
     }
   }
 }
 
-\cs_new_protected:Npn \__leporello_box_break_flow:nnn #1#2#3 {
-  \prop_if_in:cnTF { g__leporello_box_ #3 _prop } { flow ~ into } {
+\cs_new_protected:Npn \__leporello_break_flow:nnn #1#2#3 {
+  \prop_if_in:cnT { g__leporello_box_ #3 _prop } { flow ~ into } {
     \group_begin:
       \clist_map_inline:nn {
         topmargin ,
@@ -1023,12 +1051,11 @@
         \use:c { leporello_ltlayout_ ##1 _set:n } { 0pt }
       }
 
-      \__leporello_box_page_gset:nn {#1} {#2}
-      \__leporello_box_break_collect:n {#3}
-      \__leporello_box_break_flow_aux:nnn {#1} {#2} {#3}
+      \__leporello_break_collect:n {#3}
+      \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
       \tl_use:c { g__leporello_box_ #3 _tl }
       \tex_par:D
-      \__leporello_gstore_remaining_space:
+      \__leporello_break_gstore_remaining_space:
       \leporello_page_clear:
       \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
       \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
@@ -1050,16 +1077,13 @@
         }
       } 
     \group_end:
-  } {
-    \tl_gput_left:cn { g__leporello_box_ #3 _tl } {
-      \__leporello_box_page_gset:nn {#1} {#2}
-    }
   }
 }
-\cs_generate_variant:Nn \__leporello_box_break_flow:nnn { een }
+\cs_generate_variant:Nn \__leporello_break_flow:nnn { een }
 
 % ===
 
+% update poles for outer box to account for bleed
 \cs_new_protected:Npn \__leporello_box_update_poles:nnn #1#2#3 {
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
@@ -1113,6 +1137,7 @@
 }
 \cs_generate_variant:Nn \__leporello_box_update_poles:nnn { VVn }
 
+% calculate the inner width and inner height of a box in a column
 \cs_new_protected:Npn \__leporello_box_measure:nn #1#2 {
   \prop_gput:cne { g__leporello_box_ #2 _prop } { inner ~ width } {
     \dim_eval:n {
@@ -1166,6 +1191,7 @@
   }
 }
 
+% create inner coffin and outer coffin for relevant box on sheet in column
 \cs_new_protected:Npn \__leporello_box_construct:nnn #1#2#3 {
   \coffin_if_exist:cF { l__leporello_box_ #1 _ #2 _ #3 _outer_coffin } {
     \coffin_new:c {
@@ -1390,13 +1416,14 @@
 }
 \cs_generate_variant:Nn \__leporello_box_construct:nnn { VVn }
 
+% calculate stretch of an outer coffin in a column
 \cs_new_protected:Npn \__leporello_box_calculate_stretch_x_aux:Nn #1#2 {
   \clist_if_in:enT {
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
   } { hc } {
     \dim_add:Nn #1 {
       \box_wd:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2
@@ -1407,7 +1434,7 @@
   } { r } {
     \dim_add:Nn #1 {
       \box_wd:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       }
@@ -1419,7 +1446,7 @@
   } { hc } {
     \dim_sub:Nn #1 {
       \box_wd:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2
@@ -1430,7 +1457,7 @@
   } { r } {
     \dim_sub:Nn #1 {
       \box_wd:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       }
@@ -1477,12 +1504,12 @@
   } { vc } {
     \dim_sub:Nn #1 {
       \box_ht:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2 +
       \box_dp:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2
@@ -1493,12 +1520,12 @@
   } { b } {
     \dim_sub:Nn #1 {
       \box_ht:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } +
       \box_dp:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       }
@@ -1510,12 +1537,12 @@
   } { vc } {
     \dim_sub:Nn #1 {
       \box_ht:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2 +
       \box_dp:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } / 2
@@ -1526,12 +1553,12 @@
   } { b } {
     \dim_sub:Nn #1 {
       \box_ht:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       } +
       \box_dp:c { l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
       }
@@ -1590,6 +1617,7 @@
 }
 \cs_generate_variant:Nn \__leporello_box_calculate_stretch_y:Nn { Ne }
 
+% position outer coffins with boxes in the relevant column
 \cs_new_protected:Npn \__leporello_boxes_attach:nn #1#2 {
   \clist_if_in:enTF {
     \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
@@ -1604,7 +1632,7 @@
       l__leporello_current_column_coffin
     } {
       l__leporello_box_
-        \int_use:N \l_leporello_current_sheet_int _
+        \int_use:N \g_leporello_current_sheet_int _
         \int_use:N \l_leporello_current_column_int _
         #1 _outer_coffin
     }
@@ -1618,7 +1646,7 @@
     } { 2 }
   } {
     l__leporello_box_
-      \int_use:N \l_leporello_current_sheet_int _
+      \int_use:N \g_leporello_current_sheet_int _
       \int_use:N \l_leporello_current_column_int _
       #2 _outer_coffin
   } {
@@ -1647,17 +1675,18 @@
 
   \int_compare:nNnF {#1} = { 0 } {
     \__leporello_box_update_poles:VVn
-      \l_leporello_current_sheet_int
+      \g_leporello_current_sheet_int
       \l_leporello_current_column_int
       {#1}
   }
 }
 
+% set the order of positioning of boxes to account for positioning relative to other boxes
 \cs_new_protected:Npn \__leporello_box_attach_children:n #1 {
   \clist_if_exist:cT { g__leporello_box_ #1 _children_clist } {
     \clist_map_inline:cn { g__leporello_box_ #1 _children_clist } {
       \__leporello_box_construct:VVn
-        \l_leporello_current_sheet_int
+        \g_leporello_current_sheet_int
         \l_leporello_current_column_int
         {##1}
       \__leporello_box_attach_children:n {##1}
@@ -1668,6 +1697,7 @@
   }
 }
 
+% store contents of box in token variable
 \cs_new_protected:Npn \__leporello_box_store:nn #1#2 {
   \tl_if_exist:cF { g__leporello_box_ #1 _tl } {
     \tl_new:c { g__leporello_box_ #1 _tl }
@@ -1680,11 +1710,12 @@
 }
 \cs_generate_variant:Nn \__leporello_box_store:nn { Vn }
 
+% typeset columns to a sheet
 \cs_new_protected:Npn \__leporello_typeset_columns:n #1 {
-  \int_incr:N \l_leporello_current_sheet_int
+  \int_gincr:N \g_leporello_current_sheet_int
   
   \bool_if:NT \l_leporello_typeset_alternate_layout_bool {
-    \int_if_even:nT { \l_leporello_current_sheet_int } {
+    \int_if_even:nT { \g_leporello_current_sheet_int } {
       \bool_set_inverse:N \l_leporello_typeset_reverse_layout_bool
     }
   }
@@ -1693,7 +1724,8 @@
     \clist_reverse:N \l_leporello_columns_clist
   }
 
-  \leporello_draw_absolute:nn { 0mm , 0mm } {
+  \draw_begin:
+    \bool_set_false:N \l_draw_bb_update_bool
     \clist_map_inline:nn {#1} {
       \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
         \dim_sub:Nn \l__leporello_current_column_offset_dim {
@@ -1726,6 +1758,9 @@
               \vbox_set_top:Nn \l__leporello_typeset_column_box {
                 \draw_suspend_begin:
                   \hook_use:n { leporello / column / begin }
+                    \__leporello_box_page_gset:VV
+                      \g_leporello_current_sheet_int
+                      \l_leporello_current_column_int
                     \tl_use:c { g_leporello_column_ ##1 _tl }
                   \hook_use:n { leporello / column / end }
                 \draw_suspend_end:
@@ -1739,7 +1774,7 @@
       \str_if_eq:nnF {##1} { . } {
         \clist_map_inline:cn { g_leporello_column_ ##1 _boxes_clist } {
           \__leporello_box_construct:VVn
-            \l_leporello_current_sheet_int
+            \g_leporello_current_sheet_int
             \l_leporello_current_column_int
             {####1}
           \__leporello_box_attach_children:n {####1}
@@ -1779,10 +1814,14 @@
         }
       }
     }
-  }
+  \draw_end:
+  \tex_par:D
+  \skip_vertical:n { 0pt plus 1fill }
+  \tex_penalty:D -10000
 }
 \cs_generate_variant:Nn \__leporello_typeset_columns:n { V }
 
+% typeset columns to sheets
 \cs_new_protected:Npn \leporello_typeset_columns:nn #1#2 {
   \group_begin:
     \hook_use:n { leporello / typeset / before }
@@ -1844,7 +1883,7 @@
         } {
           \prop_if_in_p:Nn \l__leporello_typeset_boxes_to_columns_prop {##1}
         } {
-          \__leporello_box_break_flow:een {
+          \__leporello_break_flow:een {
             \prop_item:Nn \l__leporello_typeset_boxes_to_sheets_prop {##1}
           } {
             \prop_item:Nn \l__leporello_typeset_boxes_to_columns_prop {##1}
@@ -1879,6 +1918,9 @@
   \group_end:
 }
 
+% ===
+
+% initialize document and layout settings
 \hook_gput_code:nnn { begindocument / before } { . } {
   \leporello_pagestyle_set:n { empty }
 
@@ -1947,6 +1989,7 @@
   \dim_zero:N \tex_parindent:D
 }
 
+% initiate auto typesetting mechanism
 \hook_gput_code:nnn { enddocument } { . } {
   \bool_if:NT \l_leporello_auto_typeset_bool {
     \clist_if_empty:NF \g__leporello_auto_typeset_clist {
@@ -1954,6 +1997,8 @@
     }
   }
 }
+
+% ===
 
 \NewDocumentEnvironment { leporellocolumn } { m +b } {
   \clist_new:c { g_leporello_column_ #1 _boxes_clist }
