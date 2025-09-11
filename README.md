@@ -4,7 +4,7 @@
 
 # The `leporello` class
 
-A simple LaTeX document class to create folded leaflets with the following key features:
+A LaTeX document class to create folded leaflets with the following key features:
 
 - The document layout consists of a specific number of pages that can have varying widths and are placed next to each other. Each page contains one frame to contain typeset material.
 - Material is typeset in boxes and boxes are positioned in columns which in turn are placed into the frames on the pages of the document.
