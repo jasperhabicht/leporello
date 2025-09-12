@@ -533,9 +533,6 @@
   marginparpush ,
   @colht
 } {
-  \dim_new:c {
-    l_leporello_ltlayout_ #1 _dim
-  }
   \cs_new_protected:cpn {
     leporello_ltlayout_ #1 _set:n
   } ##1 {

@@ -44,13 +44,6 @@
 }
 \makeatother
 
-\newlength\oparindent
-\NewDocumentCommand{\raggedrightindent}{}{%
-  \setlength\oparindent{\parindent}%
-  \raggedright%
-  \setlength\parindent{\oparindent}%
-}
-
 \tcbuselibrary{skins,listings}
 \lstdefinestyle{leporellodocmacro}{
   basicstyle=\small\ttfamily,
@@ -487,7 +480,7 @@ box/|padding bottom|={<dimension>}
 box/|padding|={<key-value list>}
 box/|no padding|
 \end{macrodef}
-\macro{box/padding left}, \macro{box/padding right}, \macro{box/padding top} and \macro{box/padding bottom} each expect a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
+Each of the four keys \macro{box/padding left}, \macro{box/padding right}, \macro{box/padding top} and \newline \macro{box/padding bottom} expects a dimension to describe the padding of the contents from the relevant edge of the box. If not specified, the default value of \macro{7.5mm} is assumed.
 
 All four padding settings can also be stated using the \macro{box/padding} key and the subkeys \macro{left}, \macro{right}, \macro{top}, \macro{bottom}. Using this syntax, the default value of the padding setting would be expressed as \macro{box/padding={left=7.5mm, right=7.5mm, top=7.5mm, bottom=7.5mm}}.
 
@@ -534,7 +527,7 @@ Expects a string denoting the name of the box into which typeset material will f
 \begin{macrodef}
 |\leporellotypesetcolumns|[<options>]{<list of strings>}
 \end{macrodef}
-Using the command \macro{\leporellotypesetcolumns} which takes one mandatory argument, previously defined columns can be placed onto a page of the document. The command expects as argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{global/columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
+The command \macro{\leporellotypesetcolumns} can be used to typeset previously defined columns into the document. The command expects as its single mandatory argument a comma-separated list of names of previously defined columns. These are then placed onto a document page from left to right while the width is taken from the setting via the \macro{global/columns} key and the height is taken from the setting via the \macro{layout height} key. With a \macro{.}, an empty column can be added to the list.
 
 The command takes one optional argument. Options should be used without the \macro{typeset/} prefix when used as option to the \macro{\leporellotypesetcolumns} command. The command accepts the following options:
 
@@ -706,13 +699,13 @@ Expects a name of the list environment such as \macro{enumerate} or \macro{itemi
 
 The package offers three pairs of hooks that are positioned at the start and end of columns and boxes allowing for inserting code.
 
-The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw crop marks. It uses the hook \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the \macro{global/auto typeset} key. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
+The package uses the hook \macro{begindocument/before} to insert layout-related settings as well as the hook \macro{shipout/foreground} to insert code to draw crop marks. It uses the hook \newline \macro{enddocument} to insert code for the automatic typesetting mechanism that is activated via the key \macro{global/auto typeset}. It also uses the hook \macro{label} to change the default code for the \macro{\label} so that it immediately writes to the auxiliary file.
 
 The flow mechanism makes use of the hook \macro{shipout/before} to insert code to break typeset material into boxes and \macro{build/page/after} to update the current page number. The inserted code is removed after the flow mechanism has finished.
 
-{\raggedrightindent The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode. \par}
+The hooks \macro{leporello/break-flow/before}, \macro{leporello/typeset/before} and \newline \macro{leporello/box/begin} are used to set and unset right-to-left and vertical typesetting mode.
 
-{\raggedrightindent Finally, command and environment hooks are used to issue warnings if the commands \macro{\footnote}, \macro{\footnotemark} and \macro{\footnotetext} as well as the environments \macro{figure} or \macro{table} are used as this document class does not support these. \par}
+Finally, hooks are used to issue warnings if the commands \macro{\footnote}, \macro{\footnotemark} and \macro{\footnotetext} or the environments \macro{figure} or \macro{table} are used as this document class does not support these commands and environments.
 
 \begin{longtable}{
   @{}
@@ -789,9 +782,7 @@ baz
 \begin{document}
 
 \leporellotypesetcolumns{
-  example-a,
-  example-b,
-  example-c
+  example-a, example-b, example-c
 }
 
 \end{document}
@@ -856,15 +847,13 @@ Some more text
 \begin{document}
 
 \leporellotypesetcolumns{
-  example-c,
-  example-a,
-  example-b
+  example-c, example-a, example-b
 }
 
 \end{document}
 \end{codeexample}
 
-This example shows some features of the flow mechanism. The text in the second box is moved to the end of the collected contents of all three boxes that are connected via the \macro{box/flow into} and \macro{box/name} keys. Note that the contents are appended without adding anything between, which is why a \macro{\par} was added in this example. This example further shows how the command \macro{\leporelloboxbreak} can be used to ensure that text that flows across boxes with different width is typeset correctly.
+This example shows some features of the flow mechanism. The text in the second box is moved to the end of the collected contents of all three boxes that are connected via the \macro{box/flow into} and \macro{box/name} keys. Note that the contents are appended without adding anything between, which is why a \macro{\par} was added in this example. This example further shows how the command \newline \macro{\leporelloboxbreak} can be used to ensure that text that flows across boxes with different width is typeset correctly.
 
 % =====
 
@@ -904,7 +893,7 @@ This variable holds the number of columns in the layout. It is calculated from t
 |\l_leporello_show_id_bool|
 |\l_leporello_auto_typeset_bool|
 \end{macrodef}
-{\raggedright These variables hold the relevant values of the \macro{global/prepress}, \macro{global/show frames}, \macro{global/show id} and \macro{global/auto typeset} keys. \par}
+These variables hold the relevant values of the \macro{global/prepress}, \macro{global/show frames}, \newline \macro{global/show id} and \macro{global/auto typeset} keys.
 
 \begin{macrodef}
 |\l_leporello_typeset_reverse_layout_bool|
@@ -913,7 +902,7 @@ This variable holds the number of columns in the layout. It is calculated from t
 |\l_leporello_typeset_alternate_layout_bool|
 |\l_leporello_typeset_continuous_pagination_bool|
 \end{macrodef}
-{\raggedright These variables hold the relevant values of the \macro{typeset/reverse layout}, \macro{typeset/reverse order}, \macro{typeset/reverse pagination}, \macro{typeset/alternate layout} and \macro{typeset/continuous pagination} keys. \par}
+These variables hold the relevant values of the \macro{typeset/reverse layout}, \newline \macro{typeset/reverse order}, \macro{typeset/reverse pagination}, \newline \macro{typeset/alternate layout} and \macro{typeset/continuous pagination} keys.
 
 \begin{macrodef}
 |\l_leporello_layout_vertical_ltr_bool|
@@ -934,10 +923,6 @@ These variables hold the IDs of the current sheet (page in the PDF file) and the
 These variables hold the IDs of the current column (column on the sheet) and the current box as integer respectively.
 
 \begin{macrodef}
-|\g_leporello_current_page_int|
-\end{macrodef}
-
-\begin{macrodef}
 |\l_leporello_current_column_str|
 \end{macrodef}
 This variable holds the name of the current column.
@@ -950,7 +935,7 @@ This variable holds the name of the current column.
 |\l_leporello_image_scale_fp|
 |\l_leporello_image_fill_bleed_bool|
 \end{macrodef}
-{\raggedright These variables hold the relevant values of the \macro{image/width}, \macro{image/height}, \macro{image/clip width}, \macro{image/clip height},  \macro{image/scale} and \macro{image/fill bleed} keys. \par}
+These variables hold the relevant values of the \macro{image/width}, \macro{image/height}, \newline \macro{image/clip width}, \macro{image/clip height}, \macro{image/scale} and \macro{image/fill bleed} keys.
 
 \begin{macrodef}
 |\g_leporello_notes_int|
@@ -961,11 +946,6 @@ This variable holds the current counter for notes.
 |\l_leporello_notes_list_style_str|
 \end{macrodef}
 This variable holds the name of the environment of the notes list. It can be changed via the key \macro{notes/list style}.
-
-\begin{macrodef}
-|\leporello_draw_absolute:nn| {<tuple of dimensions>} {<code>}
-\end{macrodef}
-This command typesets the code consisting of commands that are placed between \macro{\draw_begin:} and \macro{\draw_end:} by shifting it according to the offset given in the first argument. It sets the bounding box of the drawing to zero and appends a page break.
 
 \begin{macrodef}
 |\leporello_typeset_image:nn| {<key-value list>} {<file>}
@@ -1016,7 +996,7 @@ This command expects as argument the value of the current note counter as intege
 |\leporello_ltlayout_marginparsep_set:n| {<dimension>}
 |\leporello_ltlayout_marginparpush_set:n| {<dimension>}
 \end{macrodef}
-These commands set the relevant LaTeX dimension to the argument given. To give an example, \macro{\leporello_ltlayout_paperwidth_set:n {297mm}} sets \macro{\paperwidth} to 297mm.
+These commands set the relevant LaTeX dimension to the argument given. To give an example, \macro{\leporello_ltlayout_paperwidth_set:n {297mm}} sets \macro{\paperwidth} to 297mm. These commands also have a ...\macro{_gset:n} variant that sets the dimension globally.
 
 \begin{macrodef}
 |\leporello_pagestyle_set:n| {<string>}
@@ -1031,12 +1011,12 @@ The command \macro{\leporello_page_gset:n {#1}} is a wrapper for \macro{\setcoun
 \begin{macrodef}
 |\leporello_text_superscript:n| {<token list>}
 \end{macrodef}
-{\raggedright The command \macro{\leporello_text_superscript:n {#1}} is a wrapper for \macro{\textsuperscript{#1}}. \par}
+The command \macro{\leporello_text_superscript:n {#1}} is a wrapper for \newline \macro{\textsuperscript{#1}}.
 
 \begin{macrodef}
 |\leoprello_graphics_use:nn| {<key-value list>} {<file>}
 \end{macrodef}
-{\raggedright The command \macro{\leoprello_graphics_use:nn {#1} {#2}} is a wrapper for \macro{\includegraphics[#1]{#2}}. \par}
+The command \macro{\leoprello_graphics_use:nn {#1} {#2}} is a wrapper for \newline  \macro{\includegraphics[#1]{#2}}.
 
 % =====
 
