@@ -533,6 +533,9 @@
   marginparpush ,
   @colht
 } {
+  \dim_new:c {
+    l_leporello_ltlayout_ #1 _dim
+  }
   \cs_new_protected:cpn {
     leporello_ltlayout_ #1 _set:n
   } ##1 {
@@ -895,10 +898,14 @@
       _prop
     } { remaining ~ space } {
       \dim_eval:n {
-        \tex_pagetotal:D - \tex_pagegoal:D
+        \tex_pagetotal:D - 
+        \tex_pagegoal:D
       }
     }
   }
+    \iow_log:e { box: ~ \int_use:N \g__leporello_shipout_current_box_int }
+    \iow_log:e { pagegoal: ~ \dim_to_decimal_in_mm:n { \tex_pagegoal:D } }
+    \iow_log:e { pagetotal: ~ \dim_to_decimal_in_mm:n { \tex_pagetotal:D } }
 }
 
 % collect contents of connected flow boxes
@@ -1042,44 +1049,52 @@
 
 \cs_new_protected:Npn \__leporello_break_flow:nnn #1#2#3 {
   \prop_if_in:cnT { g__leporello_box_ #3 _prop } { flow ~ into } {
-    \group_begin:
-      \clist_map_inline:nn {
-        topmargin ,
-        oddsidemargin ,
-        evensidemargin
-      } {
-        \use:c { leporello_ltlayout_ ##1 _set:n } { 0pt }
-      }
-
-      \__leporello_break_collect:n {#3}
-      \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
-      \tl_use:c { g__leporello_box_ #3 _tl }
-      \tex_par:D
-      \__leporello_break_gstore_remaining_space:
-      \leporello_page_clear:
-      \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
-      \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
-
-      \clist_map_inline:Nn \g__leporello_shipout_processed_boxes_clist {
-        \tl_gset:ce {
-          g__leporello_box_ ##1 _tl
+    \clist_if_in:NVF \g__leporello_shipout_processed_boxes_clist
+      \g__leporello_shipout_current_box_int {
+      \group_begin:
+        \clist_map_inline:nn {
+          topmargin ,
+          oddsidemargin ,
+          evensidemargin
         } {
-          \vbox_top:n {
-            \vbox_unpack:c {
-              g__leporello_box_ ##1 _flow_box
-            }
-          }
-          \prop_if_in:cnT { g__leporello_box_ ##1 _prop } { remaining ~ space } {
-            \skip_vertical:n {
-              \prop_item:cn { g__leporello_box_ ##1 _prop } { remaining ~ space }
-            }
-          }
+          \use:c { leporello_ltlayout_ ##1 _set:n } { 0pt }
         }
-      }
-    \group_end:
+
+        \__leporello_break_collect:n {#3}
+        \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
+        \tl_use:c { g__leporello_box_ #3 _tl }
+        \tex_par:D
+        \vbox_to_ht:nn { \tex_baselineskip:D } { }
+        \__leporello_break_gstore_remaining_space:
+        \leporello_page_clear:
+        \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
+        \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
+      \group_end:
+    }
   }
 }
 \cs_generate_variant:Nn \__leporello_break_flow:nnn { een }
+
+\cs_new_protected:Npn \__leporello_break_gset_boxes: {
+  \clist_map_inline:Nn \g__leporello_shipout_processed_boxes_clist {
+    \tl_gset:ce {
+      g__leporello_box_ ##1 _tl
+    } {
+      \vbox_top:n {
+        \vbox_unpack:c {
+          g__leporello_box_ ##1 _flow_box
+        }
+      }
+      \prop_if_in:cnT { g__leporello_box_ ##1 _prop } { remaining ~ space } {
+        \skip_vertical:n {
+          \prop_item:cn { g__leporello_box_ ##1 _prop } { remaining ~ space }
+          - \tex_baselineskip:D
+        }
+      }
+    }
+  }
+  \clist_gclear:N \g__leporello_shipout_processed_boxes_clist
+}
 
 % ===
 
@@ -1890,6 +1905,7 @@
           } {##1}
         }
       }
+      \__leporello_break_gset_boxes:
       \hook_use:n { leporello / break-flow / after }
     \group_end:
 
