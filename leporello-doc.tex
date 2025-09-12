@@ -388,6 +388,11 @@ Expects a dimension for the width of the bleed that is added to boxes with backg
 Retrieves the width of the bleed in pt.
 
 \begin{macrodef}
+|\leporellolayoutheight|
+\end{macrodef}
+Retrieves the height of the layout in pt.
+
+\begin{macrodef}
 |\leporelloboxwidth|
 \end{macrodef}
 Retrieves the width of the current box including padding, but without bleed, in pt. The width of the box excluding padding can be retrieved with the \macro{\linewidth} command.
@@ -468,9 +473,11 @@ Expects a dimension to explicitly set the height of the current box. If not spec
 \begin{macrodef}
 box/|stretch|
 \end{macrodef}
-If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, in vertical typesetting the left or right edge) meets the edge of the parent column. This key does not expect a value.
+If set, the box is stretched until its relevant edge (the bottom edge if aligned at the top, the top edge if aligned at the bottom, or the left or right edge in vertical typesetting) meets the edge of the parent column. This key does not expect a value.
 
 This key can also help to align the relevant edges in cases where stretchable glue close to the edge would otherwise make the box overlap the edge of the parent column.
+
+\warning Currently, the \macro{box/stretch} key only affects the outer box. Therefore, if a box is stretched and has an offset, the height (or width in vertical typesetting) needs to be given explicitly as the text will flow out of the box otherwise.
 
 \begin{macrodef}
 box/|padding left|={<dimension>}
@@ -727,9 +734,9 @@ The flow mechanism makes use of the hook \macro{shipout/before} to insert code t
   \bottomrule
 \end{longtable}
 
-\section{Example}
+\section{Examples}
 
-The following example shows some of the basic ideas of the package by providing a code example and showing its output.
+The following examples show some of the basic ideas of the package by providing a code example and showing its output.
 
 \begin{tcolorbox}
 \setlength{\fboxsep}{0pt}
@@ -750,8 +757,8 @@ The following example shows some of the basic ideas of the package by providing 
 
 \begin{leporellocolumn}{example-a}
 \begin{leporellobox}[
-  background color=black!10,
-  height=50mm,
+  background color={black!10},
+  height={50mm},
   bleed={l,t}
 ]
 foo
@@ -760,7 +767,7 @@ foo
 
 \begin{leporellocolumn}{example-b}
 \begin{leporellobox}[
-  background color=black!10,
+  background color={black!10},
   offset={0mm,50mm},
   stretch,
   bleed={b}
@@ -771,7 +778,7 @@ bar
 
 \begin{leporellocolumn}{example-c}
 \begin{leporellobox}[
-  background color=black!10,
+  background color={black!10},
   align bottom,
   bleed={r,b}
 ]
@@ -790,9 +797,74 @@ baz
 \end{document}
 \end{codeexample}
 
-The example shows the use of the \macro{global/prepress} key that adds crop marks to the layout. It also shows how the \macro{global/show frames} key adds frames around the columns. Finally, the \macro{global/show id} key adds the box IDs to the boxes.
+This example shows the use of the \macro{global/prepress} key that adds crop marks to the layout. It also shows how the \macro{global/show frames} key adds frames around the columns. Finally, the \macro{global/show id} key adds the box IDs to the boxes.
 
 The default layout has three pages which are shown here. Three columns named \macro{example-a}, \macro{example-b} and \macro{example-c} are defined and contain one box each. A custom style is defined to combine the two keys needed to bottom-align the third box. A fixed height is set to for the first box and the second box has an offset and its height stretched to the bottom of the column. Bleed is added to the relevant edges of the three columns.
+
+\begin{tcolorbox}
+\setlength{\fboxsep}{0pt}
+\colorbox{white}{\includegraphics[width=\linewidth]{doc/flow.pdf}}
+\end{tcolorbox}
+
+\begin{codeexample}
+\documentclass[
+  prepress,
+  show frames,
+  show ids
+]{leporello}
+
+\usepackage{lipsum}
+
+\begin{leporellocolumn}{example-a}
+\begin{leporellobox}[
+  background color={black!10},
+  height={75mm},
+  bleed={t},
+  flow into={box-b}
+]
+\lipsum[1-3] 
+
+This is another paragraph without any particular meaning. The sole
+reason for its existence is to show how this \leporelloboxbreak
+document class can be used and to explain some of its core features.
+\par
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{example-b}
+\begin{leporellobox}[
+  background color={black!10},
+  offset={0mm,75mm},
+  height={\leporellolayoutheight-75mm},
+  bleed={r,b},
+  name={box-b},
+  flow into={box-c}
+]
+Some more text
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{leporellocolumn}{example-c}
+\begin{leporellobox}[
+  background color={black!10},
+  bleed={l,t},
+  name={box-c}
+]
+\end{leporellobox}
+\end{leporellocolumn}
+
+\begin{document}
+
+\leporellotypesetcolumns{
+  example-c,
+  example-a,
+  example-b
+}
+
+\end{document}
+\end{codeexample}
+
+This example shows some features of the flow mechanism. The text in the second box is moved to the end of the collected contents of all three boxes that are connected via the \macro{box/flow into} and \macro{box/name} keys. Note that the contents are appended without adding anything between, which is why a \macro{\par} was added in this example. This example further shows how the command \macro{\leporelloboxbreak} can be used to ensure that text that flows across boxes with different width is typeset correctly.
 
 % =====
 

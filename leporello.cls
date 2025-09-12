@@ -2151,6 +2151,10 @@
   \group_end:
 }
 
+\NewDocumentCommand { \leporellolayoutheight } { } {
+  \dim_use:N \l_leporello_layout_height_dim
+}
+
 \NewDocumentCommand { \leporelloboxwidth } { } {
   \dim_use:N \l__leporello_typeset_box_width_dim
 }
