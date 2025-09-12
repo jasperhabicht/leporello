@@ -11,7 +11,7 @@
 % This work has the LPPL maintenance status `maintained'.
 %
 \ProvidesExplClass{leporello}
-  {2025/09/10} {1.0.2} {Document class for typesetting folded leaflets}
+  {2025/09/15} {1.0.3} {Document class for typesetting folded leaflets}
 
 \msg_new:nnn { leporello } { latex-too-old } {
   LaTeX ~ kernel ~ too ~ old. \iow_newline:
