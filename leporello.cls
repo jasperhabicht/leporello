@@ -892,6 +892,7 @@
 
 % calculate remaining space after contents of last flow box
 \cs_new_protected:Npn \__leporello_break_gstore_remaining_space: {
+  \vbox_to_ht:nn { \tex_baselineskip:D } { }
   \dim_compare:nNnF { \tex_pagegoal:D } = { \c_max_dim } {
     \prop_gput:cne {
       g__leporello_box_
@@ -900,7 +901,8 @@
     } { remaining ~ space } {
       \dim_eval:n {
         \tex_pagetotal:D - 
-        \tex_pagegoal:D
+        \tex_pagegoal:D -
+        \tex_baselineskip:D
       }
     }
   }
@@ -1065,7 +1067,6 @@
         \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
         \tl_use:c { g__leporello_box_ #3 _tl }
         \tex_par:D
-        \vbox_to_ht:nn { \tex_baselineskip:D } { }
         \__leporello_break_gstore_remaining_space:
         \leporello_page_clear:
         \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
@@ -1089,7 +1090,6 @@
       \prop_if_in:cnT { g__leporello_box_ ##1 _prop } { remaining ~ space } {
         \skip_vertical:n {
           \prop_item:cn { g__leporello_box_ ##1 _prop } { remaining ~ space }
-          - \tex_baselineskip:D
         }
       }
     }
@@ -2149,20 +2149,20 @@
   \tex_penalty:D -10000
 }
 
+\hook_gput_code:nnn { leporello / break-flow / before } { . } {
+  \RenewDocumentCommand { \pagebreak } { o } {
+    \group_begin:
+      \__leporello_break_box:
+    \group_end:
+  }
+}
+
 % inspired by the flowfram package by Nicola Talbot
 \NewDocumentCommand { \leporelloboxbreak } { } {
   \group_begin:
     \skip_zero:N \tex_parfillskip:D
     \__leporello_break_box:
   \group_end:
-}
-
-\AddToHook { leporello / break-flow / before } {
-  \RenewDocumentCommand { \pagebreak } { o } {
-    \group_begin:
-      \__leporello_break_box:
-    \group_end:
-  }
 }
 
 \NewDocumentCommand { \leporellolayoutheight } { } {
