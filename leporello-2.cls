@@ -248,6 +248,7 @@
 \bool_new:N \l__leporello_box_height_bool
 \dim_new:N \l__leporello_box_width_dim
 \dim_new:N \l__leporello_box_height_dim
+\dim_new:N \l__leporello_box_stretch_dim
 \dim_new:N \l__leporello_box_padding_left_dim
 \dim_new:N \l__leporello_box_padding_right_dim
 \dim_new:N \l__leporello_box_padding_top_dim
@@ -343,8 +344,6 @@
 \dim_new:N \l__leporello_typeset_box_height_dim
 \dim_new:N \l__leporello_typeset_box_bleed_x_dim
 \dim_new:N \l__leporello_typeset_box_bleed_y_dim
-\dim_new:N \l__leporello_typeset_box_stretch_x_dim
-\dim_new:N \l__leporello_typeset_box_stretch_y_dim
 \int_new:N \l__leporello_typeset_coffin_attach_align_int
 \box_new:N \l__leporello_typeset_column_box
 \coffin_new:N \l__leporello_typeset_mark_coffin
@@ -531,7 +530,6 @@
   marginparwidth ,
   marginparsep ,
   marginparpush ,
-  linewidth ,
   @colht
 } {
   \cs_new_protected:cpn {
@@ -878,9 +876,6 @@
   \leporello_ltlayout_textwidth_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
   }
-  \leporello_ltlayout_linewidth_gset:n {
-    \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
-  }
   \dim_gset:Nn \tex_vsize:D {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ height }
   }
@@ -904,9 +899,6 @@
       }
     }
   }
-    \iow_log:e { box: ~ \int_use:N \g__leporello_shipout_current_box_int }
-    \iow_log:e { pagegoal: ~ \dim_to_decimal_in_mm:n { \tex_pagegoal:D } }
-    \iow_log:e { pagetotal: ~ \dim_to_decimal_in_mm:n { \tex_pagetotal:D } }
 }
 
 % collect contents of connected flow boxes
@@ -966,17 +958,19 @@
       inner ~ \str_use:N \l__leporello_break_check_size_str
     }
   } {
-    \msg_warning:nnVee { leporello } { break-different-size }
-      \l__leporello_break_check_size_str
-      {
-        \prop_item:ce { g__leporello_box_ #1 _prop } {
-          inner ~ \str_use:N \l__leporello_break_check_size_str
+    \tl_if_in:cnF { g__leporello_box_ #1 _tl } { \leporelloboxbreak } {
+      \msg_warning:nnVee { leporello } { break-different-size }
+        \l__leporello_break_check_size_str
+        {
+          \prop_item:ce { g__leporello_box_ #1 _prop } {
+            inner ~ \str_use:N \l__leporello_break_check_size_str
+          }
+        } {
+          \prop_item:ce { g__leporello_box_ #2 _prop } {
+            inner ~ \str_use:N \l__leporello_break_check_size_str
+          }
         }
-      } {
-        \prop_item:ce { g__leporello_box_ #2 _prop } {
-          inner ~ \str_use:N \l__leporello_break_check_size_str
-        }
-      }
+    }
   }
 }
 \cs_generate_variant:Nn \__leporello_break_check_sizes:nn { VV }
@@ -1153,6 +1147,197 @@
 }
 \cs_generate_variant:Nn \__leporello_box_update_poles:nnn { VVn }
 
+\box_new:N \g__leporello_stretch_box
+\dim_new:N \l__leporello_stretch_dim
+
+% calculate stretch of a box
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_x_aux:Nn #1#2 {
+  \group_begin:
+    \dim_set:Nn \tex_vsize:D {
+      \prop_item:cn { g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      _prop } { inner ~ height }
+    }
+    \vbox_set:Nn \g__leporello_stretch_box {
+      \tl_use:c {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _tl
+      }
+    }
+  \group_end:
+  
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { hc } {
+    \dim_add:Nn #1 {
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { inner ~ width } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { r } {
+    \dim_add:Nn #1 {
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { inner ~ width }
+    }
+  }
+
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { hc } {
+    \dim_sub:Nn #1 {
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { inner ~ width } / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { r } {
+    \dim_sub:Nn #1 {
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { inner ~ width }
+    }
+  }
+
+  \dim_add:Nn #1 {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { padding ~ left } +
+    \prop_item:cn { g__leporello_box_ #2 _prop } { padding ~ right } +
+    \fp_to_dim:n {
+      \leporello_fp_tuple_use_i:e {
+        \prop_item:cn { g__leporello_box_
+          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop } { offset }
+      }
+    }
+  }
+}
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_y_aux:Nn #1#2 {
+  \group_begin:
+    \dim_set:Nn \tex_hsize:D {
+      \prop_item:cn { g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      _prop } { inner ~ width }
+    }
+    \vbox_gset:Nn \g__leporello_stretch_box {
+      \tl_use:c {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _tl
+      }
+    }
+  \group_end:
+
+  \dim_set:Nn \l__leporello_stretch_dim {
+    \prop_if_in:cnTF {
+      g__leporello_box_
+      \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      _prop
+    } { height } {
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { height }
+    } {
+      \box_ht:N \g__leporello_stretch_box +
+      \box_dp:N \g__leporello_stretch_box % +
+      \if_false:
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { padding ~ top } +
+      \prop_item:cn {
+        g__leporello_box_
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop
+      } { padding ~ bottom }
+      \fi:
+    }
+  }
+
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { vc } {
+    \dim_sub:Nn #1 {
+      \l__leporello_stretch_dim / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
+  } { b } {
+    \dim_sub:Nn #1 {
+      \l__leporello_stretch_dim
+    }
+  }
+
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { vc } {
+    \dim_sub:Nn #1 {
+      \l__leporello_stretch_dim / 2
+    }
+  }
+  \clist_if_in:enT {
+    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
+  } { b } {
+    \dim_sub:Nn #1 {
+      \l__leporello_stretch_dim
+    }
+  }
+
+  \dim_add:Nn #1 {
+    \fp_to_dim:n {
+      \leporello_fp_tuple_use_ii:e {
+        \prop_item:cn { g__leporello_box_
+          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+        _prop } { offset }
+      }
+    }
+  }
+}
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_x:Nn #1#2 {
+  \dim_zero:N #1
+  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
+    \__leporello_box_calculate_stretch_x:Ne #1 {
+      \prop_item:Nn \g__leporello_box_names_prop {
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      }
+    }
+    \__leporello_box_calculate_stretch_x_aux:Nn #1 {#2}
+  }
+}
+\cs_generate_variant:Nn \__leporello_box_calculate_stretch_x:Nn { Ne }
+
+\cs_new_protected:Npn \__leporello_box_calculate_stretch_y:Nn #1#2 {
+  \dim_zero:N #1
+  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
+    \__leporello_box_calculate_stretch_y:Ne #1 {
+      \prop_item:Nn \g__leporello_box_names_prop {
+        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
+      }
+    }
+    \__leporello_box_calculate_stretch_y_aux:Nn #1 {#2}
+  }
+}
+\cs_generate_variant:Nn \__leporello_box_calculate_stretch_y:Nn { Ne }
+
 % calculate the inner width and inner height of a box in a column
 \cs_new_protected:Npn \__leporello_box_measure:nn #1#2 {
   \prop_gput:cne { g__leporello_box_ #2 _prop } { inner ~ width } {
@@ -1269,36 +1454,16 @@
       } {
         \l_leporello_layout_vertical_rtl_bool
       } {
-        \__leporello_box_calculate_stretch_x:Nn
-          \l__leporello_typeset_box_stretch_x_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_width_dim {
-          \fp_to_dim:n {
-            \clist_item:Nn \l_leporello_columns_clist {#2} -
-            (
-              \leporello_fp_tuple_use_i:e {
-                \prop_item:cn { g__leporello_box_ #3 _prop } { offset }
-              }
-            )
-          }
-        }
-        \dim_add:Nn \l__leporello_typeset_box_width_dim {
-          \l__leporello_typeset_box_stretch_x_dim
+          \prop_item:cn { g__leporello_box_ #3 _prop } { inner ~ width } +
+          \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ left } +
+          \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ right }
         }
       } {
-        \__leporello_box_calculate_stretch_y:Nn
-          \l__leporello_typeset_box_stretch_y_dim {#3}
         \dim_set:Nn \l__leporello_typeset_box_height_dim {
-          \fp_to_dim:n {
-            \l_leporello_layout_height_dim -
-            (
-              \leporello_fp_tuple_use_ii:e {
-                \prop_item:cn { g__leporello_box_ #3 _prop } { offset }
-              }
-            )
-          }
-        }
-        \dim_add:Nn \l__leporello_typeset_box_height_dim {
-          \l__leporello_typeset_box_stretch_y_dim
+          \prop_item:cn { g__leporello_box_ #3 _prop } { inner ~ height } +
+          \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ top } +
+          \prop_item:cn { g__leporello_box_ #3 _prop } { padding ~ bottom }
         }
       }
     }
@@ -1431,207 +1596,6 @@
   }
 }
 \cs_generate_variant:Nn \__leporello_box_construct:nnn { VVn }
-
-% calculate stretch of an outer coffin in a column
-\cs_new_protected:Npn \__leporello_box_calculate_stretch_x_aux:Nn #1#2 {
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-  } { hc } {
-    \dim_add:Nn #1 {
-      \box_wd:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2
-    }
-  }
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-  } { r } {
-    \dim_add:Nn #1 {
-      \box_wd:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      }
-    }
-  }
-
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
-  } { hc } {
-    \dim_sub:Nn #1 {
-      \box_wd:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2
-    }
-  }
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
-  } { r } {
-    \dim_sub:Nn #1 {
-      \box_wd:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      }
-    }
-  }
-
-  \int_compare:nNnF {
-    \l_leporello_current_column_int
-  } = { 1 } {
-    \clist_if_in:enT {
-      \prop_item:cn { g__leporello_box_
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-      _prop } { bleed }
-    } { l } {
-      \dim_add:Nn #1 { \l_leporello_bleed_dim }
-    }
-  }
-  \int_compare:nNnF {
-    \l_leporello_current_column_int
-  } = { \l_leporello_column_count_int } {
-    \clist_if_in:enT {
-      \prop_item:cn { g__leporello_box_
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-      _prop } { bleed }
-    } { r } {
-      \dim_add:Nn #1 { \l_leporello_bleed_dim }
-    }
-  }
-
-  \dim_add:Nn #1 {
-    \fp_to_dim:n {
-      \leporello_fp_tuple_use_i:e {
-        \prop_item:cn { g__leporello_box_
-          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-        _prop } { offset }
-      }
-    }
-  }
-}
-
-\cs_new_protected:Npn \__leporello_box_calculate_stretch_y_aux:Nn #1#2 {
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-  } { vc } {
-    \dim_sub:Nn #1 {
-      \box_ht:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2 +
-      \box_dp:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2
-    }
-  }
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ parent }
-  } { b } {
-    \dim_sub:Nn #1 {
-      \box_ht:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } +
-      \box_dp:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      }
-    }
-  }
-
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
-  } { vc } {
-    \dim_sub:Nn #1 {
-      \box_ht:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2 +
-      \box_dp:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } / 2
-    }
-  }
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_ #2 _prop } { align ~ self }
-  } { b } {
-    \dim_sub:Nn #1 {
-      \box_ht:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      } +
-      \box_dp:c { l__leporello_box_
-        \int_use:N \g_leporello_current_sheet_int _
-        \int_use:N \l_leporello_current_column_int _
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id } _outer_coffin
-      }
-    }
-  }
-
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_
-      \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-    _prop } { bleed }
-  } { t } {
-    \dim_add:Nn #1 { \l_leporello_bleed_dim }
-  }
-  \clist_if_in:enT {
-    \prop_item:cn { g__leporello_box_
-      \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-    _prop } { bleed }
-  } { b } {
-    \dim_add:Nn #1 { \l_leporello_bleed_dim }
-  }
-
-  \dim_add:Nn #1 {
-    \fp_to_dim:n {
-      \leporello_fp_tuple_use_ii:e {
-        \prop_item:cn { g__leporello_box_
-          \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-        _prop } { offset }
-      }
-    }
-  }
-}
-
-\cs_new_protected:Npn \__leporello_box_calculate_stretch_x:Nn #1#2 {
-  \dim_zero:N #1
-  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
-    \__leporello_box_calculate_stretch_x:Ne #1 {
-      \prop_item:Nn \g__leporello_box_names_prop {
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-      }
-    }
-    \__leporello_box_calculate_stretch_x_aux:Nn #1 {#2}
-  }
-}
-\cs_generate_variant:Nn \__leporello_box_calculate_stretch_x:Nn { Ne }
-
-\cs_new_protected:Npn \__leporello_box_calculate_stretch_y:Nn #1#2 {
-  \dim_zero:N #1
-  \clist_if_in:NnT \g__leporello_child_boxes_clist {#2} {
-    \__leporello_box_calculate_stretch_y:Ne #1 {
-      \prop_item:Nn \g__leporello_box_names_prop {
-        \prop_item:cn { g__leporello_box_ #2 _prop } { parent ~ id }
-      }
-    }
-    \__leporello_box_calculate_stretch_y_aux:Nn #1 {#2}
-  }
-}
-\cs_generate_variant:Nn \__leporello_box_calculate_stretch_y:Nn { Ne }
 
 % position outer coffins with boxes in the relevant column
 \cs_new_protected:Npn \__leporello_boxes_attach:nn #1#2 {
@@ -1899,6 +1863,54 @@
         } {
           \prop_if_in_p:Nn \l__leporello_typeset_boxes_to_columns_prop {##1}
         } {
+          \bool_if:nT { \prop_item:cn { g__leporello_box_ ##1 _prop } { stretch } } {
+            \bool_lazy_or:nnTF {
+              \l_leporello_layout_vertical_ltr_bool
+            } {
+              \l_leporello_layout_vertical_rtl_bool
+            } {
+              \__leporello_box_calculate_stretch_x:Nn
+                \l__leporello_box_stretch_dim
+                {##1}
+              \prop_gput:cne { g__leporello_box_ ##1 _prop } { inner ~ width } {
+                \fp_to_dim:n {
+                  \clist_item:NV \l_leporello_columns_clist
+                    \l__leporello_typeset_column_int -
+                  \prop_item:cn { g__leporello_box_ ##1 _prop } { padding ~ left } -
+                  \prop_item:cn { g__leporello_box_ ##1 _prop } { padding ~ right } -
+                  (
+                    \leporello_fp_tuple_use_i:e {
+                      \prop_item:cn { g__leporello_box_ ##1 _prop } { offset }
+                    }
+                  )
+                }
+              }
+            } {
+              \__leporello_box_calculate_stretch_y:Nn
+                \l__leporello_box_stretch_dim
+                {##1}
+              \prop_gput:cne { g__leporello_box_ ##1 _prop } { inner ~ height } {
+                \fp_to_dim:n {
+                  \l_leporello_layout_height_dim -
+                  \prop_item:cn { g__leporello_box_ ##1 _prop } { padding ~ top } -
+                  \prop_item:cn { g__leporello_box_ ##1 _prop } { padding ~ bottom } -
+                  (
+                    \leporello_fp_tuple_use_ii:e {
+                      \prop_item:cn { g__leporello_box_ ##1 _prop } { offset }
+                    }
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+      \int_step_inline:nn { \g__leporello_box_int } {
+        \bool_lazy_and:nnT {
+          \prop_if_in_p:Nn \l__leporello_typeset_boxes_to_sheets_prop {##1}
+        } {
+          \prop_if_in_p:Nn \l__leporello_typeset_boxes_to_columns_prop {##1}
+        } {
           \__leporello_break_flow:een {
             \prop_item:Nn \l__leporello_typeset_boxes_to_sheets_prop {##1}
           } {
@@ -2142,27 +2154,14 @@
   \leporello_typeset_columns:nn {#1} {#2}
 }
 
-\cs_new_protected:Npn \__leporello_break_box: {
-  \tex_par:D
-  \__leporello_break_gstore_remaining_space:
-  \skip_vertical:n { 0pt plus 1fill }
-  \tex_penalty:D -10000
-}
-
 % inspired by the flowfram package by Nicola Talbot
 \NewDocumentCommand { \leporelloboxbreak } { } {
   \group_begin:
     \skip_zero:N \tex_parfillskip:D
-    \__leporello_break_box:
+    \tex_par:D
+    \skip_vertical:n { 0pt plus 1fill }
+    \tex_penalty:D -10000
   \group_end:
-}
-
-\AddToHook { leporello / break-flow / before } {
-  \RenewDocumentCommand { \pagebreak } { o } {
-    \group_begin:
-      \__leporello_break_box:
-    \group_end:
-  }
 }
 
 \NewDocumentCommand { \leporellolayoutheight } { } {
