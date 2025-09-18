@@ -259,7 +259,6 @@
 \clist_new:N \l__leporello_box_bleed_clist
 \tl_new:N \l__leporello_box_store_width_tl
 \tl_new:N \l__leporello_box_store_height_tl
-\str_new:N \l__leporello_box_flow_into_str
 
 \keys_define:nn { leporello / box } {
   name               .code:n      = {
