@@ -44,7 +44,7 @@
 }
 \makeatother
 
-\tcbuselibrary{skins,listings}
+\tcbuselibrary{skins,listings,breakable}
 \lstdefinestyle{leporellodocmacro}{
   basicstyle=\small\ttfamily,
   literate=*{<}{{{\color{black!50}\guilsinglleft}}}1
@@ -173,10 +173,14 @@
   }
 }
 
-\NewTCBListing{codeexample}{ }{
+\NewTCBListing{codeexample}{ s }{
+  breakable,
   listing only,
   listing style={leporellodoccodeexample},
-  after={\par\smallskip\noindent}
+  after={\par\smallskip\noindent},
+  IfBooleanT={#1}{
+    breakable
+  }
 }
 
 \NewTCBListing{codeexamplecolumns}{ }{
@@ -737,7 +741,7 @@ The following examples show some of the basic ideas of the package by providing 
 \colorbox{white}{\includegraphics[width=\linewidth]{doc/layout.pdf}}
 \end{tcolorbox}
 
-\begin{codeexample}
+\begin{codeexample}*
 \documentclass[
   prepress,
   show frames,
@@ -798,7 +802,7 @@ The default layout has three pages which are shown here. Three columns named \ma
 \colorbox{white}{\includegraphics[width=\linewidth]{doc/flow.pdf}}
 \end{tcolorbox}
 
-\begin{codeexample}
+\begin{codeexample}*
 \documentclass[
   prepress,
   show frames,
@@ -859,6 +863,8 @@ This example shows some features of the flow mechanism. The text in the second b
 % =====
 
 \section{L3 commands}
+
+\subsection{L3 package commands}
 
 \begin{macrodef}
 |\l_leporello_layout_width_dim|
@@ -978,26 +984,80 @@ This command expects as argument the value of the current note counter as intege
 }
 \end{codeexample}
 
+\subsection{L3 compatibility commands}
+
 \noindent The following commands have been defined for consistency of the syntax.
 
 \begin{macrodef}
-|\leporello_ltlayout_paperwidth_set:n| {<dimension>}
-|\leporello_ltlayout_paperheight_set:n| {<dimension>}
-|\leporello_ltlayout_textwidth_set:n| {<dimension>}
-|\leporello_ltlayout_textheight_set:n| {<dimension>}
-|\leporello_ltlayout_topmargin_set:n| {<dimension>}
-|\leporello_ltlayout_oddsidemargin_set:n| {<dimension>}
-|\leporello_ltlayout_evensidemargin_set:n| {<dimension>}
-|\leporello_ltlayout_hoffset_set:n| {<dimension>}
-|\leporello_ltlayout_voffset_set:n| {<dimension>}
-|\leporello_ltlayout_headheight_set:n| {<dimension>}
-|\leporello_ltlayout_headsep_set:n| {<dimension>}
-|\leporello_ltlayout_footskip_set:n| {<dimension>}
-|\leporello_ltlayout_marginparwidth_set:n| {<dimension>}
-|\leporello_ltlayout_marginparsep_set:n| {<dimension>}
-|\leporello_ltlayout_marginparpush_set:n| {<dimension>}
+|\leporello_latex_paperwidth_set:n| {<dimension>}
+|\leporello_latex_paperheight_set:n| {<dimension>}
+|\leporello_latex_textwidth_set:n| {<dimension>}
+|\leporello_latex_textheight_set:n| {<dimension>}
+|\leporello_latex_topmargin_set:n| {<dimension>}
+|\leporello_latex_oddsidemargin_set:n| {<dimension>}
+|\leporello_latex_evensidemargin_set:n| {<dimension>}
+|\leporello_latex_hoffset_set:n| {<dimension>}
+|\leporello_latex_voffset_set:n| {<dimension>}
+|\leporello_latex_headheight_set:n| {<dimension>}
+|\leporello_latex_headsep_set:n| {<dimension>}
+|\leporello_latex_footskip_set:n| {<dimension>}
+|\leporello_latex_marginparwidth_set:n| {<dimension>}
+|\leporello_latex_marginparsep_set:n| {<dimension>}
+|\leporello_latex_marginparpush_set:n| {<dimension>}
+|\leporello_latex_linewidth_set:n| {<dimension>}
+|\leporello_latex_colht_set:n| {<dimension>}
 \end{macrodef}
-These commands set the relevant LaTeX dimension to the argument given. To give an example, \macro{\leporello_ltlayout_paperwidth_set:n {297mm}} sets \macro{\paperwidth} to 297mm. These commands also have a ...\macro{_gset:n} variant that sets the dimension globally.
+These commands set the relevant LaTeX dimension to the argument given. To give an example, \macro{\leporello_latex_paperwidth_set:n { 297mm }} sets \macro{\paperwidth} to 297mm. These commands also have a ...\macro{_gset:n} variant that sets the dimension globally. The command \newline \macro{\leporello_latex_colht_set:n} sets \macro{\@colht}.
+
+\begin{macrodef}
+|\leporello_tex_hsize_set:n| {<dimension>}
+|\leporello_tex_vsize_set:n| {<dimension>}
+|\leporello_tex_hfuzz_set:n| {<dimension>}
+|\leporello_tex_vfuzz_set:n| {<dimension>}
+|\leporello_tex_parindent_set:n| {<dimension>}
+\end{macrodef}
+These commands set the relevant TeX dimension to the argument given. These commands also have a ...\macro{_gset:n} and a ...\macro{_add:n} variant as well as a ...\macro{_zero:} variant.
+
+\begin{macrodef}
+|\leporello_tex_topskip_zero:|
+|\leporello_tex_parfillskip_zero:|
+\end{macrodef}
+These commands set the relevant TeX dimension to zero.
+
+\begin{macrodef}
+|\l_leporello_tex_baselineskip_dim|
+|\l_leporello_tex_pagegoal_dim|
+|\l_leporello_tex_pagetotal_dim|
+\end{macrodef}
+These token variables are aliases for \macro{\baselikeskip}, \macro{\pagegoal} and \macro{\pagetotal}.
+
+\begin{macrodef}
+|\c_leporello_tex_par_tl|
+\end{macrodef}
+This token variable is an alias for \macro{\par} (more exactly for \macro{\tex_par:D}).
+
+\begin{macrodef}
+|\leporello_tex_penalty_set:n| {<integer>}
+\end{macrodef}
+This command is an alias for \macro{\penalty}. For example, \newline \macro{\leporello_tex_penalty_set:n { -10000 }} is equivalent to \macro{\penalty -10000}.
+
+\begin{macrodef}
+|\leporello_luatex_pagedir_set:n| {<token list>}
+|\leporello_luatex_bodydir_set:n| {<token list>}
+|\leporello_luatex_pardir_set:n| {<token list>}
+|\leporello_luatex_textdir_set:n| {<token list>}
+\end{macrodef}
+These commands are aliases for the relevant LuaTeX commands. For example \newline \macro{\leporello_luatex_pagedir_set:n { TLT }} is equivalent to \macro{\pagedir TLT}.
+
+\begin{macrodef}
+|\l_leporello_luatex_bodydirection_int|
+\end{macrodef}
+This token variable is an alias for \macro{\bodydirection}. If LuaTeX is not used, its value is 0.
+
+\begin{macrodef}
+|\leporello_clearpage:|
+\end{macrodef}
+This command is an alias for \macro{\clearpage}.
 
 \begin{macrodef}
 |\leporello_pagestyle_set:n| {<string>}

@@ -443,25 +443,25 @@
 \bool_new:N \l_leporello_layout_vertical_rtl_bool
 
 \cs_new_protected:Npn \__leporello_layout_set:n #1 {
-  \tex_pagedir:D TLT
-  \tex_bodydir:D TLT
-  \tex_pardir:D TLT
-  \tex_textdir:D TLT
+  \leporello_luatex_pagedir_set:n { TLT }
+  \leporello_luatex_bodydir_set:n { TLT }
+  \leporello_luatex_pardir_set:n { TLT }
+  \leporello_luatex_textdir_set:n { TLT }
   \scan_stop:
   \hook_gput_code:nnn { leporello / break-flow / before } {
     leporello / layout
   } {
-    \tex_bodydir:D #1
-    \tex_pardir:D #1
-    \tex_textdir:D #1
+    \leporello_luatex_bodydir_set:n {#1}
+    \leporello_luatex_pardir_set:n {#1}
+    \leporello_luatex_textdir_set:n {#1}
     \scan_stop:
   }
   \hook_gput_code:nnn { leporello / box / begin } {
     leporello / layout
   } {
-    \tex_bodydir:D #1
-    \tex_pardir:D #1
-    \tex_textdir:D #1
+    \leporello_luatex_bodydir_set:n {#1}
+    \leporello_luatex_pardir_set:n {#1}
+    \leporello_luatex_textdir_set:n {#1}
     \scan_stop:
   }
 }
@@ -470,7 +470,7 @@
   \hook_gput_code:nnn { leporello / typeset / before } {
     leporello / layout
   } {
-    \int_case:nnF { \tex_bodydirection:D } {
+    \int_case:nnF { \l_leporello_luatex_bodydirection_int } {
       { 1 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
@@ -495,9 +495,9 @@
     } {
       \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
       \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
-      \tex_pagedir:D TLT
-      \tex_pardir:D TLT
-      \tex_textdir:D TLT
+      \leporello_luatex_pagedir_set:n { TLT }
+      \leporello_luatex_pardir_set:n { TLT }
+      \leporello_luatex_textdir_set:n { TLT }
       \group_begin:
         \msg_redirect_name:nnn { hooks } { cannot-remove } { none }
         \hook_gremove_code:nn { leporello / break-flow / before } { leporello / layout }
@@ -514,6 +514,7 @@
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
+\tl_new:N \l__leporello_cs_construct_tl
 \clist_map_inline:nn {
   paperwidth ,
   paperheight ,
@@ -533,19 +534,101 @@
   linewidth ,
   @colht
 } {
+  \tl_set:Nn \l__leporello_cs_construct_tl {#1}
+  \tl_remove_once:Nn \l__leporello_cs_construct_tl { @ }
   \cs_new_protected:cpn {
-    leporello_ltlayout_ #1 _set:n
+    leporello_latex_ \l__leporello_cs_construct_tl _set:n
   } ##1 {
     \dim_set:cn {#1} {##1}
   }
   \cs_new_protected:cpn {
-    leporello_ltlayout_ #1 _gset:n
+    leporello_latex_ \l__leporello_cs_construct_tl _gset:n
   } ##1 {
     \dim_gset:cn {#1} {##1}
   }
 }
 
-\cs_set_eq:NN \leporello_page_clear: \clearpage
+\clist_map_inline:nn {
+  baselineskip ,
+  pagegoal ,
+  pagetotal
+} {
+  \dim_new:c { l_leporello_tex_ #1 _dim }
+  \dim_set_eq:cc { l_leporello_tex_ #1 _dim } {
+    tex_ #1 :D
+  }
+}
+
+\tl_const:Nn \c_leporello_tex_par_tl {
+  \tex_par:D
+}
+
+\cs_new_protected:Npn \leporello_tex_penalty_set:n #1 {
+  \tex_penalty:D #1
+}
+
+\clist_map_inline:nn {
+  hsize ,
+  vsize ,
+  hfuzz ,
+  vfuzz ,
+  parindent
+} {
+  \cs_new_protected:cpn {
+    leporello_tex_ #1 _set:n
+  } ##1 {
+    \dim_set:cn {#1} {##1}
+  }
+  \cs_new_protected:cpn {
+    leporello_tex_ #1 _gset:n
+  } ##1 {
+    \dim_gset:cn {#1} {##1}
+  }
+  \cs_new_protected:cpn {
+    leporello_tex_ #1 _add:n
+  } ##1 {
+    \dim_add:cn {#1} {##1}
+  }
+  \cs_new_protected:cpn {
+    leporello_tex_ #1 _zero:
+  } {
+    \dim_zero:c {#1}
+  }
+}
+
+\clist_map_inline:nn {
+  topskip ,
+  parfillskip
+} {
+  \cs_new_protected:cpn {
+    leporello_tex_ #1 _zero:
+  } {
+    \skip_zero:c {#1}
+  }
+}
+
+\int_new:N \l_leporello_luatex_bodydirection_int
+\sys_if_engine_luatex:TF {
+  \int_set_eq:NN \l_leporello_luatex_bodydirection_int
+    \tex_bodydirection:D
+} {
+  \int_zero:N \l_leporello_luatex_bodydirection_int
+}
+
+\clist_map_inline:nn {
+  pagedir ,
+  bodydir ,
+  pardir ,
+  textdir
+} {
+  \cs_new_protected:cpn {
+    leporello_luatex_ #1 _set:n
+  } ##1 {
+    \use:c { tex_ #1 :D } ##1
+  }
+}
+
+\cs_set_eq:NN \leporello_clearpage: \clearpage
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_set_eq:NN \leporello_text_superscript:n \textsuperscript
 \cs_new_protected_nopar:Npn \leporello_page_gset:n #1 {
@@ -676,7 +759,7 @@
           g__leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ left }
       }
-      \dim_add:Nn \tex_hfuzz:D {
+      \leporello_tex_hfuzz_add:n {
         \prop_item:cn {
           g__leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ left }
@@ -693,7 +776,7 @@
           g__leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ right }
       }
-      \dim_add:Nn \tex_hfuzz:D {
+      \leporello_tex_hfuzz_add:n {
         \prop_item:cn {
           g__leporello_box_ \int_use:N \l_leporello_current_box_int _prop
         } { padding ~ right }
@@ -871,19 +954,19 @@
 
 % set page dimensions to inner width and inner height of relevant box
 \cs_new_protected:Npn \__leporello_break_gset_dimensions:n #1 {
-  \dim_gset:Nn \tex_hsize:D {
+  \leporello_tex_hsize_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
   }
-  \leporello_ltlayout_textwidth_gset:n {
+  \leporello_latex_textwidth_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
   }
-  \leporello_ltlayout_linewidth_gset:n {
+  \leporello_latex_linewidth_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ width }
   }
-  \dim_gset:Nn \tex_vsize:D {
+  \leporello_tex_vsize_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ height }
   }
-  \leporello_ltlayout_textheight_gset:n {
+  \leporello_latex_textheight_gset:n {
     \prop_item:cn { g__leporello_box_ #1 _prop } { inner ~ height }
   }
 }
@@ -891,23 +974,20 @@
 
 % calculate remaining space after contents of last flow box
 \cs_new_protected:Npn \__leporello_break_gstore_remaining_space: {
-  \vbox_to_ht:nn { \tex_baselineskip:D } { }
-  \dim_compare:nNnF { \tex_pagegoal:D } = { \c_max_dim } {
+  \vbox_to_ht:nn { \l_leporello_tex_baselineskip_dim } { }
+  \dim_compare:nNnF { \l_leporello_tex_pagegoal_dim } = { \c_max_dim } {
     \prop_gput:cne {
       g__leporello_box_
       \int_use:N \g__leporello_shipout_current_box_int
       _prop
     } { remaining ~ space } {
       \dim_eval:n {
-        \tex_pagetotal:D - 
-        \tex_pagegoal:D -
-        \tex_baselineskip:D
+        \l_leporello_tex_pagetotal_dim - 
+        \l_leporello_tex_pagegoal_dim -
+        \l_leporello_tex_baselineskip_dim
       }
     }
   }
-    \iow_log:e { box: ~ \int_use:N \g__leporello_shipout_current_box_int }
-    \iow_log:e { pagegoal: ~ \dim_to_decimal_in_mm:n { \tex_pagegoal:D } }
-    \iow_log:e { pagetotal: ~ \dim_to_decimal_in_mm:n { \tex_pagetotal:D } }
 }
 
 % collect contents of connected flow boxes
@@ -995,7 +1075,7 @@
   }
 
   \__leporello_break_gset_dimensions:n {#3}
-  \leporello_ltlayout_@colht_gset:n {
+  \leporello_latex_colht_gset:n {
     \prop_item:cn { g__leporello_box_ #3 _prop } { inner ~ height }
   }
   \int_gset:Nn \g__leporello_shipout_current_box_int {#3}
@@ -1059,15 +1139,15 @@
           oddsidemargin ,
           evensidemargin
         } {
-          \use:c { leporello_ltlayout_ ##1 _set:n } { 0pt }
+          \use:c { leporello_latex_ ##1 _set:n } { 0pt }
         }
 
         \__leporello_break_collect:n {#3}
         \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
         \tl_use:c { g__leporello_box_ #3 _tl }
-        \tex_par:D
+        \c_leporello_tex_par_tl
         \__leporello_break_gstore_remaining_space:
-        \leporello_page_clear:
+        \leporello_clearpage:
         \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
         \hook_gremove_code:nn { shipout / before } { leporello / break-flow }
       \group_end:
@@ -1319,7 +1399,7 @@
         \dim_add:Nn \l__leporello_typeset_box_bleed_x_dim { \l_leporello_bleed_dim }
       }
     }
-    \dim_add:Nn \tex_hfuzz:D { \l__leporello_typeset_box_bleed_x_dim }
+    \leporello_tex_hfuzz_add:n { \l__leporello_typeset_box_bleed_x_dim }
 
     \clist_if_in:enT {
       \prop_item:cn { g__leporello_box_ #3 _prop } { bleed }
@@ -1331,7 +1411,7 @@
     } { b } {
       \dim_add:Nn \l__leporello_typeset_box_bleed_y_dim { \l_leporello_bleed_dim }
     }
-    \dim_add:Nn \tex_vfuzz:D { \l__leporello_typeset_box_bleed_y_dim }
+    \leporello_tex_vfuzz_add:n { \l__leporello_typeset_box_bleed_y_dim }
 
     \coffin_new:c {
       l__leporello_box_ #1 _ #2 _ #3 _outer_coffin
@@ -1830,9 +1910,9 @@
       }
     }
   \draw_end:
-  \tex_par:D
+  \c_leporello_tex_par_tl
   \skip_vertical:n { 0pt plus 1fill }
-  \tex_penalty:D -10000
+  \leporello_tex_penalty_set:n { -10000 }
 }
 \cs_generate_variant:Nn \__leporello_typeset_columns:n { V }
 
@@ -1957,20 +2037,20 @@
     marginparsep ,
     marginparpush
   } {
-    \use:c { leporello_ltlayout_ #1 _set:n } { 0pt }
+    \use:c { leporello_latex_ #1 _set:n } { 0pt }
   }
   \clist_map_inline:nn {
     topmargin ,
     oddsidemargin ,
     evensidemargin
   } {
-    \use:c { leporello_ltlayout_ #1 _set:n } { -1in }
+    \use:c { leporello_latex_ #1 _set:n } { -1in }
   }
 
-  \leporello_ltlayout_paperwidth_set:n { \l_leporello_layout_width_dim }
-  \leporello_ltlayout_paperheight_set:n { \l_leporello_layout_height_dim }
-  \leporello_ltlayout_textwidth_set:n { \l_leporello_layout_width_dim }
-  \leporello_ltlayout_textheight_set:n { \l_leporello_layout_height_dim }
+  \leporello_latex_paperwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_latex_paperheight_set:n { \l_leporello_layout_height_dim }
+  \leporello_latex_textwidth_set:n { \l_leporello_layout_width_dim }
+  \leporello_latex_textheight_set:n { \l_leporello_layout_height_dim }
 
   \bool_if:NT \l_leporello_prepress_bool {
     \clist_map_inline:nn {
@@ -1978,13 +2058,13 @@
       oddsidemargin ,
       evensidemargin
     } {
-      \use:c { leporello_ltlayout_ #1 _set:n } {
+      \use:c { leporello_latex_ #1 _set:n } {
         \l_leporello_info_area_dim - 1in
       }
     }
 
-    \leporello_ltlayout_paperwidth_set:n { \l_leporello_paper_width_dim }
-    \leporello_ltlayout_paperheight_set:n { \l_leporello_paper_height_dim }
+    \leporello_latex_paperwidth_set:n { \l_leporello_paper_width_dim }
+    \leporello_latex_paperheight_set:n { \l_leporello_paper_height_dim }
 
     \hook_gput_code:nnn { shipout / foreground } { . } {
       \__leporello_cropmarks:
@@ -2001,8 +2081,8 @@
     }
   }
 
-  \skip_zero:N \tex_topskip:D
-  \dim_zero:N \tex_parindent:D
+  \leporello_tex_topskip_zero:
+  \leporello_tex_parindent_zero:
 }
 
 % initiate auto typesetting mechanism
@@ -2142,10 +2222,10 @@
 }
 
 \cs_new_protected:Npn \__leporello_break_box: {
-  \tex_par:D
+  \c_leporello_tex_par_tl
   \__leporello_break_gstore_remaining_space:
   \skip_vertical:n { 0pt plus 1fill }
-  \tex_penalty:D -10000
+  \leporello_tex_penalty_set:n { -10000 }
 }
 
 \hook_gput_code:nnn { leporello / break-flow / before } { . } {
@@ -2159,7 +2239,7 @@
 % inspired by the flowfram package by Nicola Talbot
 \NewDocumentCommand { \leporelloboxbreak } { } {
   \group_begin:
-    \skip_zero:N \tex_parfillskip:D
+    \leporello_tex_parfillskip_zero:
     \__leporello_break_box:
   \group_end:
 }
