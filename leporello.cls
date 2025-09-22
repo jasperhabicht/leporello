@@ -470,7 +470,7 @@
   \hook_gput_code:nnn { leporello / typeset / before } {
     leporello / layout
   } {
-    \int_case:nnF { \l_leporello_luatex_bodydirection_int } {
+    \int_case:nnF { \l_leporello_luatex_bodydirection_tl } {
       { 1 } {
         \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
         \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
@@ -495,7 +495,7 @@
     } {
       \bool_set_false:N \l_leporello_layout_vertical_ltr_bool
       \bool_set_false:N \l_leporello_layout_vertical_rtl_bool
-      \leporello_luatex_pagedir_set:n { TLT }
+      \leporello_luatex_bodydir_set:n { TLT }
       \leporello_luatex_pardir_set:n { TLT }
       \leporello_luatex_textdir_set:n { TLT }
       \group_begin:
@@ -514,42 +514,11 @@
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
-\tl_new:N \l__leporello_cs_construct_tl
-\clist_map_inline:nn {
-  paperwidth ,
-  paperheight ,
-  textwidth ,
-  textheight ,
-  topmargin ,
-  oddsidemargin ,
-  evensidemargin ,
-  hoffset ,
-  voffset ,
-  headheight ,
-  headsep ,
-  footskip ,
-  marginparwidth ,
-  marginparsep ,
-  marginparpush ,
-  linewidth ,
-  @colht
-} {
-  \tl_set:Nn \l__leporello_cs_construct_tl {#1}
-  \tl_remove_once:Nn \l__leporello_cs_construct_tl { @ }
-  \cs_new_protected:cpn {
-    leporello_latex_ \l__leporello_cs_construct_tl _set:n
-  } ##1 {
-    \dim_set:cn {#1} {##1}
-  }
-  \cs_new_protected:cpn {
-    leporello_latex_ \l__leporello_cs_construct_tl _gset:n
-  } ##1 {
-    \dim_gset:cn {#1} {##1}
-  }
+\tl_const:Nn \c_leporello_tex_par_tl {
+  \tex_par:D
 }
 
 \clist_map_inline:nn {
-  baselineskip ,
   pagegoal ,
   pagetotal
 } {
@@ -559,15 +528,17 @@
   }
 }
 
-\tl_const:Nn \c_leporello_tex_par_tl {
-  \tex_par:D
-}
+\skip_new:N \l_leporello_tex_baselineskip_skip
+\skip_set_eq:NN \l_leporello_tex_baselineskip_skip
+  \tex_baselineskip:D
 
 \cs_new_protected:Npn \leporello_tex_penalty_set:n #1 {
   \tex_penalty:D #1
 }
 
 \clist_map_inline:nn {
+  hoffset ,
+  voffset ,
   hsize ,
   vsize ,
   hfuzz ,
@@ -607,12 +578,51 @@
   }
 }
 
-\int_new:N \l_leporello_luatex_bodydirection_int
-\sys_if_engine_luatex:TF {
-  \int_set_eq:NN \l_leporello_luatex_bodydirection_int
-    \tex_bodydirection:D
+\tl_new:N \l__leporello_cs_construct_tl
+\clist_map_inline:nn {
+  paperwidth ,
+  paperheight ,
+  textwidth ,
+  textheight ,
+  topmargin ,
+  oddsidemargin ,
+  evensidemargin ,
+  linewidth ,
+  @colht
 } {
-  \int_zero:N \l_leporello_luatex_bodydirection_int
+  \tl_set:Nn \l__leporello_cs_construct_tl {#1}
+  \tl_remove_once:Nn \l__leporello_cs_construct_tl { @ }
+  \cs_new_protected:cpn {
+    leporello_latex_ \l__leporello_cs_construct_tl _set:n
+  } ##1 {
+    \dim_set:cn {#1} {##1}
+  }
+  \cs_new_protected:cpn {
+    leporello_latex_ \l__leporello_cs_construct_tl _gset:n
+  } ##1 {
+    \dim_gset:cn {#1} {##1}
+  }
+}
+
+\clist_map_inline:nn {
+  headheight ,
+  headsep ,
+  footskip ,
+  marginparwidth ,
+  marginparsep ,
+  marginparpush
+} {
+  \cs_new_protected:cpn {
+    leporello_latex_ #1 _zero:
+  } {
+    \dim_zero:c {#1}
+  }
+}
+
+\tl_new:N \l_leporello_luatex_bodydirection_tl
+\sys_if_engine_luatex:T {
+  \tl_set_eq:NN \l_leporello_luatex_bodydirection_tl
+    \tex_bodydirection:D
 }
 
 \clist_map_inline:nn {
@@ -974,7 +984,9 @@
 
 % calculate remaining space after contents of last flow box
 \cs_new_protected:Npn \__leporello_break_gstore_remaining_space: {
-  \vbox_to_ht:nn { \l_leporello_tex_baselineskip_dim } { }
+  \vbox_to_ht:nn {
+    \dim_eval:n { \l_leporello_tex_baselineskip_skip } 
+  } { }
   \dim_compare:nNnF { \l_leporello_tex_pagegoal_dim } = { \c_max_dim } {
     \prop_gput:cne {
       g__leporello_box_
@@ -984,7 +996,7 @@
       \dim_eval:n {
         \l_leporello_tex_pagetotal_dim - 
         \l_leporello_tex_pagegoal_dim -
-        \l_leporello_tex_baselineskip_dim
+        \l_leporello_tex_baselineskip_skip
       }
     }
   }
@@ -2029,7 +2041,11 @@
 
   \clist_map_inline:nn {
     hoffset ,
-    voffset ,
+    voffset
+  } {
+    \use:c { leporello_tex_ #1 _zero: }
+  }
+  \clist_map_inline:nn {
     headheight ,
     headsep ,
     footskip ,
@@ -2037,7 +2053,7 @@
     marginparsep ,
     marginparpush
   } {
-    \use:c { leporello_latex_ #1 _set:n } { 0pt }
+    \use:c { leporello_latex_ #1 _zero: }
   }
   \clist_map_inline:nn {
     topmargin ,
