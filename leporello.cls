@@ -571,8 +571,6 @@
   \tex_penalty:D #1
 }
 
-\cs_set_eq:NN \leporello_tex_par: \par
-
 \tl_new:N \l__leporello_cs_construct_tl
 \clist_map_inline:nn {
   paperwidth ,
@@ -633,6 +631,7 @@
   }
 }
 
+\cs_set_eq:NN \leporello_par: \par
 \cs_set_eq:NN \leporello_clearpage: \clearpage
 \cs_set_eq:NN \leporello_pagestyle_set:n \pagestyle
 \cs_set_eq:NN \leporello_text_superscript:n \textsuperscript
@@ -1152,7 +1151,7 @@
         \__leporello_break_collect:n {#3}
         \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
         \tl_use:c { g__leporello_box_ #3 _tl }
-        \leporello_tex_par:
+        \leporello_par:
         \__leporello_break_gstore_remaining_space:
         \leporello_clearpage:
         \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
@@ -1917,7 +1916,7 @@
       }
     }
   \draw_end:
-  \leporello_tex_par:
+  \leporello_par:
   \skip_vertical:n { 0pt plus 1fill }
   \leporello_tex_penalty_set:n { -10000 }
 }
@@ -2233,7 +2232,7 @@
 }
 
 \cs_new_protected:Npn \__leporello_break_box: {
-  \leporello_tex_par:
+  \leporello_par:
   \__leporello_break_gstore_remaining_space:
   \skip_vertical:n { 0pt plus 1fill }
   \leporello_tex_penalty_set:n { -10000 }

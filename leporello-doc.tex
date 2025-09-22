@@ -1018,11 +1018,6 @@ These commands set the relevant TeX skip to zero.
 This command is an alias for \macro{\penalty}. For example, \newline \macro{\leporello_tex_penalty_set:n { -10000 }} is equivalent to \macro{\penalty -10000}.
 
 \begin{macrodef}
-|\leporello_tex_par:|
-\end{macrodef}
-This command is an alias for \macro{\par}.
-
-\begin{macrodef}
 |\leporello_latex_paperwidth_set:n| {<dimension>}
 |\leporello_latex_paperheight_set:n| {<dimension>}
 |\leporello_latex_textwidth_set:n| {<dimension>}
@@ -1057,6 +1052,11 @@ This token variable is an alias for \macro{\bodydirection}. If LuaTeX is not use
 |\leporello_luatex_textdir_set:n| {<token list>}
 \end{macrodef}
 These commands are aliases for the relevant LuaTeX commands. For example \newline \macro{\leporello_luatex_pagedir_set:n { TLT }} is equivalent to \macro{\pagedir TLT}.
+
+\begin{macrodef}
+|\leporello_par:|
+\end{macrodef}
+This command is an alias for \macro{\par}.
 
 \begin{macrodef}
 |\leporello_clearpage:|
