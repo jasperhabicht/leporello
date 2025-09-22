@@ -571,7 +571,7 @@
   \tex_penalty:D #1
 }
 
-\cs_set_eq:NN \leporello_tex_par: \tex_par:D
+\cs_set_eq:NN \leporello_tex_par: \par
 
 \tl_new:N \l__leporello_cs_construct_tl
 \clist_map_inline:nn {
