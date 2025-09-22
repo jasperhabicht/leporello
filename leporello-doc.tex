@@ -989,14 +989,9 @@ This command expects as argument the value of the current note counter as intege
 \noindent The following commands have been defined for consistency of the syntax. They are mostly aliases of TeX, LaTeX or LuaTeX commands or token variables or shorthands for setting these.
 
 \begin{macrodef}
-|\c_leporello_tex_par_tl|
-\end{macrodef}
-This token variable is an alias for \macro{\par} (more exactly for \macro{\tex_par:D}).
-
-\begin{macrodef}
-|\l_leporello_tex_baselineskip_skip|
-|\l_leporello_tex_pagegoal_dim|
-|\l_leporello_tex_pagetotal_dim|
+|\l_leporello_tex_baselineskip_tl|
+|\l_leporello_tex_pagegoal_tl|
+|\l_leporello_tex_pagetotal_tl|
 \end{macrodef}
 These token variables are aliases for \macro{\baselikeskip}, \macro{\pagegoal} and \macro{\pagetotal}.
 
@@ -1009,7 +1004,7 @@ These token variables are aliases for \macro{\baselikeskip}, \macro{\pagegoal} a
 |\leporello_tex_vfuzz_set:n| {<dimension>}
 |\leporello_tex_parindent_set:n| {<dimension>}
 \end{macrodef}
-These commands set the relevant TeX dimension to the argument given. To give an example, \newline \macro{\leporello_tex_hoffset_set:n { 1in }} sets \macro{\hoffset} to 1in. These commands also have a ...\macro{_gset:n} and a ...\macro{_add:n} variant as well as a ...\macro{_zero:} variant.
+These commands set the relevant TeX dimension to the argument given. To give an example, \newline \macro{\leporello_tex_hoffset_set:n { 1in }} sets \macro{\hoffset} to 1in. Each of these commands also has a ...\macro{_gset:n} and a ...\macro{_add:n} variant as well as a ...\macro{_zero:} variant.
 
 \begin{macrodef}
 |\leporello_tex_topskip_zero:|
@@ -1023,6 +1018,11 @@ These commands set the relevant TeX skip to zero.
 This command is an alias for \macro{\penalty}. For example, \newline \macro{\leporello_tex_penalty_set:n { -10000 }} is equivalent to \macro{\penalty -10000}.
 
 \begin{macrodef}
+|\leporello_tex_par:|
+\end{macrodef}
+This command is an alias for the primitive \macro{\par} (for \macro{\tex_par:D}).
+
+\begin{macrodef}
 |\leporello_latex_paperwidth_set:n| {<dimension>}
 |\leporello_latex_paperheight_set:n| {<dimension>}
 |\leporello_latex_textwidth_set:n| {<dimension>}
@@ -1033,7 +1033,7 @@ This command is an alias for \macro{\penalty}. For example, \newline \macro{\lep
 |\leporello_latex_linewidth_set:n| {<dimension>}
 |\leporello_latex_colht_set:n| {<dimension>}
 \end{macrodef}
-These commands set the relevant LaTeX dimension to the argument given. These commands also have a ...\macro{_gset:n} variant that sets the dimension globally. The command \newline \macro{\leporello_latex_colht_set:n} sets \macro{\@colht}.
+These commands set the relevant LaTeX dimension to the argument given. Each of these commands also has a ...\macro{_gset:n} variant. The command \newline \macro{\leporello_latex_colht_set:n} sets \macro{\@colht}.
 
 \begin{macrodef}
 |\leporello_latex_headheight_zero:| {<dimension>}
@@ -1046,17 +1046,17 @@ These commands set the relevant LaTeX dimension to the argument given. These com
 These commands set the relevant LaTeX dimension to zero.
 
 \begin{macrodef}
+|\l_leporello_luatex_bodydirection_tl|
+\end{macrodef}
+This token variable is an alias for \macro{\bodydirection}. If LuaTeX is not used, it is empty.
+
+\begin{macrodef}
 |\leporello_luatex_pagedir_set:n| {<token list>}
 |\leporello_luatex_bodydir_set:n| {<token list>}
 |\leporello_luatex_pardir_set:n| {<token list>}
 |\leporello_luatex_textdir_set:n| {<token list>}
 \end{macrodef}
 These commands are aliases for the relevant LuaTeX commands. For example \newline \macro{\leporello_luatex_pagedir_set:n { TLT }} is equivalent to \macro{\pagedir TLT}.
-
-\begin{macrodef}
-|\l_leporello_luatex_bodydirection_tl|
-\end{macrodef}
-This token variable is an alias for \macro{\bodydirection}. If LuaTeX is not used, it is empty.
 
 \begin{macrodef}
 |\leporello_clearpage:|

@@ -514,26 +514,15 @@
 \RequirePackage { graphicx }
 \RequirePackage { l3draw }
 
-\tl_const:Nn \c_leporello_tex_par_tl {
-  \tex_par:D
-}
-
 \clist_map_inline:nn {
+  baselineskip ,
   pagegoal ,
   pagetotal
 } {
-  \dim_new:c { l_leporello_tex_ #1 _dim }
-  \dim_set_eq:cc { l_leporello_tex_ #1 _dim } {
+  \tl_new:c { l_leporello_tex_ #1 _tl }
+  \tl_set_eq:cc { l_leporello_tex_ #1 _tl } {
     tex_ #1 :D
   }
-}
-
-\skip_new:N \l_leporello_tex_baselineskip_skip
-\skip_set_eq:NN \l_leporello_tex_baselineskip_skip
-  \tex_baselineskip:D
-
-\cs_new_protected:Npn \leporello_tex_penalty_set:n #1 {
-  \tex_penalty:D #1
 }
 
 \clist_map_inline:nn {
@@ -577,6 +566,12 @@
     \skip_zero:c {#1}
   }
 }
+
+\cs_new_protected:Npn \leporello_tex_penalty_set:n #1 {
+  \tex_penalty:D #1
+}
+
+\cs_set_eq:NN \leporello_tex_par: \tex_par:D
 
 \tl_new:N \l__leporello_cs_construct_tl
 \clist_map_inline:nn {
@@ -985,18 +980,18 @@
 % calculate remaining space after contents of last flow box
 \cs_new_protected:Npn \__leporello_break_gstore_remaining_space: {
   \vbox_to_ht:nn {
-    \dim_eval:n { \l_leporello_tex_baselineskip_skip } 
+    \dim_eval:n { \l_leporello_tex_baselineskip_tl }
   } { }
-  \dim_compare:nNnF { \l_leporello_tex_pagegoal_dim } = { \c_max_dim } {
+  \dim_compare:nNnF { \l_leporello_tex_pagegoal_tl } = { \c_max_dim } {
     \prop_gput:cne {
       g__leporello_box_
       \int_use:N \g__leporello_shipout_current_box_int
       _prop
     } { remaining ~ space } {
       \dim_eval:n {
-        \l_leporello_tex_pagetotal_dim - 
-        \l_leporello_tex_pagegoal_dim -
-        \l_leporello_tex_baselineskip_skip
+        \l_leporello_tex_pagetotal_tl - 
+        \l_leporello_tex_pagegoal_tl -
+        \l_leporello_tex_baselineskip_tl
       }
     }
   }
@@ -1157,7 +1152,7 @@
         \__leporello_break_collect:n {#3}
         \__leporello_break_flow_aux:nnn {#1} {#2} {#3}
         \tl_use:c { g__leporello_box_ #3 _tl }
-        \c_leporello_tex_par_tl
+        \leporello_tex_par:
         \__leporello_break_gstore_remaining_space:
         \leporello_clearpage:
         \hook_gremove_code:nn { build / page / after } { leporello / break-flow }
@@ -1922,7 +1917,7 @@
       }
     }
   \draw_end:
-  \c_leporello_tex_par_tl
+  \leporello_tex_par:
   \skip_vertical:n { 0pt plus 1fill }
   \leporello_tex_penalty_set:n { -10000 }
 }
@@ -2238,7 +2233,7 @@
 }
 
 \cs_new_protected:Npn \__leporello_break_box: {
-  \c_leporello_tex_par_tl
+  \leporello_tex_par:
   \__leporello_break_gstore_remaining_space:
   \skip_vertical:n { 0pt plus 1fill }
   \leporello_tex_penalty_set:n { -10000 }
