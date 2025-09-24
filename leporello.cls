@@ -345,7 +345,6 @@
 \dim_new:N \l__leporello_typeset_box_stretch_x_dim
 \dim_new:N \l__leporello_typeset_box_stretch_y_dim
 \int_new:N \l__leporello_typeset_coffin_attach_align_int
-\box_new:N \l__leporello_typeset_column_box
 \coffin_new:N \l__leporello_typeset_mark_coffin
 \coffin_new:N \l__leporello_typeset_mark_temp_coffin
 \prop_new:N \l__leporello_typeset_boxes_to_sheets_prop
@@ -724,9 +723,11 @@
       \msg_error:nn { leporello } { image-outside-box }
     }
 
+    \tag_suspend:n { image }
     \hbox_set:Nn \l__leporello_image_original_box {
       \leporello_graphics_use:nn { } {#2}
     }
+    \tag_resume:n { image }
 
     \bool_if:NF \l__leporello_image_clip_width_bool {
       \dim_set:Nn \l_leporello_image_clip_width_dim {
@@ -1003,7 +1004,7 @@
         _prop
       } { remaining ~ space } {
         \dim_eval:n {
-          \l_leporello_tex_pagetotal_tl - 
+          \l_leporello_tex_pagetotal_tl -
           \l_leporello_tex_pagegoal_tl -
           \l_leporello_tex_baselineskip_tl
         }
@@ -1015,7 +1016,7 @@
         _prop
       } { remaining ~ space } {
         \dim_eval:n {
-          \l_leporello_tex_pagetotal_tl - 
+          \l_leporello_tex_pagetotal_tl -
           \l_leporello_tex_pagegoal_tl
         }
       }
@@ -1277,7 +1278,7 @@
     \bool_if:NT \l_leporello_typeset_reverse_layout_bool {
       \clist_reverse:N \l_leporello_columns_clist
     }
-    
+
     \prop_gput:cne { g__leporello_box_ #3 _prop } { inner ~ width } {
       \dim_eval:n {
         \bool_lazy_or:nnTF {
@@ -1523,12 +1524,12 @@
       \hcoffin_set:Nn \l__leporello_typeset_mark_coffin {
         \__leporello_id_mark:n { #3 }
       }
-      \tag_resume:n { mark-coffin }
       \coffin_attach:cnnNnnnn {
         l__leporello_box_ #1 _ #2 _ #3 _inner_coffin
       } { hc } { vc }
         \l__leporello_typeset_mark_coffin
         { hc } { vc } { 0pt } { 0pt }
+      \tag_resume:n { mark-coffin }
     }
 
     \coffin_attach:cencennn {
@@ -1868,7 +1869,9 @@
     \clist_reverse:N \l_leporello_columns_clist
   }
 
+  \tag_suspend:n { typeset-columns }
   \draw_begin:
+  \tag_resume:n { typeset-columns }
     \bool_set_false:N \l_draw_bb_update_bool
     \clist_map_inline:nn {#1} {
       \bool_if:NTF \l_leporello_typeset_reverse_order_bool {
@@ -1881,7 +1884,7 @@
       }
 
       \str_if_eq:nnF {##1} { . } {
-        \tl_if_exist:cF { g_leporello_column_ ##1 _tl } {
+        \tl_if_exist:cF { g_leporello_column_ ##1 _boxes_clist } {
           \msg_error:nnn { leporello } { column-undefined } {##1}
         }
       }
@@ -1889,7 +1892,7 @@
       \tag_suspend:n { column-coffin }
       \vcoffin_set:Nnn \l__leporello_current_column_coffin {
         \clist_item:NV \l_leporello_columns_clist
-            \l_leporello_current_column_int
+          \l_leporello_current_column_int
       } {
         \draw_suspend_begin:
           \draw_begin:
@@ -1899,19 +1902,6 @@
               \l_leporello_layout_height_dim
             }
             \draw_path_use_clear:n { clip }
-            \str_if_eq:nnF {##1} { . } {
-              \vbox_set_top:Nn \l__leporello_typeset_column_box {
-                \draw_suspend_begin:
-                  \hook_use:n { leporello / column / begin }
-                    \__leporello_box_page_gset:VV
-                      \g_leporello_current_sheet_int
-                      \l_leporello_current_column_int
-                    \tl_use:c { g_leporello_column_ ##1 _tl }
-                  \hook_use:n { leporello / column / end }
-                \draw_suspend_end:
-              }
-              \draw_box_use:N \l__leporello_typeset_column_box
-            }
           \draw_end:
         \draw_suspend_end:
       }
@@ -1960,8 +1950,10 @@
         }
       }
     }
+  \tag_suspend:n { typeset-columns }
   \draw_end:
   \leporello_par:
+  \tag_resume:n { typeset-columns }
   \skip_vertical:n { 0pt plus 1fill }
   \leporello_tex_penalty_set:n { -10000 }
 }
@@ -2041,7 +2033,7 @@
       \__leporello_break_gset_boxes:
       \hook_use:n { leporello / break-flow / after }
     \group_end:
-    
+
     \int_zero:N \l__leporello_typeset_column_int
     \clist_clear:N \l__leporello_typeset_temp_clist
     \clist_map_inline:nn {#2} {
@@ -2155,9 +2147,6 @@
 
 \NewDocumentEnvironment { leporellocolumn } { m +b } {
   \clist_new:c { g_leporello_column_ #1 _boxes_clist }
-  \tl_if_exist:cF { g_leporello_column_ #1 _tl } {
-    \tl_new:c { g_leporello_column_ #1 _tl }
-  }
   \group_begin:
     \str_set:Nn \l_leporello_current_column_str {#1}
     #2
