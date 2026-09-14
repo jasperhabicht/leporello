@@ -28,7 +28,7 @@
 }
 
 \cs_generate_variant:Nn \clist_item:Nn { NV }
-\cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cencennn , ceeceeee }
+\cs_generate_variant:Nn \coffin_attach:NnnNnnnn { cence , ceeceeee }
 \cs_generate_variant:Nn \color_select:n { e }
 \cs_generate_variant:Nn \msg_error:nnnn { nneV }
 \cs_generate_variant:Nn \msg_warning:nnnnn { nnVee }
@@ -36,8 +36,8 @@
 \cs_generate_variant:Nn \tl_const:Nn { co }
 \cs_generate_variant:Nn \vbox_set_top:Nn { Ne }
 
-\prg_generate_conditional_variant:Nnn \clist_if_in:nn { en } { T , F , TF }
-\prg_generate_conditional_variant:Nnn \str_if_eq:nn { en } { T , F }
+\prg_generate_conditional_variant:Nnn \clist_if_in:nn { e } { T , F , TF }
+\prg_generate_conditional_variant:Nnn \str_if_eq:nn { e } { T , F }
 
 % helper function to extract first and second part of a fp tuple
 \cs_new:Npn \__leporello_fp_tuple_use_i:w ( #1 , #2 ) {#1}
